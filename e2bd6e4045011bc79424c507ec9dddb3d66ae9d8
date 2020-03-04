@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a361fd3e_01441c32",
+        "filename": "plugin/src/main/java/de/ids_mannheim/korap/plkexport/IdsExportService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-03-04T06:00:57Z",
+      "side": 1,
+      "message": "I guess the service should only provide an \"export\" path and determine the media type based on the requested media type.",
+      "range": {
+        "startLine": 12,
+        "startChar": 10,
+        "endLine": 12,
+        "endChar": 22
+      },
+      "revId": "e2bd6e4045011bc79424c507ec9dddb3d66ae9d8",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    }
+  ]
+}
