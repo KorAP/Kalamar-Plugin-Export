@@ -1,4 +1,4 @@
-package de.ids_mannheim.korap.pklexport;
+package de.ids_mannheim.korap.plkexport;
 
 import static org.junit.Assert.assertEquals;
 
@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import de.ids_mannheim.korap.plkexport.IdsExportService;
 
+//TODO Find a way to test efficiently the starting of the PluginServer with host and port of the config-file
 
 public class IdsExportServiceTest extends JerseyTest {
 	 
