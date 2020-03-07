@@ -1,4 +1,4 @@
-package de.ids_mannheim.korap.pklexport;
+package de.ids_mannheim.korap.plkexport;
 
 import static org.junit.Assert.assertEquals;
 
