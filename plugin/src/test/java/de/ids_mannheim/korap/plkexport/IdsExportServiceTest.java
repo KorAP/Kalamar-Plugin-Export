@@ -14,7 +14,10 @@ import org.junit.Test;
 
 import de.ids_mannheim.korap.plkexport.IdsExportService;
 
-//TODO Find a way to test efficiently the starting of the PluginServer with host and port of the config-file
+/*
+ * TODO Find a way to test efficiently the starting of the PluginServer with host and port of the config-file
+ * + serving static files
+ */
 
 public class IdsExportServiceTest extends JerseyTest {
 	 
@@ -31,7 +34,8 @@ public class IdsExportServiceTest extends JerseyTest {
 		   assertEquals("Http Content-Type should be: ", MediaType.TEXT_HTML, response.getHeaderString(HttpHeaders.CONTENT_TYPE));
 		   String content = response.readEntity(String.class);
 		   assertEquals("Content of response is: ", "Export Web Service under construction", content);
+		  
 	   } 
-
+	
 }
 
