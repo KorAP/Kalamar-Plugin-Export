@@ -5,8 +5,13 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.DefaultHandler;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
@@ -31,7 +36,8 @@ public class PluginServer {
         else {
             in = new FileInputStream(f);
         }
-
+   
+        
         properties.load(in);
         in.close();
         
@@ -46,8 +52,24 @@ public class PluginServer {
         connector.setHost(host);
         connector.setIdleTimeout(60000);
         jettyServer.addConnector(connector);
+        
+        ResourceHandler resourceHandler= new ResourceHandler();
+        String resourceBase ="templates";
+        //If server is started as jar-file in target directory
+        if(!new File("templates").exists()) {
+           resourceBase = "../" + resourceBase; 
+        }
 
-        jettyServer.setHandler(contextHandler);
+        resourceHandler.setResourceBase(resourceBase);
+        //enable directory listing
+        resourceHandler.setDirectoriesListed(true);
+        ContextHandler contextHandRes= new ContextHandler("/res");
+        contextHandRes.setHandler(resourceHandler);
+
+        HandlerList handlers = new HandlerList();
+        handlers.setHandlers(new Handler[] { contextHandRes, contextHandler, new DefaultHandler()});
+        jettyServer.setHandler(handlers);
+        
         ServletHolder servletHolder = contextHandler.addServlet(
                 org.glassfish.jersey.servlet.ServletContainer.class, "/*");
         servletHolder.setInitOrder(0);
