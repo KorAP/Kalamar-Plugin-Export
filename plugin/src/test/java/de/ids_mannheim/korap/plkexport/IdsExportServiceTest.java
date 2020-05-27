@@ -3,6 +3,10 @@ package de.ids_mannheim.korap.plkexport;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
@@ -33,8 +37,7 @@ public class IdsExportServiceTest extends JerseyTest {
     // Client is pre-configured in JerseyTest
     /**
      * Tests if webservice returns a document with the right filename
-     * and file
-     * format.
+     * and file format and handles empty/missing parameters correctly.
      */
     @Test
     public void testExportWs () {
@@ -46,6 +49,8 @@ public class IdsExportServiceTest extends JerseyTest {
         frmap.add("format", "json");
         frmap.add("q", "Wasser");
         frmap.add("ql", "poliqarp");
+
+        String message;
 
         Response responsejson = target("/export").request()
                 .post(Entity.form(frmap));
@@ -84,6 +89,37 @@ public class IdsExportServiceTest extends JerseyTest {
         assertTrue("Request RTF: Filename should be set correctly: ",
                 responsertf.getHeaderString(HttpHeaders.CONTENT_DISPOSITION)
                         .contains("filename=" + filenamer));
+
+        Response resp;
+        String fvalue;
+        MultivaluedHashMap<String, String> map = new MultivaluedHashMap<String, String>();
+        map.putAll(frmap);
+
+        //Checks missing or empty parameters
+        for (String fkey : frmap.keySet()) {
+            //parameter is missing
+            fvalue = frmap.getFirst(fkey);
+            map.remove(fkey);
+            resp = target("/export").request().post(Entity.form(map));
+            assertEquals("Request RTF: Http Response should be 400: ",
+                    Status.BAD_REQUEST.getStatusCode(), resp.getStatus());
+            message = resp.readEntity(String.class);
+            assertTrue(
+                    "Right Exception Message should be returned for missing format",
+                    message.contains(
+                            "Parameter \"" + fkey + "\" is missing or empty"));
+            //parameter is empty
+            map.putSingle(fkey, "");
+            resp = target("/export").request().post(Entity.form(map));
+            assertEquals("Request RTF: Http Response should be 400: ",
+                    Status.BAD_REQUEST.getStatusCode(), resp.getStatus());
+            message = resp.readEntity(String.class);
+            assertTrue(
+                    "Right Exception Message should be returned for missing format",
+                    message.contains(
+                            "Parameter \"" + fkey + "\" is missing or empty"));
+            map.putSingle(fkey, fvalue);
+        }
     }
 
 }

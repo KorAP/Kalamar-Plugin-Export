@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -16,6 +18,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -33,6 +37,16 @@ public class IdsExportService {
      * response as json(all of the response) and
      * as rtf(matches)
      * 
+     * @param fname
+     *            file name
+     * @param format
+     *            the file format value rtf or json.
+     * @param q
+     *            the query
+     * @param ql
+     *            the query language
+     * 
+     * 
      */
     @POST
     @Path("export")
@@ -41,7 +55,18 @@ public class IdsExportService {
             @FormParam("format") String format, @FormParam("q") String q,
             @FormParam("ql") String ql) throws IOException {
 
+        String[][] params = { { "fname", fname }, { "format", format },
+                { "q", q }, { "ql", ql } };
 
+        for (int i = 0; i < params.length; i++) {
+            if (params[i][1] == null || params[i][1].trim().isEmpty())
+                throw new BadRequestException(Response
+                        .status(Status.BAD_REQUEST).entity("Parameter " + "\""
+                                + params[i][0] + "\"" + " is missing or empty")
+                        .build());
+        }
+
+        ResponseBuilder builder;
         Client client = ClientBuilder.newClient();
 
         String url = "http://localhost:8089/api/v1.0/search?context=sentence"
@@ -49,7 +74,6 @@ public class IdsExportService {
         WebTarget resource = client.target(url);
         String resp = resource.request(MediaType.APPLICATION_JSON)
                 .get(String.class);
-        ResponseBuilder builder;
 
         //format == json
         if (format.equals("json")) {
