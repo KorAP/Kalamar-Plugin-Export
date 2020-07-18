@@ -100,7 +100,7 @@ public class IdsExportService {
                     .hasNext();) {
                 match = objectMapper.readValue(itNode.next().toString(),
                         MatchExport.class);
-                listMatches.addFirst(match);
+                listMatches.addLast(match);
             }
 
 
