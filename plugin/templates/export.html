@@ -9,8 +9,10 @@
 <body>
 
 <form id ="frmid" action="http://localhost:7777/export" method="POST">
-  <!-- Zu Testenzwecken: -->
    Zu Testzwecken: <br />
+   <ul>
+   <li> <a onclick="KorAPlugin.requestMsg({'action':'get', 'key':'KQ'}, function (d) { document.write(JSON.stringify(d.value))})">Get KQ</a> </li>
+  </ul>
   <label for="q"> Suchanfrage:</label>
   <input id="q" name="q" value="Wasser">
   <label for="ql"> Suchanfragesprache:</label>
