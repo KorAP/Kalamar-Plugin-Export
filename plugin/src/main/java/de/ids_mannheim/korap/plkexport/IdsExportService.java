@@ -29,6 +29,7 @@ import static com.tutego.jrtf.Rtf.rtf;
 import static com.tutego.jrtf.RtfPara.*;
 import static com.tutego.jrtf.RtfText.*;
 
+
 @Path("/")
 public class IdsExportService {
 
@@ -48,12 +49,14 @@ public class IdsExportService {
      * 
      * 
      */
+
     @POST
     @Path("export")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response testjsonform (@FormParam("fname") String fname,
             @FormParam("format") String format, @FormParam("q") String q,
-            @FormParam("ql") String ql) throws IOException {
+            @FormParam("ql") String ql, @FormParam("islimit") String il,
+            @FormParam("hitc") int hitc) throws IOException {
 
         String[][] params = { { "fname", fname }, { "format", format },
                 { "q", q }, { "ql", ql } };
@@ -69,8 +72,17 @@ public class IdsExportService {
         ResponseBuilder builder;
         Client client = ClientBuilder.newClient();
 
+
         String url = "http://localhost:8089/api/v1.0/search?context=sentence"
                 + "&q=" + URLEncoder.encode(q, "UTF-8") + "&ql=" + ql;
+
+        if (il != null) {
+            url = url + "&cutoff=1" + "&count=" + hitc;
+        }
+
+        else {
+            url = url + "&cutoff=1" + "&count=" + ExWSConf.MAX_EXP_LIMIT;
+        }
         WebTarget resource = client.target(url);
         String resp = resource.request(MediaType.APPLICATION_JSON)
                 .get(String.class);
@@ -96,13 +108,14 @@ public class IdsExportService {
             LinkedList<MatchExport> listMatches = new LinkedList();
             ObjectMapper objectMapper = new ObjectMapper();
             MatchExport match;
+
+
             for (Iterator<JsonNode> itNode = jsonNode1.elements(); itNode
                     .hasNext();) {
                 match = objectMapper.readValue(itNode.next().toString(),
                         MatchExport.class);
                 listMatches.addLast(match);
             }
-
 
             String rtfresp = writeRTF(listMatches);
             builder = Response.ok(rtfresp);

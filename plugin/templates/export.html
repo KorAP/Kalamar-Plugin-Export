@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- TODO: style, localization, remove Zu Testzwecken in the end, ...-->
+<!-- TODO: style, localization, remove 'Zu Testzwecken' in the end, ...-->
 <html>
 <head>
 <meta charset="UTF-8">
@@ -9,7 +9,7 @@
 <body>
 
 <form id ="frmid" action="http://localhost:7777/export" method="POST">
-   Zu Testzwecken: <br />
+   Zu Testzwecken: <br/>
    <ul>
    <li> <a onclick="KorAPlugin.requestMsg({'action':'get', 'key':'KQ'}, function (d) { document.write(JSON.stringify(d.value))})">Get KQ</a> </li>
   </ul>
@@ -18,16 +18,28 @@
   <label for="ql"> Suchanfragesprache:</label>
   <input id="ql" name="ql" value="poliqarp">
   <input type="hidden" id="cq" name="cq" value="">
-  <br />
-  <br />
-  <br />
+  <br/>
+  <br/>
+  <br/>
   <label for="fname">Dateiname:</label>
-  <input type="text" id="fname" name="fname" required> <br>
+  <input type="text" id="fname" name="fname" required> <br/>
   Dateiformat: 
   <input type="radio" id="formatjson" name="format" value="json">  
   <label for="formatjson">JSON</label>
   <input type="radio" checked="checked" id="formathtml" name="format" value="rtf">  
-  <label for="formatrtf">RTF</label><br>
+  <label for="formatrtf">RTF</label><br/>
+  
+  <div>
+  <br/>
+   <label>
+          <input type="checkbox" name="islimit" checked="checked" value="limited">
+          Beschränken auf 
+            <input name="hitc" type="number" min="1" max="1000" value="20">
+          Treffer 
+  </label>
+  <br/>
+  <br/>
+  </div>
  <button> Exportieren </button> 
 </form>
 </body>
