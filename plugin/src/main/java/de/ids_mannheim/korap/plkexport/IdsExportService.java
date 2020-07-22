@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response.Status;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutego.jrtf.*;
@@ -57,6 +58,7 @@ public class IdsExportService {
             @FormParam("format") String format, @FormParam("q") String q,
             @FormParam("ql") String ql, @FormParam("islimit") String il,
             @FormParam("hitc") int hitc) throws IOException {
+
 
         String[][] params = { { "fname", fname }, { "format", format },
                 { "q", q }, { "ql", ql } };
@@ -138,6 +140,16 @@ public class IdsExportService {
         String textSigle;
         int j = matchlist.size();
 
+        //TODO Add export plugin version to JSON output?
+        /*
+         * TODO 
+         * The output rtf file lacks style, 
+         * but I'm thinking about changing the jRTF library to OpenRTF https://github.com/LibrePDF/OpenRTF, 
+         * because jRTF is very rudimentary, so I only list the information in a section right now.
+         */
+        RtfTextPara pv = getVersion();
+        listp.add(pv);
+
         for (int i = 0; i < j; i++) {
             MatchExport matchakt = (MatchExport) matchlist.get(i);
             reference = " (" + matchakt.getTitle() + " von "
@@ -153,5 +165,15 @@ public class IdsExportService {
 
         String rtfresp = rtf().section(listp).toString();
         return rtfresp;
+    }
+
+
+    public RtfTextPara getVersion () {
+        Version version = new Version(ExWSConf.VERSION_MAJOR,
+                ExWSConf.VERSION_MINOR, ExWSConf.VERSION_PATCHLEVEL, null, null,
+                null);
+        RtfTextPara parv = p("@Institut für Deutsche Sprache, Mannheim", ("\n"),
+                "IDSExportPlugin-Version:  ", version, "\n");
+        return parv;
     }
 }

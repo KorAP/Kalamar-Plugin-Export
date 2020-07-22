@@ -16,4 +16,9 @@ public class ExWSConf {
      * See also: https://www.ids-mannheim.de/cosmas2/script-app/hilfe/sitzung.html
      */
     public static final int MAX_EXP_LIMIT = 10000;
+    
+    //Version of Export Plugin
+    public static final int VERSION_MAJOR = 0;
+    public static final int VERSION_MINOR = 1;
+    public static final int VERSION_PATCHLEVEL= 0;
 }
