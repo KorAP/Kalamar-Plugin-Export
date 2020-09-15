@@ -16,6 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -79,19 +80,28 @@ public class IdsExportService {
 
         String port = properties.getProperty("api.port", "8089");
         String host = properties.getProperty("api.host", "localhost");
-        
-        String url = "http://" + host + ":" + port + "/api/v1.0/search?context=sentence"
-                + "&q=" + URLEncoder.encode(q, "UTF-8") + "&ql=" + ql;
 
+        // URIBuildernew UriBuilder();
+        UriBuilder uri = UriBuilder.fromPath("/api/v1.0/search")
+            .host(host)
+            .port(Integer.parseInt(port))
+            .scheme("https")
+            .queryParam("q", q)
+            .queryParam("context", "sentence")
+            .queryParam("ql", ql)
+            .queryParam("cutoff", 1)
+            ;
+        
         if (il != null) {
-            url = url + "&cutoff=1" + "&count=" + hitc;
+            uri = uri.queryParam("count", hitc);
         }
 
         else {
-            url = url + "&cutoff=1" + "&count=" + ExWSConf.MAX_EXP_LIMIT;
+            uri = uri.queryParam("count", ExWSConf.MAX_EXP_LIMIT);
         }
 
-        WebTarget resource = client.target(url);
+        //WebTarget resource = client.target(url);
+        WebTarget resource = client.target(uri.build());
         String resp = resource.request(MediaType.APPLICATION_JSON)
                 .get(String.class);
 
