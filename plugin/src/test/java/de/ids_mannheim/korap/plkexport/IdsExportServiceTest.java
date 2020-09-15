@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
@@ -20,6 +21,7 @@ import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
 
 import de.ids_mannheim.korap.plkexport.IdsExportService;
+import de.ids_mannheim.korap.plkexport.ExWSConf;
 
 /*
  * TODO Find a way to test efficiently the starting of the PluginServer with host and port of the config-file
@@ -51,6 +53,10 @@ public class IdsExportServiceTest extends JerseyTest {
         frmap.add("ql", "poliqarp");
 
         String message;
+
+        Properties properties = ExWSConf.properties(null);
+        properties.setProperty("api.host", "localhost");
+        properties.setProperty("api.port", "8089");
 
         Response responsejson = target("/export").request()
                 .post(Entity.form(frmap));

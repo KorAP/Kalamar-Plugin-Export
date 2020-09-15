@@ -1,6 +1,6 @@
 # KalamarExportPlugin
 
-#Setup
+## Setup
 
 The jar file is located in the ```target/``` folder
 

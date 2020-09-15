@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Properties;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.FormParam;
@@ -34,6 +35,8 @@ import static com.tutego.jrtf.RtfText.*;
 @Path("/")
 public class IdsExportService {
 
+    Properties properties = ExWSConf.properties(null);
+    
     /**
      * WebService calls Kustvakt Search Webservices and returns
      * response as json(all of the response) and
@@ -74,8 +77,10 @@ public class IdsExportService {
         ResponseBuilder builder;
         Client client = ClientBuilder.newClient();
 
-
-        String url = "http://localhost:8089/api/v1.0/search?context=sentence"
+        String port = properties.getProperty("api.port", "8089");
+        String host = properties.getProperty("api.host", "localhost");
+        
+        String url = "http://" + host + ":" + port + "/api/v1.0/search?context=sentence"
                 + "&q=" + URLEncoder.encode(q, "UTF-8") + "&ql=" + ql;
 
         if (il != null) {
@@ -85,6 +90,7 @@ public class IdsExportService {
         else {
             url = url + "&cutoff=1" + "&count=" + ExWSConf.MAX_EXP_LIMIT;
         }
+
         WebTarget resource = client.target(url);
         String resp = resource.request(MediaType.APPLICATION_JSON)
                 .get(String.class);
