@@ -62,7 +62,7 @@ public class IdsExportService {
             @FormParam("format") String format, @FormParam("q") String q,
             @FormParam("ql") String ql, @FormParam("islimit") String il,
             @FormParam("hitc") int hitc) throws IOException {
-
+        
 
         String[][] params = { { "fname", fname }, { "format", format },
                 { "q", q }, { "ql", ql } };
@@ -78,6 +78,7 @@ public class IdsExportService {
         ResponseBuilder builder;
         Client client = ClientBuilder.newClient();
 
+        String scheme = properties.getProperty("api.scheme", "https");
         String port = properties.getProperty("api.port", "8089");
         String host = properties.getProperty("api.host", "localhost");
 
@@ -85,7 +86,7 @@ public class IdsExportService {
         UriBuilder uri = UriBuilder.fromPath("/api/v1.0/search")
             .host(host)
             .port(Integer.parseInt(port))
-            .scheme("https")
+            .scheme(scheme)
             .queryParam("q", q)
             .queryParam("context", "sentence")
             .queryParam("ql", ql)
@@ -117,7 +118,6 @@ public class IdsExportService {
 
         // format == rtf / else
         else {
-
             ObjectMapper mapper = new ObjectMapper();
             JsonFactory factory = mapper.getFactory();
             JsonParser parser = factory.createParser(resp);
@@ -126,7 +126,7 @@ public class IdsExportService {
             LinkedList<MatchExport> listMatches = new LinkedList();
             ObjectMapper objectMapper = new ObjectMapper();
             MatchExport match;
-
+                        
 
             for (Iterator<JsonNode> itNode = jsonNode1.elements(); itNode
                     .hasNext();) {
