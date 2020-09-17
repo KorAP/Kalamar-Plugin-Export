@@ -216,6 +216,7 @@ public class IdsExportServiceTest extends JerseyTest {
 
         Response resp;
         String fvalue;
+        frmap.remove("fname");
         MultivaluedHashMap<String, String> map = new MultivaluedHashMap<String, String>();
         map.putAll(frmap);
 

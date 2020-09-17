@@ -65,7 +65,6 @@ public class IdsExportService {
         
 
         String[][] params = {
-            { "fname", fname },
             { "format", format },
             { "q", q },
             { "ql", ql }
@@ -112,14 +111,15 @@ public class IdsExportService {
         String resp = resource.request(MediaType.APPLICATION_JSON)
                 .get(String.class);
 
+        if (fname == null) {
+            fname = q;
+        }
+
         //format == json
         if (format.equals("json")) {
             builder = Response.ok(resp);
-            builder.header("Content-Disposition",
-                    "attachment; filename=" + fname + ".json");
             builder.type(MediaType.APPLICATION_JSON);
-            Response response = builder.build();
-            return response;
+            fname = fname + ".json";
         }
 
         // format == rtf / else
@@ -143,11 +143,15 @@ public class IdsExportService {
 
             String rtfresp = writeRTF(listMatches);
             builder = Response.ok(rtfresp);
-            builder.header("Content-Disposition",
-                    "attachment; filename=" + fname + ".rtf");
-            Response response = builder.build();
-            return response;
+            fname = fname + ".rtf";
         }
+
+        // TODO:
+        //   Sanitize file name (i.e. replace extra characters)
+        builder.header("Content-Disposition",
+                       "attachment; filename=" + fname);
+        Response response = builder.build();
+        return response;
     }
 
 
