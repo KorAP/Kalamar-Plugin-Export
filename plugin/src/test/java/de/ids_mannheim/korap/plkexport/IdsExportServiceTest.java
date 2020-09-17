@@ -95,7 +95,7 @@ public class IdsExportServiceTest extends JerseyTest {
             .respond(
                 response()
                 .withHeader("Content-Type: application/json; charset=utf-8")
-                .withBody("{}")
+                .withBody(getFixture("response_water.json"))
                 .withStatusCode(200)
                 );
 
@@ -141,6 +141,37 @@ public class IdsExportServiceTest extends JerseyTest {
 
     };
 
+    @Test
+    public void testExportWsJsonEmpty () {
+        mockClient.reset().when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "????")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_none.json"))
+                .withStatusCode(200)
+                );
+
+        String filenamej = "dateiJson";
+        MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<String, String>();
+        frmap.add("fname", filenamej);
+        frmap.add("format", "json");
+        frmap.add("q", "????");
+        frmap.add("ql", "poliqarp");
+
+        String message;
+
+        Response responsejson = target("/export").request()
+                .post(Entity.form(frmap));
+        
+        assertEquals("Request JSON: Http Response should be 200: ",
+                Status.OK.getStatusCode(), responsejson.getStatus());
+    };
+    
     
     @Test
     public void testExportWsRTF () {
@@ -148,6 +179,7 @@ public class IdsExportServiceTest extends JerseyTest {
             request()
             .withMethod("GET")
             .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Wasser")
             )
             .respond(
                 response()
@@ -214,6 +246,38 @@ public class IdsExportServiceTest extends JerseyTest {
         }
     }
 
+
+    @Test
+    public void testExportWsRTFEmpty () {
+        mockClient.reset().when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "????")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_none.json"))
+                .withStatusCode(200)
+                );
+
+        MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<String, String>();
+        frmap.add("format", "rtf");
+        frmap.add("q", "????");
+        frmap.add("ql", "poliqarp");
+        String filenamer = "dateiRtf";
+        frmap.putSingle("fname", filenamer);
+
+        String message;
+
+        Response responsertf = target("/export").request()
+            .post(Entity.form(frmap));
+        assertEquals("Request RTF: Http Response should be 200: ",
+                Status.OK.getStatusCode(), responsertf.getStatus());
+    }
+
+    
     // Get fixture from ressources
     private String getFixture (String file) {
         String filepath = getClass()
