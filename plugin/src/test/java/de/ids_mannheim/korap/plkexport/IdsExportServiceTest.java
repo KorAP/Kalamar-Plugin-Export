@@ -124,8 +124,21 @@ public class IdsExportServiceTest extends JerseyTest {
                         .contains("attachment"));
         // The document should be named correctly
         assertTrue("Request JSON: Filename should be set correctly: ",
-                responsejson.getHeaderString(HttpHeaders.CONTENT_DISPOSITION)
-                        .contains("filename=" + filenamej));
+                   responsejson.getHeaderString(HttpHeaders.CONTENT_DISPOSITION)
+                   .contains("filename=" + filenamej));
+
+        frmap.remove("ql");
+        responsejson = target("/export").request()
+                .post(Entity.form(frmap));
+        assertEquals("Request JSON: Http Response should be 400: ",
+                Status.BAD_REQUEST.getStatusCode(), responsejson.getStatus());
+
+        frmap.remove("q");
+        responsejson = target("/export").request()
+                .post(Entity.form(frmap));
+        assertEquals("Request JSON: Http Response should be 400: ",
+                Status.BAD_REQUEST.getStatusCode(), responsejson.getStatus());
+
     };
 
     
@@ -139,7 +152,7 @@ public class IdsExportServiceTest extends JerseyTest {
             .respond(
                 response()
                 .withHeader("Content-Type: application/json; charset=utf-8")
-                .withBody(getFixture("response_query_baum_o0_c25.json"))
+                .withBody(getFixture("response_water.json"))
                 .withStatusCode(200)
                 );
 

@@ -64,6 +64,7 @@ public class PluginServer {
         try {
             jettyServer.start();
             System.out.println("PluginServer available under: http://" + host+ ":" + portStr);
+            System.out.println("ApiServer expected under: " + properties.getProperty("api.scheme") + "://" + properties.getProperty("api.host")+ ":" + properties.getProperty("api.port"));
             jettyServer.join();
         }
         finally {

@@ -64,15 +64,21 @@ public class IdsExportService {
             @FormParam("hitc") int hitc) throws IOException {
         
 
-        String[][] params = { { "fname", fname }, { "format", format },
-                { "q", q }, { "ql", ql } };
+        String[][] params = {
+            { "fname", fname },
+            { "format", format },
+            { "q", q },
+            { "ql", ql }
+        };
 
         for (int i = 0; i < params.length; i++) {
             if (params[i][1] == null || params[i][1].trim().isEmpty())
-                throw new BadRequestException(Response
-                        .status(Status.BAD_REQUEST).entity("Parameter " + "\""
-                                + params[i][0] + "\"" + " is missing or empty")
-                        .build());
+                throw new BadRequestException(
+                    Response
+                    .status(Status.BAD_REQUEST)
+                    .entity("Parameter " + "\""
+                            + params[i][0] + "\"" + " is missing or empty")
+                    .build());
         }
 
         ResponseBuilder builder;
