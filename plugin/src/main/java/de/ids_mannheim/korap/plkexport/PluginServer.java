@@ -35,9 +35,9 @@ public class PluginServer {
         connector.setIdleTimeout(60000);
         jettyServer.addConnector(connector);
         
-        ResourceHandler resourceHandler= new ResourceHandler();
+        ResourceHandler resourceHandler = new ResourceHandler();
         String resourceBase ="templates";
-        //If server is started as jar-file in target directory
+        // If server is started as jar-file in target directory
         if(!new File("templates").exists()) {
            resourceBase = "../" + resourceBase; 
         }
