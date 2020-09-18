@@ -32,6 +32,8 @@ import static com.tutego.jrtf.Rtf.rtf;
 import static com.tutego.jrtf.RtfPara.*;
 import static com.tutego.jrtf.RtfText.*;
 
+import static de.ids_mannheim.korap.plkexport.Util.*;
+
 
 @Path("/")
 public class IdsExportService {
@@ -149,7 +151,7 @@ public class IdsExportService {
         // TODO:
         //   Sanitize file name (i.e. replace extra characters)
         builder.header("Content-Disposition",
-                       "attachment; filename=" + fname);
+                       "attachment; filename=" + sanitizeFileName(fname));
         Response response = builder.build();
         return response;
     }
