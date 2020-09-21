@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- TODO: style, localization, remove 'Zu Testzwecken' in the end, ...-->
+<!-- TODO: localization ... -->
 <html>
   <head>
     <meta charset="UTF-8">
@@ -7,34 +7,40 @@
 
     <!-- This is only for testing purposes -->
     <script src="http://localhost:64543/js/korap-plugin-0.2.js"></script>
-    <link type="text/css" rel="stylesheet" href="http://localhost:64543/css/kalamar-plugin-0.2.css" />
+    <link type="text/css" rel="stylesheet" href="http://localhost:64543/css/kalamar-plugin-0.2.css?x=4" />
   </head>
-  <body style="padding: .5em">
+  <body>
+    <h1>Export: <code id="export-query"></code></h1>
+    <section>
+      <form id="frmid" class="form-table" action="http://localhost:7777/export" method="POST">
+        <fieldset>
+          <input type="hidden"  id="q" name="q">
+          <input type="hidden" id="ql" name="ql">
+          <input type="hidden" id="cq" name="cq">
+          
+          <fieldset class="form-line">
+            <legend>Dateiformat</legend>
+            <input type="radio" id="formatjson" name="format" value="json">
+            <label for="formatjson">JSON</label>
+            
+            <input type="radio" checked="checked" id="formathtml" name="format" value="rtf">  
+            <label for="formatrtf">RTF</label>
+          </fieldset>
 
-    <form id="frmid" class="form-table" action="http://localhost:7777/export" method="POST">
-      <fieldset>
-        <legend>Export <code id="export-query"></code></legend>
-        <input type="hidden"  id="q" name="q">
-        <input type="hidden" id="ql" name="ql">
-        <input type="hidden" id="cq" name="cq">
-        
-        <label for="format">Dateiformat</label>
-        <input type="radio" id="formatjson" name="format" value="json">  
-        <label for="formatjson">JSON</label>
-        <input type="radio" checked="checked" id="formathtml" name="format" value="rtf">  
-        <label for="formatrtf">RTF</label>
-
-        <div>
-          <label>
-            <input type="checkbox" name="islimit" checked="checked" value="limited">
-            Beschränken auf 
-            <input name="hitc" type="number" min="1" max="1000" value="20">
-            Treffer 
-          </label>
-        </div>
-        <input type="submit" value="Exportieren">
-      </fieldset>
-    </form>
+          <!--
+              <div>
+                <label>
+                  <input type="checkbox" name="islimit" checked="checked" value="limited">
+                  Beschränken auf 
+                  <input name="hitc" type="number" min="1" max="1000" value="20">
+                  Treffer 
+                </label>
+              </div>
+              -->
+          <input type="submit" value="Exportieren">
+        </fieldset>
+      </form>
+    </section>
     <script src="export.js" defer></script>
   </body>
 </html>
