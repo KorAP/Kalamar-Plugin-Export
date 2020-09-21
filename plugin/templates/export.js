@@ -1,3 +1,5 @@
+"use strict";
+
 function pluginit(P) {
   P.requestMsg(
     {
@@ -6,7 +8,7 @@ function pluginit(P) {
     },
     function (d) {
       let v = d.value;
-      if (v["q"]) {
+      if (v !== undefined && v["q"]) {
         let e = v["q"];
         document.getElementById("q").value=v["q"];
         if (v["ql"]) {
