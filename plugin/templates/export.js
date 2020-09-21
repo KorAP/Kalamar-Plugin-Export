@@ -21,6 +21,8 @@ function pluginit(P) {
         };
         document.getElementById("export-query").innerText = e;
       };
+
+      P.resize();
     }
   );
 };
