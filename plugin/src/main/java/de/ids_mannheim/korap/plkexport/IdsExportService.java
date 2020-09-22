@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Properties;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -21,6 +22,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
+import java.net.ConnectException;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -108,10 +110,19 @@ public class IdsExportService {
             uri = uri.queryParam("count", ExWSConf.MAX_EXP_LIMIT);
         }
 
-        //WebTarget resource = client.target(url);
-        WebTarget resource = client.target(uri.build());
-        String resp = resource.request(MediaType.APPLICATION_JSON)
+        String resp;
+        try {
+            WebTarget resource = client.target(uri.build());
+            resp = resource.request(MediaType.APPLICATION_JSON)
                 .get(String.class);
+        } catch (Exception e) {
+            throw new WebApplicationException(
+                Response
+                .ok(new String("Unable to reach Backend"), MediaType.TEXT_PLAIN)
+                .status(Status.BAD_GATEWAY)
+                .build()
+                );
+        }
 
         if (fname == null) {
             fname = q;
