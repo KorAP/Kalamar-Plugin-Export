@@ -278,6 +278,29 @@ public class IdsExportServiceTest extends JerseyTest {
                 Status.OK.getStatusCode(), responsertf.getStatus());
     }
 
+
+    @Test
+    public void testExportWsProxyProblem () {
+        ExWSConf.properties(null).setProperty("api.port", String.valueOf(mockServer.getPort() + 11));
+
+        String filenamej = "dateiJson";
+        MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<String, String>();
+        frmap.add("fname", filenamej);
+        frmap.add("format", "json");
+        frmap.add("q", "????");
+        frmap.add("ql", "poliqarp");
+
+        String message;
+
+        Response responsejson = target("/export").request()
+                .post(Entity.form(frmap));
+
+        ExWSConf.properties(null).setProperty("api.port", String.valueOf(mockServer.getPort()));
+
+        assertEquals("Request JSON: Http Response should be 502: ",
+                     Status.BAD_GATEWAY.getStatusCode(), responsejson.getStatus());
+    };
+
     
     // Get fixture from ressources
     private String getFixture (String file) {
