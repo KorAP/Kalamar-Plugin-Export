@@ -1,6 +1,8 @@
 package de.ids_mannheim.korap.plkexport;
 
 import java.io.IOException;
+import java.lang.Thread;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +14,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.client.Client;
@@ -29,6 +32,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.tutego.jrtf.*;
 import static com.tutego.jrtf.Rtf.rtf;
 import static com.tutego.jrtf.RtfPara.*;
@@ -41,6 +45,14 @@ import static de.ids_mannheim.korap.plkexport.Util.*;
 public class IdsExportService {
 
     Properties properties = ExWSConf.properties(null);
+
+    // Load export string
+    ClassLoader cl = Thread.currentThread().getContextClassLoader();
+    InputStream is1 = cl.getResourceAsStream("assets/export.html");
+    private final String exportStr = streamToString(is1);
+
+    InputStream is2 = cl.getResourceAsStream("assets/export.js");
+    private final String exportJsStr = streamToString(is2);
     
     /**
      * WebService calls Kustvakt Search Webservices and returns
@@ -58,7 +70,6 @@ public class IdsExportService {
      * 
      * 
      */
-
     @POST
     @Path("export")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -159,15 +170,30 @@ public class IdsExportService {
             fname = fname + ".rtf";
         }
 
-        // TODO:
-        //   Sanitize file name (i.e. replace extra characters)
         builder.header("Content-Disposition",
                        "attachment; filename=" + sanitizeFileName(fname));
         Response response = builder.build();
         return response;
     }
 
+    @GET
+    @Path("export")
+    @Produces(MediaType.TEXT_HTML)
+    public Response exportHTML () {
+        return Response
+            .ok(exportStr, MediaType.TEXT_HTML)
+            .build();
+    };
 
+    @GET
+    @Path("export.js")
+    @Produces("application/javascript")
+    public Response exportJavascript () {
+        return Response
+            .ok(exportJsStr, "application/javascript")
+            .build();
+    };
+    
     public String writeRTF (LinkedList list) {
         LinkedList matchlist = list;
         RtfTextPara par = p((" "));

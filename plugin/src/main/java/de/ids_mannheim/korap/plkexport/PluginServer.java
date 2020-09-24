@@ -9,13 +9,11 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 public class PluginServer {
     public static void main (String[] args) throws Exception {
-
 
         ServletContextHandler contextHandler = new ServletContextHandler(
             ServletContextHandler.NO_SESSIONS);
@@ -35,21 +33,8 @@ public class PluginServer {
         connector.setIdleTimeout(60000);
         jettyServer.addConnector(connector);
         
-        ResourceHandler resourceHandler = new ResourceHandler();
-        String resourceBase ="templates";
-        // If server is started as jar-file in target directory
-        if(!new File("templates").exists()) {
-           resourceBase = "../" + resourceBase; 
-        }
-
-        resourceHandler.setResourceBase(resourceBase);
-        //enable directory listing
-        resourceHandler.setDirectoriesListed(true);
-        ContextHandler contextHandRes= new ContextHandler("/res");
-        contextHandRes.setHandler(resourceHandler);
-
         HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[] { contextHandRes, contextHandler, new DefaultHandler()});
+        handlers.setHandlers(new Handler[] { contextHandler, new DefaultHandler()});
         jettyServer.setHandler(handlers);
         
         ServletHolder servletHolder = contextHandler.addServlet(

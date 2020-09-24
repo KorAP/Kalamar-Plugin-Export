@@ -139,8 +139,29 @@ public class IdsExportServiceTest extends JerseyTest {
         assertEquals("Request JSON: Http Response should be 400: ",
                 Status.BAD_REQUEST.getStatusCode(), responsejson.getStatus());
 
-    };
+    }
 
+    @Test
+    public void testFormHTML () {
+        Response responsehtml = target("/export").request()
+                .get();
+        assertEquals("HTTP Code",
+                Status.OK.getStatusCode(), responsehtml.getStatus());
+        String str = responsehtml.readEntity(String.class);
+        assertTrue("HTTP Body", str.contains("<title>Export</title>"));
+    }
+
+    @Test
+    public void testJS () {
+        Response responsejs = target("/export.js").request()
+                .get();
+        assertEquals("HTTP Code",
+                Status.OK.getStatusCode(), responsejs.getStatus());
+        String str = responsejs.readEntity(String.class);
+
+        assertTrue("HTTP Body", str.contains("pluginit"));
+    }
+    
     @Test
     public void testExportWsJsonEmpty () {
         mockClient.reset().when(

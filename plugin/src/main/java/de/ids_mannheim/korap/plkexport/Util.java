@@ -1,5 +1,8 @@
 package de.ids_mannheim.korap.plkexport;
 
+import java.io.IOException;
+import java.io.*;
+
 public class Util {
     public static String sanitizeFileName (String fname) {
         return fname
@@ -11,4 +14,22 @@ public class Util {
             .replaceFirst("-+$","")
             ;
     }
+
+	public static String streamToString (InputStream in) {
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line + System.lineSeparator());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+		return sb.toString();
+	}
+
 }

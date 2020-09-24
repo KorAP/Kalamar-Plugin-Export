@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Export Template</title>
+    <title>Export</title>
 
     <!-- This is only for testing purposes -->
     <script src="http://localhost:64543/js/korap-plugin-0.2.1.js"></script>
@@ -13,7 +13,7 @@
     <div class="banner" data-note="Experimental"></div>
     <h1>Export: <code id="export-query"></code></h1>
     <section>
-      <form id="frmid" class="form-table" action="http://localhost:7777/export" method="POST">
+      <form id="frmid" class="form-table" action="/export" method="POST">
         <fieldset>
           <input type="hidden"  id="q" name="q">
           <input type="hidden" id="ql" name="ql">
@@ -42,6 +42,6 @@
         </fieldset>
       </form>
     </section>
-    <script src="export.js" defer></script>
+    <script src="/export.js" defer></script>
   </body>
 </html>
