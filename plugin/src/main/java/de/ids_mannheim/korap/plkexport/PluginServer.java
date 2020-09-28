@@ -12,11 +12,14 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
+import org.glassfish.jersey.servlet.ServletContainer;
+
 public class PluginServer {
     public static void main (String[] args) throws Exception {
 
         ServletContextHandler contextHandler = new ServletContextHandler(
-            ServletContextHandler.NO_SESSIONS);
+            ServletContextHandler.NO_SESSIONS
+            );
         contextHandler.setContextPath("/");
 
         Properties properties = ExWSConf.properties(null);
@@ -36,9 +39,12 @@ public class PluginServer {
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[] { contextHandler, new DefaultHandler()});
         jettyServer.setHandler(handlers);
+
+
+        ServletContainer servletContainer = new ServletContainer();        
+        ServletHolder servletHolder = new ServletHolder(servletContainer);
+        contextHandler.addServlet(servletHolder, "/*");
         
-        ServletHolder servletHolder = contextHandler.addServlet(
-                org.glassfish.jersey.servlet.ServletContainer.class, "/*");
         servletHolder.setInitOrder(0);
 
         // Tells the Jersey Servlet which REST service/class to load.
@@ -49,7 +55,13 @@ public class PluginServer {
         try {
             jettyServer.start();
             System.out.println("PluginServer available under: http://" + host+ ":" + portStr);
-            System.out.println("ApiServer expected under: " + properties.getProperty("api.scheme") + "://" + properties.getProperty("api.host")+ ":" + properties.getProperty("api.port"));
+            System.out.println(
+                "ApiServer expected under: " +
+                properties.getProperty("api.scheme") +
+                "://" +
+                properties.getProperty("api.host")+ ":" +
+                properties.getProperty("api.port")
+                );
             jettyServer.join();
         }
         finally {

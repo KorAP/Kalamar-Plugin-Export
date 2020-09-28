@@ -4,10 +4,8 @@
   <head>
     <meta charset="UTF-8">
     <title>Export</title>
-
-    <!-- This is only for testing purposes -->
-    <script src="http://localhost:64543/js/korap-plugin-0.2.1.js"></script>
-    <link type="text/css" rel="stylesheet" href="http://localhost:64543/css/kalamar-plugin-0.2.1.css" />
+    <script src="${assetPath}/js/korap-plugin-0.2.1.js"></script>
+    <link href="${assetPath}/css/kalamar-plugin-0.2.1.css" type="text/css" rel="stylesheet" />
   </head>
   <body>
     <div class="banner" data-note="Experimental"></div>
