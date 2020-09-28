@@ -56,6 +56,12 @@ public class IdsExportService {
    
     InputStream is = cl.getResourceAsStream("assets/export.js");
     private final String exportJsStr = streamToString(is);
+
+    Configuration cfg = new Configuration();
+    {
+        cfg.setClassForTemplateLoading(IdsExportService.class, "/assets/templates");
+        cfg.setDefaultEncoding("UTF-8");
+    }
     
     /**
      * WebService calls Kustvakt Search Webservices and returns
@@ -130,10 +136,7 @@ public class IdsExportService {
                 .get(String.class);
         } catch (Exception e) {
             throw new WebApplicationException(
-                Response
-                .ok(new String("Unable to reach Backend"), MediaType.TEXT_PLAIN)
-                .status(Status.BAD_GATEWAY)
-                .build()
+                responseForm(Status.BAD_GATEWAY, "Unable to reach Backend")
                 );
         }
 
@@ -182,11 +185,20 @@ public class IdsExportService {
     @Path("export")
     @Produces(MediaType.TEXT_HTML)
     public Response exportHTML () {
-        
-        Configuration cfg = new Configuration();
-        cfg.setClassForTemplateLoading(IdsExportService.class, "/assets/templates");
-        cfg.setDefaultEncoding("UTF-8");
+        return responseForm();
+    };
 
+
+    /**
+     * Response with form template.
+     * 
+     * Accepts an optional error code and message.
+     */
+    private Response responseForm () {
+        return responseForm(null, null);
+    }
+
+    private Response responseForm (Status code, String msg) {
         StringWriter out = new StringWriter();
         HashMap<String, Object> templateData = new HashMap<String, Object>();
 
@@ -205,6 +217,12 @@ public class IdsExportService {
 
         templateData.put("assetPath", uri.build());
 
+        if (code != null) {
+            templateData.put("code", code.getStatusCode());
+            templateData.put("msg", msg);            
+        };
+
+        // Generate template
         try {
             Template template = cfg.getTemplate("export.ftl");
             template.process(templateData, out);
@@ -215,11 +233,17 @@ public class IdsExportService {
                 .status(Status.INTERNAL_SERVER_ERROR)
                 .build();
         }
-        return Response
-            .ok(out.toString(), "text/html")
-            .build();
-    };
 
+        ResponseBuilder resp = Response.ok(out.toString(), "text/html");
+
+        if (code != null)  {
+            resp = resp.status(code);
+        };
+
+        return resp.build();
+    }
+
+    
     @GET
     @Path("export.js")
     @Produces("application/javascript")

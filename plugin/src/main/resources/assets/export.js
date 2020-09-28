@@ -25,4 +25,8 @@ function pluginit(P) {
       P.resize();
     }
   );
+
+  if (window.dynCall) {
+    window.dynCall(P)
+  };
 };

@@ -2,6 +2,7 @@ package de.ids_mannheim.korap.plkexport;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 // Mockserver tests
@@ -151,8 +152,9 @@ public class IdsExportServiceTest extends JerseyTest {
         assertTrue("HTTP Body", str.contains("<title>Export</title>"));
         assertTrue("Assets", str.contains("<script src=\"https://korap.ids-mannheim.de/js"));
         assertTrue("Assets", str.contains("<link href=\"https://korap.ids-mannheim.de/css"));
+        assertFalse("Errors", str.contains("dynCall("));
     }
-    
+
     @Test
     public void testJS () {
         Response responsejs = target("/export.js").request()
@@ -322,6 +324,9 @@ public class IdsExportServiceTest extends JerseyTest {
 
         assertEquals("Request JSON: Http Response should be 502: ",
                      Status.BAD_GATEWAY.getStatusCode(), responsejson.getStatus());
+
+        String str = responsejson.readEntity(String.class);
+        assertTrue("HTTP Body", str.contains("P.log(502, 'Unable to reach Backend');"));
     };
 
     

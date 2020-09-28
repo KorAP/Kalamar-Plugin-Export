@@ -41,5 +41,13 @@
       </form>
     </section>
     <script src="/export.js" defer></script>
+
+    <#if code??>
+    <script>//<![CDATA[
+      function dynCall (P) {
+        P.log(${code}, '${msg}');
+      };
+    //]]></script>
+    </#if>
   </body>
 </html>
