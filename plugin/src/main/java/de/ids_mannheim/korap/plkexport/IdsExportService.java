@@ -1,9 +1,11 @@
 package de.ids_mannheim.korap.plkexport;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.lang.Thread;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -40,19 +42,20 @@ import static com.tutego.jrtf.RtfText.*;
 
 import static de.ids_mannheim.korap.plkexport.Util.*;
 
+// Template engine
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+
 
 @Path("/")
 public class IdsExportService {
 
     Properties properties = ExWSConf.properties(null);
 
-    // Load export string
-    ClassLoader cl = Thread.currentThread().getContextClassLoader();
-    InputStream is1 = cl.getResourceAsStream("assets/export.html");
-    private final String exportStr = streamToString(is1);
-
-    InputStream is2 = cl.getResourceAsStream("assets/export.js");
-    private final String exportJsStr = streamToString(is2);
+    private final ClassLoader cl = Thread.currentThread().getContextClassLoader();
+   
+    InputStream is = cl.getResourceAsStream("assets/export.js");
+    private final String exportJsStr = streamToString(is);
     
     /**
      * WebService calls Kustvakt Search Webservices and returns
@@ -102,7 +105,6 @@ public class IdsExportService {
         String port = properties.getProperty("api.port", "8089");
         String host = properties.getProperty("api.host", "localhost");
 
-        // URIBuildernew UriBuilder();
         UriBuilder uri = UriBuilder.fromPath("/api/v1.0/search")
             .host(host)
             .port(Integer.parseInt(port))
@@ -180,8 +182,41 @@ public class IdsExportService {
     @Path("export")
     @Produces(MediaType.TEXT_HTML)
     public Response exportHTML () {
+        
+        Configuration cfg = new Configuration();
+        cfg.setClassForTemplateLoading(IdsExportService.class, "/assets/templates");
+        cfg.setDefaultEncoding("UTF-8");
+
+        StringWriter out = new StringWriter();
+        HashMap<String, Object> templateData = new HashMap<String, Object>();
+
+        String scheme = properties.getProperty("asset.scheme", "https");
+        String port = properties.getProperty("asset.port", "");
+        String host = properties.getProperty("asset.host", "korap.ids-mannheim.de");
+
+        UriBuilder uri = UriBuilder.fromPath("")
+            .host(host)
+            .scheme(scheme)
+            ;
+
+        if (port != "") {
+            uri = uri.port(Integer.parseInt(port));
+        }
+
+        templateData.put("assetPath", uri.build());
+
+        try {
+            Template template = cfg.getTemplate("export.ftl");
+            template.process(templateData, out);
+        }
+        catch (Exception e) {
+            return Response
+                .ok(new String("Template not found"))
+                .status(Status.INTERNAL_SERVER_ERROR)
+                .build();
+        }
         return Response
-            .ok(exportStr, MediaType.TEXT_HTML)
+            .ok(out.toString(), "text/html")
             .build();
     };
 
@@ -192,8 +227,8 @@ public class IdsExportService {
         return Response
             .ok(exportJsStr, "application/javascript")
             .build();
-    };
-    
+    };    
+
     public String writeRTF (LinkedList list) {
         LinkedList matchlist = list;
         RtfTextPara par = p((" "));

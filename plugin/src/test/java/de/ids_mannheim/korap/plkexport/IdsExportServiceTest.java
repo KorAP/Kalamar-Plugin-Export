@@ -149,8 +149,10 @@ public class IdsExportServiceTest extends JerseyTest {
                 Status.OK.getStatusCode(), responsehtml.getStatus());
         String str = responsehtml.readEntity(String.class);
         assertTrue("HTTP Body", str.contains("<title>Export</title>"));
+        assertTrue("Assets", str.contains("<script src=\"https://korap.ids-mannheim.de/js"));
+        assertTrue("Assets", str.contains("<link href=\"https://korap.ids-mannheim.de/css"));
     }
-
+    
     @Test
     public void testJS () {
         Response responsejs = target("/export.js").request()
