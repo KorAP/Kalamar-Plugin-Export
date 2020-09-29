@@ -110,6 +110,7 @@ public class IdsExportService {
         String scheme = properties.getProperty("api.scheme", "https");
         String port = properties.getProperty("api.port", "8089");
         String host = properties.getProperty("api.host", "localhost");
+        String path = properties.getProperty("api.path", "");
 
         UriBuilder uri = UriBuilder.fromPath("/api/v1.0/search")
             .host(host)
@@ -120,6 +121,10 @@ public class IdsExportService {
             .queryParam("ql", ql)
             .queryParam("cutoff", 1)
             ;
+
+        if (path != "") {
+            uri = uri.path(path);
+        };
         
         if (il != null) {
             uri = uri.queryParam("count", hitc);
@@ -127,7 +132,7 @@ public class IdsExportService {
 
         else {
             uri = uri.queryParam("count", ExWSConf.MAX_EXP_LIMIT);
-        }
+        };
 
         String resp;
         try {
@@ -205,15 +210,19 @@ public class IdsExportService {
         String scheme = properties.getProperty("asset.scheme", "https");
         String port = properties.getProperty("asset.port", "");
         String host = properties.getProperty("asset.host", "korap.ids-mannheim.de");
+        String path = properties.getProperty("asset.path", "");
 
         UriBuilder uri = UriBuilder.fromPath("")
             .host(host)
-            .scheme(scheme)
-            ;
+            .scheme(scheme);
+
+        if (path != "") {
+            uri = uri.path(path);
+        };
 
         if (port != "") {
             uri = uri.port(Integer.parseInt(port));
-        }
+        };
 
         templateData.put("assetPath", uri.build());
 

@@ -156,6 +156,29 @@ public class IdsExportServiceTest extends JerseyTest {
     }
 
     @Test
+    public void testFormHTML2 () {
+        Properties properties = ExWSConf.properties(null);
+        String hostTemp = properties.getProperty("asset.host");
+        String pathTemp = properties.getProperty("asset.path");
+        properties.setProperty("asset.host", "ids-mannheim.example");
+        properties.setProperty("asset.path", "/instance/test");
+        
+        Response responsehtml = target("/export").request()
+                .get();
+        assertEquals("HTTP Code",
+                Status.OK.getStatusCode(), responsehtml.getStatus());
+        String str = responsehtml.readEntity(String.class);
+        assertTrue("HTTP Body", str.contains("<title>Export</title>"));
+        assertTrue("Assets", str.contains("<script src=\"https://ids-mannheim.example/instance/test/js"));
+        assertTrue("Assets", str.contains("<link href=\"https://ids-mannheim.example/instance/test/css"));
+        assertFalse("Errors", str.contains("dynCall("));
+
+        properties.setProperty("asset.host", hostTemp);
+        properties.setProperty("asset.path", pathTemp != null ? pathTemp : "");
+    }
+
+    
+    @Test
     public void testJS () {
         Response responsejs = target("/export.js").request()
                 .get();
@@ -306,7 +329,9 @@ public class IdsExportServiceTest extends JerseyTest {
 
     @Test
     public void testExportWsProxyProblem () {
-        ExWSConf.properties(null).setProperty("api.port", String.valueOf(mockServer.getPort() + 11));
+        Properties properties = ExWSConf.properties(null);
+        String portTemp = properties.getProperty("api.port");
+        properties.setProperty("api.port", String.valueOf(mockServer.getPort() + 11));
 
         String filenamej = "dateiJson";
         MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<String, String>();
@@ -327,6 +352,7 @@ public class IdsExportServiceTest extends JerseyTest {
 
         String str = responsejson.readEntity(String.class);
         assertTrue("HTTP Body", str.contains("P.log(502, 'Unable to reach Backend');"));
+        properties.setProperty("api.port", portTemp);
     };
 
     

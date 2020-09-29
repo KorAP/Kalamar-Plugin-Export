@@ -59,7 +59,8 @@ public class PluginServer {
                 "ApiServer expected under: " +
                 properties.getProperty("api.scheme") +
                 "://" +
-                properties.getProperty("api.host")+ ":" +
+                properties.getProperty("api.host") +
+                properties.getProperty("api.path") + ":" +
                 properties.getProperty("api.port")
                 );
             jettyServer.join();
