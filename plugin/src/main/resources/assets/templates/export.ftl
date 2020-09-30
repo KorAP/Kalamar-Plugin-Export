@@ -11,7 +11,7 @@
     <div class="banner" data-note="Experimental"></div>
     <h1>Export: <code id="export-query"></code></h1>
     <section>
-      <form id="frmid" class="form-table" action="/export" method="POST">
+      <form id="frmid" class="form-table" action="export" method="POST">
         <fieldset>
           <input type="hidden"  id="q" name="q">
           <input type="hidden" id="ql" name="ql">
@@ -40,7 +40,7 @@
         </fieldset>
       </form>
     </section>
-    <script src="/export.js" defer></script>
+    <script src="export.js" defer></script>
 
     <#if code??>
     <script>//<![CDATA[
