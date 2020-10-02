@@ -11,6 +11,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.Base64;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.WebApplicationException;
@@ -29,8 +32,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
+import javax.servlet.http.Cookie;
 import java.net.ConnectException;
-import org.eclipse.jetty.server.Request;
+import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -71,6 +75,13 @@ public class IdsExportService {
 
     private final static String ipre =
         octets + "\\." + octets + "\\." + octets + "\\." + octets;
+
+    private static Pattern authrep = Pattern.compile("\"auth\":\"([^\"]+?)\"");
+    
+    private final static Base64.Decoder b64Dec = Base64.getDecoder();
+
+    @Context
+    private HttpServletRequest req; 
     
     /**
      * WebService calls Kustvakt Search Webservices and returns
@@ -97,7 +108,7 @@ public class IdsExportService {
         @FormParam("q") String q,
         @FormParam("ql") String ql,
         @FormParam("islimit") String il,
-        @FormParam("hitc") int hitc,  @Context Request req
+        @FormParam("hitc") int hitc
         ) throws IOException {
         
         String[][] params = {
@@ -131,13 +142,13 @@ public class IdsExportService {
             .queryParam("q", q)
             .queryParam("context", "sentence")
             .queryParam("ql", ql)
-            .queryParam("cutoff", 1)
             ;
 
         if (path != "") {
             uri = uri.path(path);
         };
-        
+
+        /*
         if (il != null) {
             uri = uri.queryParam("count", hitc);
         }
@@ -145,22 +156,63 @@ public class IdsExportService {
         else {
             uri = uri.queryParam("count", ExWSConf.MAX_EXP_LIMIT);
         };
+        */
 
         // Get client IP, in case service is behind a proxy
         String xff = "";
+        // Get auth (temporarily) via Session riding
+        String auth = "";
         if (req != null) {
             xff = getClientIP(req.getHeader("X-Forwarded-For"));
             if (xff == "") {
                 xff = req.getRemoteAddr();
             };
+
+            // This is a temporary solution using session riding - only
+            // valid for the time being
+            Cookie[] cookies = req.getCookies();
+            String cookiePath = properties.getProperty("cookie.path", "");
+
+            // Iterate through all cookies for a Kalamar session
+            for (int i = 0; i < cookies.length; i++) {
+                
+                // Check the valid path
+                if (cookiePath != "" && cookies[i].getPath() != cookiePath) {
+                    continue;
+                };
+
+                // Ignore irrelevant cookies
+                if (!cookies[i].getName().matches("^kalamar(-.+?)?$")) {
+                    continue;
+                };
+
+                // Get the value
+                String b64 = cookies[i].getValue();
+                String[] b64Parts = b64.split("--", 2);
+                if (b64Parts.length == 2) {
+                    // Read the payload
+                    String payload = new String(b64Dec.decode(b64Parts[0]));
+                    if (payload != "") {
+                        Matcher m = authrep.matcher(payload);
+                        if (m.find()) {
+                            auth = m.group(1);
+                            break;
+                        };
+                    };
+                };
+                continue;
+            };
         };
-        
+    
         String resp;
         try {
             WebTarget resource = client.target(uri.build());
             Invocation.Builder reqBuilder = resource.request(MediaType.APPLICATION_JSON);
             if (xff != "") {
                 reqBuilder = reqBuilder.header("X-Forwarded-For", xff);
+            };
+            if (auth != "") {
+                reqBuilder = reqBuilder.header("Authorization", auth);
             };
             resp = reqBuilder.get(String.class);
         } catch (Exception e) {
