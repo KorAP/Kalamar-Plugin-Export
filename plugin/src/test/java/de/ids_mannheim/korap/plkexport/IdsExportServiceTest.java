@@ -130,7 +130,7 @@ public class IdsExportServiceTest extends JerseyTest {
         // The document should be named correctly
         assertTrue("Request JSON: Filename should be set correctly: ",
                    responsejson.getHeaderString(HttpHeaders.CONTENT_DISPOSITION)
-                   .contains("filename=" + filenamej));
+                   .contains("filename=" + filenamej + ".json"));
 
         frmap.remove("ql");
         responsejson = target("/export").request()
@@ -264,7 +264,7 @@ public class IdsExportServiceTest extends JerseyTest {
         // The document should be named correctly
         assertTrue("Request RTF: Filename should be set correctly: ",
                 responsertf.getHeaderString(HttpHeaders.CONTENT_DISPOSITION)
-                        .contains("filename=" + filenamer));
+                        .contains("filename=" + filenamer + ".rtf"));
 
         Response resp;
         String fvalue;

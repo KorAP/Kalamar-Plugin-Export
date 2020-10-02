@@ -231,7 +231,6 @@ public class IdsExportService {
         if (format.equals("json")) {
             builder = Response.ok(resp);
             builder.type(MediaType.APPLICATION_JSON);
-            fname = fname + ".json";
         }
 
         // format == rtf / else
@@ -255,11 +254,16 @@ public class IdsExportService {
 
             String rtfresp = writeRTF(listMatches);
             builder = Response.ok(rtfresp);
-            fname = fname + ".rtf";
+            format = "rtf";
         }
 
-        builder.header("Content-Disposition",
-                       "attachment; filename=" + sanitizeFileName(fname));
+        builder.header(
+            "Content-Disposition",
+            "attachment; filename=" +
+            sanitizeFileName(fname) +
+            '.' +
+            format
+            );
         Response response = builder.build();
         return response;
     }
