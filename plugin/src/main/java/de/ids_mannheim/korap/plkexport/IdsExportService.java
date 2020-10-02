@@ -22,12 +22,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import java.net.ConnectException;
+import org.eclipse.jetty.server.Request;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -62,6 +65,12 @@ public class IdsExportService {
         cfg.setClassForTemplateLoading(IdsExportService.class, "/assets/templates");
         cfg.setDefaultEncoding("UTF-8");
     }
+
+    private final static String octets =
+        "(?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})";
+
+    private final static String ipre =
+        octets + "\\." + octets + "\\." + octets + "\\." + octets;
     
     /**
      * WebService calls Kustvakt Search Webservices and returns
@@ -82,12 +91,15 @@ public class IdsExportService {
     @POST
     @Path("export")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response testjsonform (@FormParam("fname") String fname,
-            @FormParam("format") String format, @FormParam("q") String q,
-            @FormParam("ql") String ql, @FormParam("islimit") String il,
-            @FormParam("hitc") int hitc) throws IOException {
+    public Response testjsonform (
+        @FormParam("fname") String fname,
+        @FormParam("format") String format,
+        @FormParam("q") String q,
+        @FormParam("ql") String ql,
+        @FormParam("islimit") String il,
+        @FormParam("hitc") int hitc,  @Context Request req
+        ) throws IOException {
         
-
         String[][] params = {
             { "format", format },
             { "q", q },
@@ -134,11 +146,23 @@ public class IdsExportService {
             uri = uri.queryParam("count", ExWSConf.MAX_EXP_LIMIT);
         };
 
+        // Get client IP, in case service is behind a proxy
+        String xff = "";
+        if (req != null) {
+            xff = getClientIP(req.getHeader("X-Forwarded-For"));
+            if (xff == "") {
+                xff = req.getRemoteAddr();
+            };
+        };
+        
         String resp;
         try {
             WebTarget resource = client.target(uri.build());
-            resp = resource.request(MediaType.APPLICATION_JSON)
-                .get(String.class);
+            Invocation.Builder reqBuilder = resource.request(MediaType.APPLICATION_JSON);
+            if (xff != "") {
+                reqBuilder = reqBuilder.header("X-Forwarded-For", xff);
+            };
+            resp = reqBuilder.get(String.class);
         } catch (Exception e) {
             throw new WebApplicationException(
                 responseForm(Status.BAD_GATEWAY, "Unable to reach Backend")
@@ -308,5 +332,26 @@ public class IdsExportService {
         RtfTextPara parv = p("@Institut für Deutsche Sprache, Mannheim", ("\n"),
                 "IDSExportPlugin-Version:  ", version, "\n");
         return parv;
+    }
+
+
+    /*
+     * This function is a simplification of
+     * Mojolicious::Plugin::ClientIP
+     */
+    protected static String getClientIP (String xff) {
+        if (xff == null) {
+            return "";
+        };
+
+        String[] ips = xff.split("\\s*,\\s*");
+
+        for (int i = ips.length - 1; i >= 0; i--){
+            if (ips[i].matches(ipre)) {
+                return ips[i];
+            };
+        };
+
+        return "";
     }
 }

@@ -42,6 +42,10 @@ import org.junit.Test;
 import de.ids_mannheim.korap.plkexport.IdsExportService;
 import de.ids_mannheim.korap.plkexport.ExWSConf;
 
+import org.eclipse.jetty.server.Request;
+
+import static de.ids_mannheim.korap.plkexport.IdsExportService.getClientIP;
+
 /*
  * TODO Find a way to test efficiently the starting of the PluginServer with host and port of the config-file
  * + serving static files
@@ -355,6 +359,17 @@ public class IdsExportServiceTest extends JerseyTest {
         properties.setProperty("api.port", portTemp);
     };
 
+
+    @Test
+    public void testClientIP () {
+        assertEquals(getClientIP("10.0.4.6"), "10.0.4.6");
+        assertEquals(getClientIP("10.0.4.5, 10.0.4.6"), "10.0.4.6");
+        assertEquals(getClientIP("10.0.4.6, 10.0.4.256"), "10.0.4.6");
+        assertEquals(getClientIP("10.0.4.6, 256.0.4.6 , 10.0.4.256"), "10.0.4.6");
+        assertEquals(getClientIP("10.0.4.6, 14.800.4.6 , 10.0.4.256"), "10.0.4.6");
+    };
+
+    
     
     // Get fixture from ressources
     private String getFixture (String file) {
