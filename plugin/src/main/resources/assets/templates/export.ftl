@@ -37,6 +37,9 @@
               </div>
               -->
           <input type="submit" value="Exportieren">
+
+          <p style="font-size: 80%">Das Export-Plugin befindet sich noch in einer experimentellen Phase. Derzeit können nur die ersten 50 Treffer exportiert werden.</p>
+
         </fieldset>
       </form>
     </section>

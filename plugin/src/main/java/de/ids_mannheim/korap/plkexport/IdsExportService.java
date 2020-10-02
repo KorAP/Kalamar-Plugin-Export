@@ -140,7 +140,8 @@ public class IdsExportService {
             .port(Integer.parseInt(port))
             .scheme(scheme)
             .queryParam("q", q)
-            .queryParam("context", "sentence")
+            // .queryParam("context", "sentence")
+            .queryParam("context", "40-t,40-t")
             .queryParam("ql", ql)
             ;
 
@@ -157,6 +158,7 @@ public class IdsExportService {
             uri = uri.queryParam("count", ExWSConf.MAX_EXP_LIMIT);
         };
         */
+        uri = uri.queryParam("count", 50);
 
         // Get client IP, in case service is behind a proxy
         String xff = "";
