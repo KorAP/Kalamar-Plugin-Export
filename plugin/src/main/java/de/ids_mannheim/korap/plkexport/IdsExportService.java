@@ -243,7 +243,6 @@ public class IdsExportService {
             LinkedList<MatchExport> listMatches = new LinkedList();
             ObjectMapper objectMapper = new ObjectMapper();
             MatchExport match;
-                        
 
             for (Iterator<JsonNode> itNode = jsonNode1.elements(); itNode
                     .hasNext();) {
@@ -254,6 +253,7 @@ public class IdsExportService {
 
             String rtfresp = writeRTF(listMatches);
             builder = Response.ok(rtfresp);
+            builder.type("application/rtf");
             format = "rtf";
         }
 

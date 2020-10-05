@@ -255,7 +255,7 @@ public class IdsExportServiceTest extends JerseyTest {
                 Status.OK.getStatusCode(), responsertf.getStatus());
         // An RTF document should be returned
         assertEquals("Request RTF: Http Content-Type should be: ",
-                MediaType.APPLICATION_OCTET_STREAM,
+                "application/rtf",
                 responsertf.getHeaderString(HttpHeaders.CONTENT_TYPE));
         // Results should not be displayed inline but saved and displayed locally
         assertTrue("Request RTF: Results should not be displayed inline",
