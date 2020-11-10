@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e114f5e8_16cbe6d5",
+        "filename": "plugin/src/main/java/de/ids_mannheim/korap/plkexport/IdsExportService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2020-11-10T15:05:43Z",
+      "side": 1,
+      "message": "Are you sure this is threadsafe?",
+      "range": {
+        "startLine": 79,
+        "startChar": 12,
+        "endLine": 79,
+        "endChar": 18
+      },
+      "revId": "669d0bb5ae2687045be4126a4bb6bf99d1b62ec6",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    }
+  ]
+}
