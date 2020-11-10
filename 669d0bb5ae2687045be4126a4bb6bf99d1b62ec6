@@ -22,6 +22,30 @@
       "revId": "669d0bb5ae2687045be4126a4bb6bf99d1b62ec6",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "78bb90d7_6fa7d09e",
+        "filename": "plugin/src/main/java/de/ids_mannheim/korap/plkexport/IdsExportService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-11-10T17:25:32Z",
+      "side": 1,
+      "message": "I would say \"yes\", following:\nhttps://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html :\n\"Instances of this class are immutable and are safe for use by multiple concurrent threads.\"",
+      "parentUuid": "e114f5e8_16cbe6d5",
+      "range": {
+        "startLine": 79,
+        "startChar": 12,
+        "endLine": 79,
+        "endChar": 18
+      },
+      "revId": "669d0bb5ae2687045be4126a4bb6bf99d1b62ec6",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
     }
   ]
 }
