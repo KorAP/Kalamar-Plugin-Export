@@ -57,23 +57,12 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 
 /**
- * TODO
- * This is only a draft!!!
- * Has to be integrated in Nils sourcecode
- * 
- * Export works only for rtf, JSON has to be integrated
- * 
- * Delete the temp file of the export at the end
- * 
- * Get variable cutoff from URL
- * 
- * Right now, the web service returns one page (cutoff=1) or all
- * pages.
- * There is now limitations of hits. ("Beschränken auf xy Treffer")
- * does not work right now.
- * 
- * ------------------------------------------------------------
- * Works with the export demo
+ * TODO:
+ * - Paging export works only for rtf, JSON has to be integrated
+ * - Delete the temp file of the export at the end
+ * - Get variable cutoff from URL
+ * - Right now, the web service returns one page (cutoff=1) or
+ *   all pages.
  */
 
 @Path("/")
@@ -130,15 +119,18 @@ public class IdsExportService {
         @FormParam("q") String q,
         @FormParam("ql") String ql,
         @FormParam("islimit") String il,
+        @FormParam("cutoff") String cutoffStr,
         @FormParam("hitc") int hitc
         ) throws IOException {
-        
+
+        // These parameters are required
         String[][] params = {
             { "format", format },
             { "q", q },
             { "ql", ql }
         };
 
+        // Check that all parameters are available
         for (int i = 0; i < params.length; i++) {
             if (params[i][1] == null || params[i][1].trim().isEmpty())
                 throw new BadRequestException(
@@ -147,14 +139,16 @@ public class IdsExportService {
                     .entity("Parameter " + "\""
                             + params[i][0] + "\"" + " is missing or empty")
                     .build());
-        }
+        };
 
 
         int totalhits;
-
-        //TODO cutoff to try out, retrieve it  later:
+        
+        // Retrieve cutoff value
         boolean cutoff = false;
-        //boolean cutoff = true;
+        if (cutoffStr != null && (cutoffStr.equals("true") || cutoffStr.equals("1"))) {
+            cutoff = true;
+        };
 
         ResponseBuilder builder = null;
         Client client = ClientBuilder.newClient();
@@ -259,8 +253,10 @@ public class IdsExportService {
 
         // format == json
         if (format.equals("json")) {
-            builder = Response.ok(resp);
-            builder.type(MediaType.APPLICATION_JSON);
+            if (cutoff) {
+                builder = Response.ok(resp);
+                builder.type(MediaType.APPLICATION_JSON);
+            };
         }
 
         // format == rtf
@@ -274,8 +270,9 @@ public class IdsExportService {
              * Get total results
              */
             totalhits = actualObj.at("/meta").get("totalResults").asInt();
-
-            // If only one page should be exported there is no need for an temporary export file
+            
+            // If only one page should be exported there is no need
+            // for a temporary export file
             if (cutoff) {
                 String rtfresp = getRtf(resp);
                 builder = Response.ok(rtfresp);
@@ -302,17 +299,19 @@ public class IdsExportService {
                 File expTmp = createTempFile("idsexppl-", format);
                 FileWriter fw = new FileWriter(expTmp, true);
                 BufferedWriter bw = new BufferedWriter(fw);
-                //better delete after it is not needed anymore
+                // better delete after it is not needed anymore
                 expTmp.deleteOnExit();
             
                 // position of pages, 1 = first page, 2 = middle pages, 3 = last page
                 int pos = 0;
                 // String urlorg = url;
-                uri.queryParam("page", "{PAGE}");
+                uri.queryParam("offset", "{offset}");
                 for (int i = 1; i <= pg; i++) {
                     // url = urlorg + "&page=" + i;
                     // resource = client.target(url);
-                    resource = client.target(uri.build(i));
+                    resource = client.target(
+                        uri.build((i * ExWSConf.PAGE_SIZE) - ExWSConf.PAGE_SIZE)
+                        );
                     resp = resource.request(MediaType.APPLICATION_JSON)
                         .get(String.class);
 
@@ -465,7 +464,9 @@ public class IdsExportService {
     };
     
   
-
+    /*
+     * Iterate over all matches and get an RTF section
+     */
     public String getRtfSection (LinkedList list, int pos, int dr) {
         LinkedList matchlist = list;
         RtfTextPara par = p((" "));
@@ -482,11 +483,11 @@ public class IdsExportService {
         
         //TODO Add export plugin version to JSON output?
         //
-         // TODO 
-         // The output rtf file lacks style, 
-         // but I'm thinking about changing the jRTF library to OpenRTF https://github.com/LibrePDF/OpenRTF, 
-         // because jRTF is very rudimentary, so I only list the information in a section right now.
-         //
+        // TODO 
+        // The output rtf file lacks style, 
+        // but I'm thinking about changing the jRTF library to OpenRTF https://github.com/LibrePDF/OpenRTF, 
+        // because jRTF is very rudimentary, so I only list the information in a section right now.
+        //
 
         RtfTextPara pv = getVersion();
         listp.add(pv);
@@ -494,7 +495,7 @@ public class IdsExportService {
         for (int i = 0; i < j; i++) {
             MatchExport matchakt = (MatchExport) matchlist.get(i);
             reference = " (" + matchakt.getTitle() + " von "
-                    + matchakt.getAuthor() + " (" + matchakt.getPubDate() + ")";
+                + matchakt.getAuthor() + " (" + matchakt.getPubDate() + ")";
             textSigle = "[" + matchakt.getTextSigle() + "]";
             String leftSnippet = matchakt.getSnippetO().getLeft();
             String rightSnippet = matchakt.getSnippetO().getRight();
@@ -504,69 +505,73 @@ public class IdsExportService {
             listp.add(par);
         }
 
-
         String rtfresp = rtf().section(listp).toString();
         return rtfresp;
-
-    }
+    };
 
     
     public String writeRTF (LinkedList list) throws IOException {
         String rtfresp =  getRtfSection(list, 0, 0);
         return rtfresp;
-    }
+    };
     
+
     public void writeRTF (LinkedList list, File file, FileWriter filewriter,
-            BufferedWriter bw, int pos, int dr) throws IOException {
+                          BufferedWriter bw, int pos, int dr) throws IOException {
    
         String rtfresp = getRtfSection(list, pos,dr);
         
         switch (pos) {
 
-            case 1: {
-                rtfresp = rtfresp.substring(0, rtfresp.length() - 1);
-                bw.append(rtfresp);
-                bw.flush();
-                break;
-            }
-
-            case 2: {
-                rtfresp = rtfresp.substring(143, rtfresp.length() - 1);
-                bw.append(rtfresp);
-                bw.flush();
-                break;
-            }
-
-            case 3: {
-                rtfresp = rtfresp.substring(143);
-                bw.append(rtfresp);
-                bw.flush();
-                bw.close();
-                break;
-            }
-
-            default: {
-                //TODO Error Handling
-                System.out.println("Invalid pos Parameter");
-                break;
-            }
+        case 1: {
+            rtfresp = rtfresp.substring(0, rtfresp.length() - 1);
+            bw.append(rtfresp);
+            bw.flush();
+            break;
         }
 
+        case 2: {
+            rtfresp = rtfresp.substring(143, rtfresp.length() - 1);
+            bw.append(rtfresp);
+            bw.flush();
+            break;
+        }
+
+        case 3: {
+            rtfresp = rtfresp.substring(143);
+            bw.append(rtfresp);
+            bw.flush();
+            bw.close();
+            break;
+        }
+
+        default: {
+            //TODO Error Handling
+            System.out.println("Invalid pos Parameter");
+            break;
+        }
+        };
+
         return;
+    };
 
-    }
 
-    /**
-     *  Get version for RTF document 
-     *  */
+    /*
+     * Get version for RTF document 
+     */
     public RtfTextPara getVersion () {
-        Version version = new Version(ExWSConf.VERSION_MAJOR,
-                ExWSConf.VERSION_MINOR, ExWSConf.VERSION_PATCHLEVEL, null, null,
-                null);
+        Version version = new Version(
+            ExWSConf.VERSION_MAJOR,
+            ExWSConf.VERSION_MINOR,
+            ExWSConf.VERSION_PATCHLEVEL,
+            null,
+            null,
+            null
+            );
         RtfTextPara parv = p("@Institut für Deutsche Sprache, Mannheim", ("\n"),
-                "IDSExportPlugin-Version:  ", version, "\n");
+                             "IDSExportPlugin-Version:  ", version, "\n");
         return parv;
-    }
+    };
 
 
     /*
@@ -587,7 +592,8 @@ public class IdsExportService {
         };
 
         return "";
-    }
+    };
+
 
     /**
      * Creates file to hold the result temporarily
@@ -597,11 +603,11 @@ public class IdsExportService {
         try {
             File temp = File.createTempFile(name, "." + suffix);
             return temp;
-
+            
         }
         catch (IOException e) {
             e.printStackTrace();
         }
         return null;
-    }
-}
+    };
+};

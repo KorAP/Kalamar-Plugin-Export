@@ -109,6 +109,7 @@ public class IdsExportServiceTest extends JerseyTest {
         frmap.add("fname", filenamej);
         frmap.add("format", "json");
         frmap.add("q", "Wasser");
+        frmap.add("cutoff", "true");
         frmap.add("ql", "poliqarp");
 
         String message;
@@ -214,6 +215,7 @@ public class IdsExportServiceTest extends JerseyTest {
         frmap.add("format", "json");
         frmap.add("q", "????");
         frmap.add("ql", "poliqarp");
+        frmap.add("cutoff", "true");
 
         String message;
 
@@ -244,6 +246,7 @@ public class IdsExportServiceTest extends JerseyTest {
         frmap.add("format", "rtf");
         frmap.add("q", "Wasser");
         frmap.add("ql", "poliqarp");
+        frmap.add("cutoff", "true");
         String filenamer = "dateiRtf";
         frmap.putSingle("fname", filenamer);
 
@@ -269,6 +272,7 @@ public class IdsExportServiceTest extends JerseyTest {
         Response resp;
         String fvalue;
         frmap.remove("fname");
+        frmap.remove("cutoff");
         MultivaluedHashMap<String, String> map = new MultivaluedHashMap<String, String>();
         map.putAll(frmap);
 
@@ -319,6 +323,7 @@ public class IdsExportServiceTest extends JerseyTest {
         frmap.add("format", "rtf");
         frmap.add("q", "????");
         frmap.add("ql", "poliqarp");
+        frmap.add("cuttoff", "true");
         String filenamer = "dateiRtf";
         frmap.putSingle("fname", filenamer);
 
@@ -326,10 +331,60 @@ public class IdsExportServiceTest extends JerseyTest {
 
         Response responsertf = target("/export").request()
             .post(Entity.form(frmap));
+
         assertEquals("Request RTF: Http Response should be 200: ",
                 Status.OK.getStatusCode(), responsertf.getStatus());
     }
 
+    @Test
+    public void testExportWsRTFPaging () {
+
+        mockClient.reset().when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Plagegeist")
+            .withQueryStringParameter("count", "5")
+            .withQueryStringParameter("offset", "5")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_plagegeist_2.json"))
+                .withStatusCode(200)
+                );
+
+        mockClient.when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Plagegeist")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_plagegeist_1.json"))
+                .withStatusCode(200)
+                );
+        
+        MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<String, String>();
+        frmap.add("format", "rtf");
+        frmap.add("q", "Plagegeist");
+        frmap.add("ql", "poliqarp");
+        String filenamer = "dateiPagingRtf";
+        frmap.putSingle("fname", filenamer);
+
+        Response responsertf = target("/export").request()
+            .post(Entity.form(frmap));
+        assertEquals("Request RTF: Http Response should be 200: ",
+                Status.OK.getStatusCode(), responsertf.getStatus());
+
+        String str = responsertf.readEntity(String.class);
+        assertTrue("Page 1 content", str.contains("Ironhoof"));
+        assertTrue("Page 2 content", str.contains("Sinologie"));
+    }
+
+    
 
     @Test
     public void testExportWsProxyProblem () {
@@ -343,8 +398,7 @@ public class IdsExportServiceTest extends JerseyTest {
         frmap.add("format", "json");
         frmap.add("q", "????");
         frmap.add("ql", "poliqarp");
-
-        String message;
+        frmap.add("cuttoff", "true");
 
         Response responsejson = target("/export").request()
                 .post(Entity.form(frmap));
