@@ -154,9 +154,10 @@ public class IdsExportService {
         Client client = ClientBuilder.newClient();
 
         String scheme = properties.getProperty("api.scheme", "https");
-        String port = properties.getProperty("api.port", "8089");
-        String host = properties.getProperty("api.host", "localhost");
-        String path = properties.getProperty("api.path", "");
+        String port   = properties.getProperty("api.port", "8089");
+        String host   = properties.getProperty("api.host", "localhost");
+        String path   = properties.getProperty("api.path", "");
+        int pageSize  = Integer.parseInt(properties.getProperty("conf.page_size", "5"));
 
         UriBuilder uri = UriBuilder.fromPath("/api/v1.0/search")
             .host(host)
@@ -181,7 +182,8 @@ public class IdsExportService {
             uri = uri.queryParam("count", ExWSConf.MAX_EXP_LIMIT);
         };
         */
-        uri = uri.queryParam("count", ExWSConf.PAGE_SIZE);
+
+        uri = uri.queryParam("count", pageSize);
 
         // Get client IP, in case service is behind a proxy
         String xff = "";
@@ -285,12 +287,12 @@ public class IdsExportService {
                  *  which should be exported at the last page
                  */
                 int pg = 1;
-                int dr = totalhits % ExWSConf.PAGE_SIZE;
+                int dr = totalhits % pageSize;
                 if (dr > 0) {
-                    pg = totalhits / ExWSConf.PAGE_SIZE + 1;
+                    pg = totalhits / pageSize + 1;
                 }
                 else {
-                    pg = totalhits / ExWSConf.PAGE_SIZE;
+                    pg = totalhits / pageSize;
                 }
 
                 /*
@@ -310,7 +312,7 @@ public class IdsExportService {
                     // url = urlorg + "&page=" + i;
                     // resource = client.target(url);
                     resource = client.target(
-                        uri.build((i * ExWSConf.PAGE_SIZE) - ExWSConf.PAGE_SIZE)
+                        uri.build((i * pageSize) - pageSize)
                         );
                     resp = resource.request(MediaType.APPLICATION_JSON)
                         .get(String.class);

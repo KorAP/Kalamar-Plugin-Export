@@ -20,14 +20,6 @@ public class ExWSConf {
      * See also: https://www.ids-mannheim.de/cosmas2/script-app/hilfe/sitzung.html
      */
     public static final int MAX_EXP_LIMIT = 10000;
-    /* 
-     * TODO:
-     * Analog zur Variable aus Search.pm 
-     * Kommentar eventuell JSON um aus Perl und Java einzulesen 
-     */
-    // Eigentlich 25 zu Testzwecken kleiner
-    // public static final int PAGE_SIZE = 25;
-    public static final int PAGE_SIZE = 5;
     
     // Version of Export Plugin
     public static final int VERSION_MAJOR = 0;
