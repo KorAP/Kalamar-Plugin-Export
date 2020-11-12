@@ -245,19 +245,28 @@ public class IdsExportService {
                 );
         }
 
+        // set filename to query
         if (fname == null) {
             fname = q;
         }
 
-        // format == json
-        if (format.equals("json")) {
-            if (cutoff) {
+        // If only one page should be exported there is no need
+        // for a temporary export file
+        if (cutoff) {
+
+            if (format.equals("json")) {
                 builder = Response.ok(resp);
                 builder.type(MediaType.APPLICATION_JSON);
+            }
+
+            else {
+                builder = Response.ok(getRtf(resp));
+                builder.type("application/rtf");
+                format = "rtf";
             };
         }
 
-        // format == rtf
+        // Page through results
         else {
             ObjectMapper mapper = new ObjectMapper();
             JsonFactory factory = mapper.getFactory();
@@ -268,64 +277,62 @@ public class IdsExportService {
              * Get total results
              */
             totalhits = actualObj.at("/meta").get("totalResults").asInt();
+
+
+            // Not yet supported
+            if (format.equals("json")) {
+                System.err.println("Not yet supported!");
+            };
             
-            // If only one page should be exported there is no need
-            // for a temporary export file
-            if (cutoff) {
-                String rtfresp = getRtf(resp);
-                builder = Response.ok(rtfresp);
+            // format == rtf
+
+            /*
+             *  Get number of pages and the number of hits 
+             *  which should be exported at the last page
+             */
+            int pg = 1;
+            int dr = totalhits % pageSize;
+            if (dr > 0) {
+                pg = totalhits / pageSize + 1;
+            }
+            else {
+                pg = totalhits / pageSize;
             }
 
-            if (!cutoff) {
-           
-                /*
-                 *  Get number of pages and the number of hits 
-                 *  which should be exported at the last page
-                 */
-                int pg = 1;
-                int dr = totalhits % pageSize;
-                if (dr > 0) {
-                    pg = totalhits / pageSize + 1;
-                }
-                else {
-                    pg = totalhits / pageSize;
-                }
-
-                /*
-                 * Create temporary file
-                 */
-                File expTmp = createTempFile("idsexppl-", format);
-                FileWriter fw = new FileWriter(expTmp, true);
-                BufferedWriter bw = new BufferedWriter(fw);
-                // better delete after it is not needed anymore
-                expTmp.deleteOnExit();
+            /*
+             * Create temporary file
+             */
+            File expTmp = createTempFile("idsexppl-", format);
+            FileWriter fw = new FileWriter(expTmp, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            // better delete after it is not needed anymore
+            expTmp.deleteOnExit();
             
-                int pos = 0;
-                uri.queryParam("offset", "{offset}");
+            int pos = 0;
+            uri.queryParam("offset", "{offset}");
                 
-                for (int i = 1; i <= pg; i++) {
-                    // url = urlorg + "&page=" + i;
-                    // resource = client.target(url);
-                    resource = client.target(
-                        uri.build((i * pageSize) - pageSize)
-                        );
+            for (int i = 1; i <= pg; i++) {
+                // url = urlorg + "&page=" + i;
+                // resource = client.target(url);
+                resource = client.target(
+                    uri.build((i * pageSize) - pageSize)
+                    );
 
-                    reqBuilder = resource.request(MediaType.APPLICATION_JSON);
-                    resp = authBuilder(reqBuilder, xff, auth).get(String.class);
+                reqBuilder = resource.request(MediaType.APPLICATION_JSON);
+                resp = authBuilder(reqBuilder, xff, auth).get(String.class);
 
-                    if (i < pg) {
-                        pos = 2;
-                    }
-                    if (i == 1) {
-                        pos = 1;
-                    }
-                    if (pg == i) {
-                        pos = 3;
-                    }
-                    getRtf(expTmp, fw, resp, bw, pos, dr);
+                if (i < pg) {
+                    pos = 2;
                 }
-                builder = Response.ok(expTmp);
+                if (i == 1) {
+                    pos = 1;
+                }
+                if (pg == i) {
+                    pos = 3;
+                }
+                getRtf(expTmp, fw, resp, bw, pos, dr);
             }
+            builder = Response.ok(expTmp);
 
             builder.type("application/rtf");
             format = "rtf";
@@ -338,8 +345,7 @@ public class IdsExportService {
             '.' +
             format
             );
-        Response response = builder.build();
-        return response;
+        return builder.build();
     }
 
     @GET
