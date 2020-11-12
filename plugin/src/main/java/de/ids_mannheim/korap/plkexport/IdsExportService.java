@@ -233,16 +233,12 @@ public class IdsExportService {
     
         String resp;
         WebTarget resource;
+        Invocation.Builder reqBuilder;
+                        
         try {
             resource = client.target(uri.build());
-            Invocation.Builder reqBuilder = resource.request(MediaType.APPLICATION_JSON);
-            if (xff != "") {
-                reqBuilder = reqBuilder.header("X-Forwarded-For", xff);
-            };
-            if (auth != "") {
-                reqBuilder = reqBuilder.header("Authorization", auth);
-            };
-            resp = reqBuilder.get(String.class);
+            reqBuilder = resource.request(MediaType.APPLICATION_JSON);
+            resp = authBuilder(reqBuilder, xff, auth).get(String.class);
         } catch (Exception e) {
             throw new WebApplicationException(
                 responseForm(Status.BAD_GATEWAY, "Unable to reach Backend")
@@ -304,18 +300,18 @@ public class IdsExportService {
                 // better delete after it is not needed anymore
                 expTmp.deleteOnExit();
             
-                // position of pages, 1 = first page, 2 = middle pages, 3 = last page
                 int pos = 0;
-                // String urlorg = url;
                 uri.queryParam("offset", "{offset}");
+                
                 for (int i = 1; i <= pg; i++) {
                     // url = urlorg + "&page=" + i;
                     // resource = client.target(url);
                     resource = client.target(
                         uri.build((i * pageSize) - pageSize)
                         );
-                    resp = resource.request(MediaType.APPLICATION_JSON)
-                        .get(String.class);
+
+                    reqBuilder = resource.request(MediaType.APPLICATION_JSON);
+                    resp = authBuilder(reqBuilder, xff, auth).get(String.class);
 
                     if (i < pg) {
                         pos = 2;
@@ -363,6 +359,19 @@ public class IdsExportService {
         return responseForm(null, null);
     }
 
+    // Decorate request with auth headers
+    private Invocation.Builder authBuilder (Invocation.Builder reqBuilder, String xff, String auth) {
+        if (xff != "") {
+            reqBuilder = reqBuilder.header("X-Forwarded-For", xff);
+        };
+        if (auth != "") {
+            reqBuilder = reqBuilder.header("Authorization", auth);
+        };
+
+        return reqBuilder;
+    };
+
+    
     private Response responseForm (Status code, String msg) {
         StringWriter out = new StringWriter();
         HashMap<String, Object> templateData = new HashMap<String, Object>();
