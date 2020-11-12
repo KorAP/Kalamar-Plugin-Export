@@ -107,13 +107,15 @@ public class IdsExportService {
      *            the query
      * @param ql
      *            the query language
+     * @param cutoff
+     *            Export more than the first page
      * 
      * 
      */
     @POST
     @Path("export")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response testjsonform (
+    public Response export (
         @FormParam("fname") String fname,
         @FormParam("format") String format,
         @FormParam("q") String q,
@@ -165,7 +167,7 @@ public class IdsExportService {
             .scheme(scheme)
             .queryParam("q", q)
             // .queryParam("context", "sentence")
-            .queryParam("context", "40-t,40-t")
+            .queryParam("context", "40-t,40-t") // Not yet supported
             .queryParam("ql", ql)
             ;
 
@@ -278,14 +280,6 @@ public class IdsExportService {
              */
             totalhits = actualObj.at("/meta").get("totalResults").asInt();
 
-
-            // Not yet supported
-            if (format.equals("json")) {
-                System.err.println("Not yet supported!");
-            };
-            
-            // format == rtf
-
             /*
              *  Get number of pages and the number of hits 
              *  which should be exported at the last page
@@ -310,10 +304,14 @@ public class IdsExportService {
             
             int pos = 0;
             uri.queryParam("offset", "{offset}");
-                
+
+
+            // Not yet supported
+            if (format.equals("json")) {
+                System.err.println("Not yet supported!");
+            };
+            
             for (int i = 1; i <= pg; i++) {
-                // url = urlorg + "&page=" + i;
-                // resource = client.target(url);
                 resource = client.target(
                     uri.build((i * pageSize) - pageSize)
                     );
@@ -346,7 +344,8 @@ public class IdsExportService {
             format
             );
         return builder.build();
-    }
+    };
+
 
     @GET
     @Path("export")
@@ -356,14 +355,15 @@ public class IdsExportService {
     };
 
 
-    /**
-     * Response with form template.
-     * 
-     * Accepts an optional error code and message.
-     */
-    private Response responseForm () {
-        return responseForm(null, null);
-    }
+    @GET
+    @Path("export.js")
+    @Produces("application/javascript")
+    public Response exportJavascript () {
+        return Response
+            .ok(exportJsStr, "application/javascript")
+            .build();
+    };
+    
 
     // Decorate request with auth headers
     private Invocation.Builder authBuilder (Invocation.Builder reqBuilder, String xff, String auth) {
@@ -377,7 +377,20 @@ public class IdsExportService {
         return reqBuilder;
     };
 
-    
+
+    /*
+     * Response with form template.
+     */
+    private Response responseForm () {
+        return responseForm(null, null);
+    }
+
+
+    /*
+     * Response with form template.
+     * 
+     * Accepts an error code and message.
+     */
     private Response responseForm (Status code, String msg) {
         StringWriter out = new StringWriter();
         HashMap<String, Object> templateData = new HashMap<String, Object>();
@@ -428,20 +441,10 @@ public class IdsExportService {
     };
 
     
-    @GET
-    @Path("export.js")
-    @Produces("application/javascript")
-    public Response exportJavascript () {
-        return Response
-            .ok(exportJsStr, "application/javascript")
-            .build();
-    };
-
-
     /*
      * returns export results of one page as rtf String 
      */
-    public String getRtf (String resp) throws IOException {
+    private String getRtf (String resp) throws IOException {
         LinkedList<MatchExport> listMatches = getListMatches(resp);
         return writeRTF(listMatches);
     };
@@ -450,7 +453,7 @@ public class IdsExportService {
     /* 
      * Writes result of export pages to temporary file
      */
-    public void getRtf (File file, FileWriter filewriter, String resp,
+    private void getRtf (File file, FileWriter filewriter, String resp,
             BufferedWriter bw, int pos, int dr) throws IOException {
         LinkedList<MatchExport> listMatches = getListMatches(resp);
         writeRTF(listMatches, file, filewriter, bw, pos, dr);
@@ -460,7 +463,7 @@ public class IdsExportService {
     /*
      * returns LinkedList of Matches
      */
-    public LinkedList<MatchExport> getListMatches (String resp)
+    private LinkedList<MatchExport> getListMatches (String resp)
             throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory factory = mapper.getFactory();
@@ -484,7 +487,7 @@ public class IdsExportService {
     /*
      * Iterate over all matches and get an RTF section
      */
-    public String getRtfSection (LinkedList list, int pos, int dr) {
+    private String getRtfSection (LinkedList list, int pos, int dr) {
         LinkedList matchlist = list;
         RtfTextPara par = p((" "));
         RtfTextPara[] pararray;
@@ -527,13 +530,13 @@ public class IdsExportService {
     };
 
     
-    public String writeRTF (LinkedList list) throws IOException {
+    private String writeRTF (LinkedList list) throws IOException {
         String rtfresp =  getRtfSection(list, 0, 0);
         return rtfresp;
     };
     
 
-    public void writeRTF (LinkedList list, File file, FileWriter filewriter,
+    private void writeRTF (LinkedList list, File file, FileWriter filewriter,
                           BufferedWriter bw, int pos, int dr) throws IOException {
    
         String rtfresp = getRtfSection(list, pos,dr);
@@ -576,7 +579,7 @@ public class IdsExportService {
     /*
      * Get version for RTF document 
      */
-    public RtfTextPara getVersion () {
+    private RtfTextPara getVersion () {
         Version version = new Version(
             ExWSConf.VERSION_MAJOR,
             ExWSConf.VERSION_MINOR,
@@ -612,11 +615,10 @@ public class IdsExportService {
     };
 
 
-    /**
+    /*
      * Creates file to hold the result temporarily
-     *
      */
-    public static File createTempFile (String name, String suffix) {
+    private static File createTempFile (String name, String suffix) {
         try {
             File temp = File.createTempFile(name, "." + suffix);
             return temp;
