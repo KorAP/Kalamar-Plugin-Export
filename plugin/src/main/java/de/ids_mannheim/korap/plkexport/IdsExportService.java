@@ -63,6 +63,7 @@ import freemarker.template.Template;
  * - Get variable cutoff from URL
  * - Right now, the web service returns one page (cutoff=1) or
  *   all pages.
+ * - Handle timeout results (with minimum total results).
  */
 
 @Path("/")
@@ -197,40 +198,7 @@ public class IdsExportService {
                 xff = req.getRemoteAddr();
             };
 
-            // This is a temporary solution using session riding - only
-            // valid for the time being
-            Cookie[] cookies = req.getCookies();
-            String cookiePath = properties.getProperty("cookie.path", "");
-
-            // Iterate through all cookies for a Kalamar session
-            for (int i = 0; i < cookies.length; i++) {
-                
-                // Check the valid path
-                if (cookiePath != "" && cookies[i].getPath() != cookiePath) {
-                    continue;
-                };
-
-                // Ignore irrelevant cookies
-                if (!cookies[i].getName().matches("^kalamar(-.+?)?$")) {
-                    continue;
-                };
-
-                // Get the value
-                String b64 = cookies[i].getValue();
-                String[] b64Parts = b64.split("--", 2);
-                if (b64Parts.length == 2) {
-                    // Read the payload
-                    String payload = new String(b64Dec.decode(b64Parts[0]));
-                    if (payload != "") {
-                        Matcher m = authrep.matcher(payload);
-                        if (m.find()) {
-                            auth = m.group(1);
-                            break;
-                        };
-                    };
-                };
-                continue;
-            };
+            auth = authFromCookie(req);
         };
     
         String resp;
@@ -247,7 +215,7 @@ public class IdsExportService {
                 );
         }
 
-        // set filename to query
+        // set filename based on query (if not already set)
         if (fname == null) {
             fname = q;
         }
@@ -366,7 +334,9 @@ public class IdsExportService {
     
 
     // Decorate request with auth headers
-    private Invocation.Builder authBuilder (Invocation.Builder reqBuilder, String xff, String auth) {
+    private Invocation.Builder authBuilder (Invocation.Builder reqBuilder,
+                                            String xff,
+                                            String auth) {
         if (xff != "") {
             reqBuilder = reqBuilder.header("X-Forwarded-For", xff);
         };
@@ -378,12 +348,52 @@ public class IdsExportService {
     };
 
 
+    // Get authorization token from cookie
+    private String authFromCookie (HttpServletRequest r) {
+
+        // This is a temporary solution using session riding - only
+        // valid for the time being
+        Cookie[] cookies = r.getCookies();
+        String cookiePath = properties.getProperty("cookie.path", "");
+
+        // Iterate through all cookies for a Kalamar session
+        for (int i = 0; i < cookies.length; i++) {
+                
+            // Check the valid path
+            if (cookiePath != "" && cookies[i].getPath() != cookiePath) {
+                continue;
+            };
+
+            // Ignore irrelevant cookies
+            if (!cookies[i].getName().matches("^kalamar(-.+?)?$")) {
+                continue;
+            };
+
+            // Get the value
+            String b64 = cookies[i].getValue();
+            String[] b64Parts = b64.split("--", 2);
+            if (b64Parts.length == 2) {
+                // Read the payload
+                String payload = new String(b64Dec.decode(b64Parts[0]));
+                if (payload != "") {
+                    Matcher m = authrep.matcher(payload);
+                    if (m.find()) {
+                        return m.group(1);
+                    };
+                };
+            };
+        };
+
+        return "";
+    };
+
+    
     /*
      * Response with form template.
      */
     private Response responseForm () {
         return responseForm(null, null);
-    }
+    };
 
 
     /*
@@ -429,7 +439,7 @@ public class IdsExportService {
                 .ok(new String("Template not found"))
                 .status(Status.INTERNAL_SERVER_ERROR)
                 .build();
-        }
+        };
 
         ResponseBuilder resp = Response.ok(out.toString(), "text/html");
 
