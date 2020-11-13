@@ -34,6 +34,11 @@ public class MatchAggregator implements Iterable<JsonNode> {
      */
     public MatchAggregator (String resp) throws IOException {
 
+        matches = new LinkedList();
+
+        if (resp == null)
+            return;
+        
         JsonParser parser = mapper.getFactory().createParser(resp);
         JsonNode actualObj = mapper.readTree(parser);
 
@@ -52,11 +57,11 @@ public class MatchAggregator implements Iterable<JsonNode> {
         
         // Iterate over the results of the current file
         Iterator<JsonNode> mNode = mNodes.elements();
-        matches = new LinkedList();
         while (mNode.hasNext()) {
             this.matches.add(mNode.next());
         };
     };
+
 
     /**
      * Append more matches to the result set.
@@ -87,16 +92,17 @@ public class MatchAggregator implements Iterable<JsonNode> {
         };
     };
 
+
     /**
      * Return an iterator for all matches
      */
-    public Iterator<JsonNode> iterator() { 
+    public MatchIterator iterator() { 
         return new MatchIterator(); 
     };
 
 
     // Private iterator class
-    private class MatchIterator implements Iterator<JsonNode> {
+    public class MatchIterator implements Iterator<JsonNode> {
         private int listIndex, fileIndex;
 
         // Constructor
@@ -109,7 +115,7 @@ public class MatchAggregator implements Iterable<JsonNode> {
 
         @Override
         public boolean hasNext () {
-            if (listIndex >= 0 || fileIndex >= 0) {
+            if (this.listIndex >= 0 || this.fileIndex >= 0) {
                 return true;
             };
             return false;
@@ -117,10 +123,12 @@ public class MatchAggregator implements Iterable<JsonNode> {
 
         @Override
         public JsonNode next () {
-            if (this.listIndex > 0) {
+            if (this.listIndex >= 0) {
                 int i = this.listIndex;
-                if (i >= matches.size()) {
+                if (i >= matches.size() - 1) {
                     this.listIndex = -1;
+                } else {
+                    this.listIndex++;
                 };
                 return matches.get(i);
             };
