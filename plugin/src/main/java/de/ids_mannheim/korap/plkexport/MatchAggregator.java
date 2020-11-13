@@ -2,9 +2,11 @@ package de.ids_mannheim.korap.plkexport;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.Writer;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+
 import java.util.Collection;
 import java.util.ArrayList;
 
@@ -17,22 +19,50 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
-public class MatchAggregator implements Iterable<JsonNode> {
+/**
+ * Base class for collecting matches and header information
+ * for exporters implementing the Exporter interface.
+ */
+
+public class MatchAggregator {
 
     private ObjectMapper mapper = new ObjectMapper();
 
     private LinkedList<JsonNode> matches;
 
-    private BufferedWriter writer;
+    private Writer writer;
 
+    private File file;
+    
     public JsonNode meta, query, collection;
+
+    public void setMeta (JsonNode meta) {
+        this.meta = meta;
+    };
+   
+    public void setQuery (JsonNode query) {
+        this.query = query;
+    };
+
+    public void setCollection (JsonNode collection) {
+        this.collection = collection;
+    };
+
+    public void writeHeader (Writer w) throws IOException { };
+    public void writeFooter (Writer w) throws IOException { };
+    public void addMatch (JsonNode n, Writer w) throws IOException { };
+   
 
     /**
      * Create new match aggregator and parse initial Json
      * file to get header information and initial matches.
      */
-    public MatchAggregator (String resp) throws IOException {
+    public void init (String resp) throws IOException {
+
+        this.file = null;
 
         matches = new LinkedList();
 
@@ -45,11 +75,14 @@ public class MatchAggregator implements Iterable<JsonNode> {
         if (actualObj == null)
             return;
 
-        this.meta       = actualObj.get("meta");
-        this.query      = actualObj.get("query");
-        this.collection = actualObj.get("collection");
+        this.setMeta(actualObj.get("meta"));
+        this.setQuery(actualObj.get("query"));
+        this.setCollection(actualObj.get("collection"));
 
+        writer = new StringWriter();
 
+        this.writeHeader(writer);
+        
         JsonNode mNodes = actualObj.get("matches");
 
         if (mNodes == null)
@@ -58,7 +91,8 @@ public class MatchAggregator implements Iterable<JsonNode> {
         // Iterate over the results of the current file
         Iterator<JsonNode> mNode = mNodes.elements();
         while (mNode.hasNext()) {
-            this.matches.add(mNode.next());
+            this.addMatch(mNode.next(), writer);
+            // this.matches.add(mNode.next());
         };
     };
 
@@ -66,73 +100,67 @@ public class MatchAggregator implements Iterable<JsonNode> {
     /**
      * Append more matches to the result set.
      */
-    public void append (String resp) throws IOException {
+    public void appendMatches (String resp) throws IOException {
 
         // Open a temp file if not already opened
-        if (writer == null) {
+        if (this.file == null) {
 
             // Create temporary file
-            File expTmp = File.createTempFile("idsexppl-", ".tmpJson");
+            this.file = File.createTempFile("idsexppl-", ".tmpJson");
 
             // better delete after it is not needed anymore
-            expTmp.deleteOnExit();
+            this.file.deleteOnExit();
+
+            String s = writer.toString();
 
             // Establish writer
-            writer = new BufferedWriter(new FileWriter(expTmp, true));
+            writer = new BufferedWriter(new FileWriter(this.file, true));
+
+            // Add in memory string
+            writer.write(s);
         };
 
         JsonParser parser = mapper.getFactory().createParser(resp);
         JsonNode actualObj = mapper.readTree(parser);
-        Iterator<JsonNode> mNode = actualObj.get("matches").elements();
 
+        if (actualObj == null)
+            return;
+        
+        JsonNode mNodes = actualObj.get("matches");
+
+        if (mNodes == null)
+            return;
+
+        Iterator<JsonNode> mNode = mNodes.elements();
+        
         MatchExport match;
         while (mNode.hasNext()) {
-            writer.append(mNode.next().toString());
-            writer.newLine();
+            this.addMatch(mNode.next(), writer);
         };
     };
 
 
     /**
-     * Return an iterator for all matches
+     * Serve response entity, either as a string or as a file.
      */
-    public MatchIterator iterator() { 
-        return new MatchIterator(); 
-    };
+    public ResponseBuilder serve () {
+        try {
 
-
-    // Private iterator class
-    public class MatchIterator implements Iterator<JsonNode> {
-        private int listIndex, fileIndex;
-
-        // Constructor
-        public MatchIterator () {
-            this.listIndex = matches.size() > 0 ? 0 : -1;
-
-            // Set to zero, if file exists
-            this.fileIndex = (writer != null) ? 0 : -1;
-        };
-
-        @Override
-        public boolean hasNext () {
-            if (this.listIndex >= 0 || this.fileIndex >= 0) {
-                return true;
+            this.writeFooter(this.writer);
+            this.writer.close();
+            
+            if (this.file == null) {
+                return Response.ok(writer.toString());
             };
-            return false;
+            return Response.ok(this.file);            
+        }
+
+        // Catch error
+        catch (IOException io) {
         };
 
-        @Override
-        public JsonNode next () {
-            if (this.listIndex >= 0) {
-                int i = this.listIndex;
-                if (i >= matches.size() - 1) {
-                    this.listIndex = -1;
-                } else {
-                    this.listIndex++;
-                };
-                return matches.get(i);
-            };
-            return null;
-        };
+        // TODO:
+        //   Return exporter error
+        return Response.status(500).entity("error");
     };
 };

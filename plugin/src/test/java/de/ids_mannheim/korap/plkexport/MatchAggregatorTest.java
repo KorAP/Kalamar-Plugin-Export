@@ -15,17 +15,14 @@ public class MatchAggregatorTest {
 
     @Test
     public void testEmptyInit () throws IOException {
-        MatchAggregator m = new MatchAggregator("");
+        MatchAggregator m = new MatchAggregator();
+        m.init("");
         assertNull(m.meta);
         assertNull(m.query);
         assertNull(m.collection);
 
-        MatchAggregator.MatchIterator mi = m.iterator();
-
-        assertFalse(mi.hasNext());
-        assertNull(mi.next());
-
-        m = new MatchAggregator(null);
+        m = new MatchAggregator();
+        m.init(null);
         assertNull(m.meta);
         assertNull(m.query);
         assertNull(m.collection);
@@ -33,9 +30,8 @@ public class MatchAggregatorTest {
 
     @Test
     public void testSampleInit () throws IOException {
-        MatchAggregator m = new MatchAggregator(
-            "{\"meta\":{\"totalResults\":6}}"
-            );
+        MatchAggregator m = new MatchAggregator();
+        m.init("{\"meta\":{\"totalResults\":6}}");
         assertEquals(m.meta.toString(),"{\"totalResults\":6}");
         assertNull(m.query);
         assertNull(m.collection);
@@ -43,19 +39,10 @@ public class MatchAggregatorTest {
   
     @Test
     public void testMatchesInit () throws IOException {
-        MatchAggregator m = new MatchAggregator(
-            "{\"matches\":[\"first\",\"second\"]}"
-            );
+        MatchAggregator m = new MatchAggregator();
+        m.init("{\"matches\":[\"first\",\"second\"]}");
         assertNull(m.meta);
         assertNull(m.query);
         assertNull(m.collection);
-
-        MatchAggregator.MatchIterator mi = m.iterator();
-
-        assertTrue(mi.hasNext());
-        assertEquals(mi.next().toString(),"\"first\"");
-        assertTrue(mi.hasNext());
-        assertEquals(mi.next().toString(),"\"second\"");
-        assertFalse(mi.hasNext());
     };
 };
