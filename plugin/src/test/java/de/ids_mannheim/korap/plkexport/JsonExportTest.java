@@ -1,6 +1,9 @@
 package de.ids_mannheim.korap.plkexport;
 
 import java.io.IOException;
+import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -36,4 +39,29 @@ public class JsonExportTest {
         resp.close();
         assertEquals(x,"{\"query\":\"cool\",\"meta\":\"ja\",\"collection\":\"hm\",\"matches\":[\"first\",\"second\"]}");
     };
+
+    @Test
+    public void testPaging () throws IOException {
+        JsonExporter json = new JsonExporter();
+        json.init("{\"meta\":\"ja\",\"collection\":\"hm\",\"query\":\"cool\",\"matches\":[\"first\",\"second\"]}");
+        json.appendMatches("{\"meta\":\"ja2\",\"collection\":\"hm2\",\"query\":\"cool2\",\"matches\":[\"third\",\"fourth\"]}");
+
+        Response resp = json.serve().build();
+        File x = (File) resp.getEntity();
+        resp.close();
+        assertEquals(slurp(x),"{\"query\":\"cool\",\"meta\":\"ja\",\"collection\":\"hm\",\"matches\":[\"first\",\"second\",\"third\",\"fourth\"]}");
+    };
+    
+    public static String slurp (File file) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(file)); 	  
+        String string; 
+	 
+        StringBuilder contentBuilder = new StringBuilder();
+
+        while ((string = br.readLine()) != null) 
+            contentBuilder.append(string); 
+
+        return contentBuilder.toString();
+    };
+
 };
