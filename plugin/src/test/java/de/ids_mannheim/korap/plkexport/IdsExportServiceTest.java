@@ -382,6 +382,7 @@ public class IdsExportServiceTest extends JerseyTest {
         String str = responsertf.readEntity(String.class);
         assertTrue("Page 1 content", str.contains("Ironhoof"));
         assertTrue("Page 2 content", str.contains("Sinologie"));
+        assertTrue("Unicode handling", str.contains("Hintergr\\u252\\'fcnde"));
     }
 
     
@@ -423,27 +424,48 @@ public class IdsExportServiceTest extends JerseyTest {
         assertEquals(getClientIP("10.0.4.6, 14.800.4.6 , 10.0.4.256"), "10.0.4.6");
     };
 
-    
-    
-    // Get fixture from ressources
+
+    // Convert string to utf8
+    private static String convertToUTF8(String s) {
+        String out = null;
+        try {
+            out = new String(s.getBytes("UTF-8"), "ISO-8859-1");
+        } catch (java.io.UnsupportedEncodingException e) {
+            return null;
+        }
+        return out;
+    }
+
+    // Get fixture from ressources utf8 encoded
     private String getFixture (String file) {
+        return getFixture(file, false);
+    };
+
+    
+    // Get fixture from ressources as byte stream
+    private String getFixture (String file, Boolean raw) {
         String filepath = getClass()
             .getResource("/fixtures/" + file)
             .getFile();
-        return getFileString(filepath);
+
+        if (raw) {
+            return getFileString(filepath);
+        };
+        return convertToUTF8(getFileString(filepath));
     };
-    
+        
 
     // Get string from a file
     public static String getFileString (String filepath) {
         StringBuilder contentBuilder = new StringBuilder();
-        try {			
+        try {
 			BufferedReader in = new BufferedReader(
-				new InputStreamReader(
-					new FileInputStream(URLDecoder.decode(filepath, "UTF-8")),
-					"UTF-8"
-					)
-				);
+                new InputStreamReader(
+                    new FileInputStream(URLDecoder.decode(filepath, "UTF-8")),
+                    "UTF-8"
+                    )
+                );
+
             String str;
             while ((str = in.readLine()) != null) {
                 contentBuilder.append(str);
