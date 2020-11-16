@@ -1,0 +1,171 @@
+package de.ids_mannheim.korap.plkexport;
+
+import com.tutego.jrtf.*;
+import static com.tutego.jrtf.RtfText.*;
+
+
+import java.lang.StringBuffer;
+import java.nio.charset.*;
+
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import static java.nio.charset.CodingErrorAction.REPORT;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.Version;
+
+import java.io.IOException;
+import java.io.Writer;
+
+/**
+ * This is a streaming exporter class for Rtf, so it's based on
+ * a string buffer.
+ */
+
+public class RtfExporter extends MatchAggregator implements Exporter {
+
+    private boolean firstMatch;
+
+    private ObjectMapper mapper = new ObjectMapper();
+
+
+    // final static Charset charset = Charset.forName("Windows-1252");
+    final static CharsetEncoder charsetEncoder =
+        Charset
+        .forName("Windows-1252")
+        .newEncoder()
+        .onMalformedInput(REPORT)
+        .onUnmappableCharacter(REPORT);
+
+    StringBuilder sb;
+
+        {
+            firstMatch = true;
+            sb = new StringBuilder(256);
+        }
+    
+    @Override
+    public void writeHeader (Writer w) throws IOException {
+        w.append("{")
+            .append("\\rtf1\\ansi\\deff0")
+            .append("\n{\\fonttbl")
+            .append("{\\f0 Times New Roman;}")
+            .append("}");
+    };
+    
+
+    @Override
+    public void writeFooter (Writer w) throws IOException {
+        addVersion(w);
+        w.append("}");
+    };
+    
+
+    @Override
+    public void addMatch (JsonNode n, Writer w) throws IOException {
+
+        try {
+            MatchExport match = mapper.treeToValue(n, MatchExport.class);
+
+            Snippet s = match.getSnippetO();
+
+            w.append("\\line ");
+
+            // Snippet
+            w.append("{\\pard ");
+            w.append("\\ql ");
+            rtfText(w, s.getLeft());
+            w.append(" {\\b ");
+            rtfText(w, s.getMark());
+            w.append("} ");
+            rtfText(w, s.getRight());
+            w.append("\\par}");
+
+            // Reference
+            w.append("{\\pard");
+            w.append("\\qr ");
+            w.append("{\\b ");
+            rtfText(w, match.getTitle());
+            w.append(" von ");
+            rtfText(w, match.getAuthor());
+            w.append(" (");
+            rtfText(w, match.getPubDate());
+            w.append(")}");
+            w.append("\\par}");
+
+        } catch (JsonProcessingException jpe) {
+            System.err.println(jpe);
+            w.append("{\\pard {\\b Unable to process match} \\par}");
+        };
+    };
+
+
+    /*
+     * Get version for RTF document 
+     */
+    private void addVersion (Writer w) throws IOException {
+        Version version = new Version(
+            ExWSConf.VERSION_MAJOR,
+            ExWSConf.VERSION_MINOR,
+            ExWSConf.VERSION_PATCHLEVEL,
+            null,
+            null,
+            null
+            );
+
+        // w.append("\\footer ");
+        w.append("{\\pard");
+        w.append("\\ql ");
+        rtfText(w, "@ Institut für Deutsche Sprache, Mannheim");
+        w.append("\\par}");
+
+        w.append("{\\pard IDSExportPlugin-Version: ")
+            .append(version.toString())
+            .append(" \\par}");
+        return;
+    };
+
+    // Based on jrtf by Christian Ullenboom
+    static void rtfText(Writer w, String rawText) throws IOException {
+        char c;
+        for (int i = 0; i < rawText.length(); i++) {
+            c = rawText.charAt( i ); 
+
+            if (c == '\n')
+                w.append("\\par\n");
+            else if (c == '\t' )
+                w.append("\\tab\n");
+            else if (c == '\\' )
+                w.append("\\\\");
+            else if (c == '{' )
+                w.append("\\{");
+            else if (c == '}' )
+                w.append("\\}");
+            else if (c < 127) {
+                w.append(c);
+            }
+
+            // Use Unicode and ask the char from the String object
+            else {
+                w.append("\\u" ).append(Integer.toString(c));
+
+                if (!charsetEncoder.canEncode(c))
+                    w.append("?");
+
+                try {
+                    final ByteBuffer bytes = charsetEncoder.encode(
+                        CharBuffer.wrap(String.valueOf(c))
+                        );
+
+                    // Treat byte as unsigned
+                    final int unsignedCharByte = bytes.get() & 255;
+                    w.append(String.format("\\'%02x", unsignedCharByte));
+                }
+                catch (CharacterCodingException err) {
+                };
+            };
+        }
+    };
+};
