@@ -42,7 +42,9 @@ public class RtfExportTest {
                   "\"title\":\"Title2\","+
                   "\"pubDate\":\"20051104\","+
                   "\"textSigle\":\"RTF/G59/34285\","+
-                  "\"snippet\":\"Simpler <mark>&quot;match2&quot;</mark> Snippet\"}"+
+                  "\"snippet\":\"<span class=\\\"context-left\\\"><span class=\\\"more\\\"></span>"+
+                  "Simpler <mark>&quot;match2&quot;</mark> Snippet"+
+                  "<span class=\\\"more\\\"></span></span>\"}"+
                   "]}");
 
         Response resp = json.serve().build();
@@ -52,5 +54,10 @@ public class RtfExportTest {
         assertTrue(x.contains("{\\b \"match2\"}"));
         assertTrue(x.contains("{\\b Title1"));
         assertTrue(x.contains("{\\b Title2"));
+
+        assertTrue(x.contains("\\qj Simple "));
+        assertTrue(x.contains("\\qj [...] Simpler "));
+        assertTrue(x.contains("Snippet\\par}"));
+        assertTrue(x.contains("Snippet [...]\\par}"));
     };
 };

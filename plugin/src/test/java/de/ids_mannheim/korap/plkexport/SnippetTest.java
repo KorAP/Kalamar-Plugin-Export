@@ -19,6 +19,8 @@ public class SnippetTest {
         assertEquals(s.getLeft(),"Der");
         assertEquals(s.getRight(),"ging um");
         assertEquals(s.getMark(),"Plagegeist");
+        assertFalse(s.hasMoreLeft());
+        assertFalse(s.hasMoreRight());
     };
 
     @Test
@@ -34,5 +36,7 @@ public class SnippetTest {
                      "im Sinne von \"");
         assertEquals(s.getRight(),"\" verwendet, folglich war 蚂蚁 ursprünglich frei übersetzt eine \"Sch...-Ameise\" ;-) -- 18:21, 30. Apr. 2007 (CEST) Hallo Allgaeuer, mag sein, dass es für dich ein Hammer ist, aber es ist Stand der aktuellen Forschung in der Sinologie. Schriften von Karlgren u.");
         assertEquals(s.getMark(),"Plagegeist");
+        assertTrue(s.hasMoreLeft());
+        assertTrue(s.hasMoreRight());
     };
 };

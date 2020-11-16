@@ -1,13 +1,29 @@
 package de.ids_mannheim.korap.plkexport;
 
+import java.util.regex.Pattern;
+
 public class Snippet {
 
-    private String left;
-    private String right;
-    private String mark;
+    private String left, right, mark;
+    private boolean leftMore, rightMore;
 
+    private static Pattern leftMoreP =
+        Pattern.compile("(?i)<span[^>]*?class=\"more\".+<mark>");
+    private static Pattern rightMoreP =
+        Pattern.compile("(?i)</mark>.+<span[^>]*?class=\"more\"");
 
     public Snippet (String snippetstr) {
+
+        // Check the context
+        this.leftMore = this.rightMore = false;
+        if (leftMoreP.matcher(snippetstr).find()) {
+            this.leftMore = true;
+        };
+        if (rightMoreP.matcher(snippetstr).find()) {
+            this.rightMore = true;
+        };
+
+        // Split the match
         String[] split = snippetstr
             .replaceAll("(?i)</?span[^>]*>", "")
             .split("</?mark>");
@@ -16,7 +32,6 @@ public class Snippet {
         this.setMark(unescapeHTML(split[1].trim()));
         this.setRight(unescapeHTML(split[2].trim()));
     }
-
 
     public String getLeft () {
         return left;
@@ -47,6 +62,17 @@ public class Snippet {
         this.mark = mark;
     }
 
+    
+    public boolean hasMoreLeft () {
+        return leftMore;
+    };
+
+
+    public boolean hasMoreRight () {
+        return rightMore;
+    };
+
+    
     private static String unescapeHTML (String text) {
         if (text == null)
 			return "";

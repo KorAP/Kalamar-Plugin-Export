@@ -73,11 +73,17 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             // Snippet
             w.append("{\\pard ");
             w.append("\\qj ");
+            if (s.hasMoreLeft()) {
+                w.append("[...] ");
+            };
             rtfText(w, s.getLeft());
             w.append(" {\\b ");
             rtfText(w, s.getMark());
             w.append("} ");
             rtfText(w, s.getRight());
+            if (s.hasMoreRight()) {
+                w.append(" [...]");
+            };
             w.append("\\par}");
 
             // Reference
