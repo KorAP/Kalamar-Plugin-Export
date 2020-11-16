@@ -14,11 +14,11 @@ public class Snippet {
         String splitright = split[2];
         //(?i) makes the regex case insensitive.
         String splitleftr = splitleft.replaceAll("(?i)</?span[^>]*>", "");
-        this.setLeft(splitleftr);
+        this.setLeft(splitleftr.trim());
         String splitmatchr = splitmatch.replaceAll("(?i)</?span[^>]*>", "");
-        this.setMark(splitmatchr);
+        this.setMark(splitmatchr.trim());
         String splitrightr = splitright.replaceAll("(?i)</?span[^>]*>", "");
-        this.setRight(splitrightr);
+        this.setRight(splitrightr.trim());
     }
 
 
