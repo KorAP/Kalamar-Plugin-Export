@@ -35,11 +35,13 @@ public class RtfExportTest {
                   "{\"author\":\"Goethe\","+
                   "\"title\":\"Title1\","+
                   "\"pubDate\":\"20051103\","+
+                  "\"textSigle\":\"RTF/G59/34284\","+
                   "\"snippet\":\"Simple <mark>match1</mark> Snippet\"}"+
                   ","+
                   "{\"author\":\"Schiller\","+
                   "\"title\":\"Title2\","+
                   "\"pubDate\":\"20051104\","+
+                  "\"textSigle\":\"RTF/G59/34285\","+
                   "\"snippet\":\"Simpler <mark>match2</mark> Snippet\"}"+
                   "]}");
 

@@ -1,9 +1,5 @@
 package de.ids_mannheim.korap.plkexport;
 
-import com.tutego.jrtf.*;
-import static com.tutego.jrtf.RtfText.*;
-
-
 import java.lang.StringBuffer;
 import java.nio.charset.*;
 
@@ -67,6 +63,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
     public void addMatch (JsonNode n, Writer w) throws IOException {
 
         try {
+
             MatchExport match = mapper.treeToValue(n, MatchExport.class);
 
             Snippet s = match.getSnippetO();
@@ -75,7 +72,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
 
             // Snippet
             w.append("{\\pard ");
-            w.append("\\ql ");
+            w.append("\\qj ");
             rtfText(w, s.getLeft());
             w.append(" {\\b ");
             rtfText(w, s.getMark());
@@ -94,6 +91,11 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             rtfText(w, match.getPubDate());
             w.append(")}");
             w.append("\\par}");
+
+            // TextSigle
+            w.append("{\\pard\\qr\\b [");
+            rtfText(w, match.getTextSigle());
+            w.append("]\\par}");
 
         } catch (JsonProcessingException jpe) {
             System.err.println(jpe);
@@ -151,8 +153,9 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             else {
                 w.append("\\u" ).append(Integer.toString(c));
 
-                if (!charsetEncoder.canEncode(c))
+                if (!charsetEncoder.canEncode(c)) {
                     w.append("?");
+                };
 
                 try {
                     final ByteBuffer bytes = charsetEncoder.encode(
