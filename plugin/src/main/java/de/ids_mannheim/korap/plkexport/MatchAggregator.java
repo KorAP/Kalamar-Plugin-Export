@@ -42,13 +42,25 @@ public class MatchAggregator {
     public void setMeta (JsonNode meta) {
         this.meta = meta;
     };
-   
+
+    public JsonNode getMeta () {
+        return this.meta;
+    };
+    
     public void setQuery (JsonNode query) {
         this.query = query;
     };
 
+    public JsonNode getQuery () {
+        return this.query;
+    };
+
     public void setCollection (JsonNode collection) {
         this.collection = collection;
+    };
+
+    public JsonNode getCollection () {
+        return this.collection;
     };
 
     public void writeHeader (Writer w) throws IOException { };
@@ -68,7 +80,7 @@ public class MatchAggregator {
 
         if (resp == null)
             return;
-        
+
         JsonParser parser = mapper.getFactory().createParser(resp);
         JsonNode actualObj = mapper.readTree(parser);
 
@@ -92,7 +104,6 @@ public class MatchAggregator {
         Iterator<JsonNode> mNode = mNodes.elements();
         while (mNode.hasNext()) {
             this.addMatch(mNode.next(), writer);
-            // this.matches.add(mNode.next());
         };
     };
 

@@ -12,6 +12,9 @@ interface Exporter {
     public void setMeta(JsonNode n);
     public void setQuery(JsonNode n);
     public void setCollection(JsonNode n);
+    public JsonNode getMeta();
+    public JsonNode getQuery();
+    public JsonNode getCollection();
     public void appendMatches (String s) throws IOException;
 
     // Implemented by Exporter
