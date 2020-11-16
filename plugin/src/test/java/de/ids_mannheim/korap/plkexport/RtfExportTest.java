@@ -42,13 +42,14 @@ public class RtfExportTest {
                   "\"title\":\"Title2\","+
                   "\"pubDate\":\"20051104\","+
                   "\"textSigle\":\"RTF/G59/34285\","+
-                  "\"snippet\":\"Simpler <mark>match2</mark> Snippet\"}"+
+                  "\"snippet\":\"Simpler <mark>&quot;match2&quot;</mark> Snippet\"}"+
                   "]}");
 
         Response resp = json.serve().build();
         String x = (String) resp.getEntity();
         resp.close();
         assertTrue(x.contains("{\\b match1}"));
+        assertTrue(x.contains("{\\b \"match2\"}"));
         assertTrue(x.contains("{\\b Title1"));
         assertTrue(x.contains("{\\b Title2"));
     };

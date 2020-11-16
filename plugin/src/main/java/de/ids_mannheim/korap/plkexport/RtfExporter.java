@@ -130,7 +130,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
     };
 
     // Based on jrtf by Christian Ullenboom
-    static void rtfText(Writer w, String rawText) throws IOException {
+    private static void rtfText(Writer w, String rawText) throws IOException {
         char c;
         for (int i = 0; i < rawText.length(); i++) {
             c = rawText.charAt( i ); 

@@ -8,17 +8,13 @@ public class Snippet {
 
 
     public Snippet (String snippetstr) {
-        String[] split = snippetstr.split("</?mark>");
-        String splitleft = split[0];
-        String splitmatch = split[1];
-        String splitright = split[2];
-        //(?i) makes the regex case insensitive.
-        String splitleftr = splitleft.replaceAll("(?i)</?span[^>]*>", "");
-        this.setLeft(splitleftr.trim());
-        String splitmatchr = splitmatch.replaceAll("(?i)</?span[^>]*>", "");
-        this.setMark(splitmatchr.trim());
-        String splitrightr = splitright.replaceAll("(?i)</?span[^>]*>", "");
-        this.setRight(splitrightr.trim());
+        String[] split = snippetstr
+            .replaceAll("(?i)</?span[^>]*>", "")
+            .split("</?mark>");
+
+        this.setLeft(unescapeHTML(split[0].trim()));
+        this.setMark(unescapeHTML(split[1].trim()));
+        this.setRight(unescapeHTML(split[2].trim()));
     }
 
 
@@ -50,4 +46,16 @@ public class Snippet {
     public void setMark (String mark) {
         this.mark = mark;
     }
+
+    private static String unescapeHTML (String text) {
+        if (text == null)
+			return "";
+		
+        return text
+            .replace("&quot;", "\"")
+            .replace("&apos;", "'")
+            .replace("&lt;", "<")
+            .replace("&gt;", ">")
+            .replace("&amp;", "&");
+    };
 }

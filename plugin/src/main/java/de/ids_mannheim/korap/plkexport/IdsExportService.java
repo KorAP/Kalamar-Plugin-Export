@@ -58,8 +58,8 @@ import freemarker.template.Template;
  * - Add format to exporters
  * - Add file suffix to exporters
  * - Add "..." to snippets in RTF exporter
- * - Fix SGML entities in RTF exporter
  * - Test Snippet-Export with multiple classes.
+ * - Test Snippet-Export with cutted matches.
  */
 
 @Path("/")
