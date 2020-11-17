@@ -55,8 +55,8 @@ public class JsonExportTest {
     @Test
     public void testAttributes () throws IOException {
         JsonExporter json = new JsonExporter();
-        json.setFname("Beispiel");
-        assertEquals(json.getFname(),"Beispiel");
+        json.setFileName("Beispiel");
+        assertEquals(json.getFileName(),"Beispiel");
         assertEquals(json.getMimeType(),"application/json");
         assertEquals(json.getSuffix(),"json");
     };

@@ -40,7 +40,7 @@ public class MatchAggregator {
     private File file;
     
     public JsonNode meta, query, collection;
-    private String fname;
+    private String fname, queryString;
 
     public String getMimeType() {
         return "text/plain";
@@ -50,16 +50,27 @@ public class MatchAggregator {
         return "txt";
     };
 
-    public void setFname (String fname) {
+    public void setFileName (String fname) {
         this.fname = fname;
     };
 
-    public String getFname () {
-        if (this.fname == null)
-            return "unknown";
-        return sanitizeFileName(this.fname);
+    public String getFileName () {
+        String s = this.fname;
+        if (s == null)
+            s = this.queryString;
+        if (s == null)
+            return "export";
+        return sanitizeFileName(s);
     };
 
+    public void setQueryString (String query) {
+        this.queryString = query;
+    };
+
+    public String getQueryString () {
+        return this.queryString;
+    };
+    
     public void setMeta (JsonNode meta) {
         this.meta = meta;
     };
@@ -195,7 +206,7 @@ public class MatchAggregator {
                 .header(
                     "Content-Disposition",
                     "attachment; filename=" +
-                    this.getFname() +
+                    this.getFileName() +
                     '.' +
                     this.getSuffix()
                     );

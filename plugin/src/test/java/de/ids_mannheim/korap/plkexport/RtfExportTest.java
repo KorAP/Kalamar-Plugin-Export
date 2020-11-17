@@ -64,8 +64,8 @@ public class RtfExportTest {
     @Test
     public void testAttributes () throws IOException {
         RtfExporter rtf = new RtfExporter();
-        rtf.setFname("Beispiel");
-        assertEquals(rtf.getFname(),"Beispiel");
+        rtf.setFileName("Beispiel");
+        assertEquals(rtf.getFileName(),"Beispiel");
         assertEquals(rtf.getMimeType(),"application/rtf");
         assertEquals(rtf.getSuffix(),"rtf");
     };

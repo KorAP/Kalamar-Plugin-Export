@@ -211,12 +211,11 @@ public class IdsExportService {
             exp = new RtfExporter();
         };
 
+        exp.setQueryString(q);
+        
         // set filename based on query (if not already set)
         if (fname != null) {
-            exp.setFname(fname);
-        }
-        else {
-            exp.setFname(q);
+            exp.setFileName(fname);
         };
         
         // Initialize exporter (with meta data and first matches)

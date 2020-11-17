@@ -49,11 +49,28 @@ public class MatchAggregatorTest {
     @Test
     public void testAttributes () throws IOException {
         MatchAggregator m = new MatchAggregator();
-        m.setFname("Beispiel");
-        assertEquals(m.getFname(),"Beispiel");
-        m.setFname("contains(<s name=\"okay\">,[orth='Test'])");
-        assertEquals(m.getFname(),"contains(s-name-okay-orth-Test)");
+        m.setFileName("Beispiel");
+        assertEquals(m.getFileName(),"Beispiel");
+        m.setFileName("contains(<s name=\"okay\">,[orth='Test'])");
+        assertEquals(m.getFileName(),"contains(s-name-okay-orth-Test)");
         assertEquals(m.getMimeType(),"text/plain");
         assertEquals(m.getSuffix(),"txt");
+    };
+
+    @Test
+    public void testFileName () throws IOException {
+        MatchAggregator m = new MatchAggregator();
+        assertEquals(m.getFileName(),"export");
+        
+        m = new MatchAggregator();
+        m.setFileName("Beispiel");
+        assertEquals(m.getFileName(),"Beispiel");
+
+        m = new MatchAggregator();
+        m.setQueryString("contains(<s name=\"okay\">,[orth='Test'])");
+        assertEquals(m.getQueryString(),"contains(<s name=\"okay\">,[orth='Test'])");
+        assertEquals(m.getFileName(),"contains(s-name-okay-orth-Test)");
+        m.setFileName("Beispiel");
+        assertEquals(m.getFileName(),"Beispiel");
     };
 };
