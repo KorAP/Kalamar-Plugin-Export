@@ -38,30 +38,30 @@ public class JsonExporter extends MatchAggregator implements Exporter {
 
         boolean header = false;
         
-        if (this.query != null) {
+        if (this.getQuery() != null) {
             w.append("\"query\":")
-                .append(this.query.toString());
+                .append(this.getQuery().toString());
             header = true;
         };
 
-        if (this.meta != null) {
+        if (this.getMeta() != null) {
             if (header) {
                 w.append(',');
             } else {
                 header = true;
             };
             w.append("\"meta\":")
-                .append(this.meta.toString());
+                .append(this.getMeta().toString());
         };
 
-        if (this.collection != null) {
+        if (this.getCollection() != null) {
             if (header) {
                 w.append(',');
             } else {
                 header = true;
             };
             w.append("\"collection\":")
-                .append(this.collection.toString());
+                .append(this.getCollection().toString());
         };
 
         if (header)

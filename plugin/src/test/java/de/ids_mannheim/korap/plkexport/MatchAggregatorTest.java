@@ -17,33 +17,33 @@ public class MatchAggregatorTest {
     public void testEmptyInit () throws IOException {
         MatchAggregator m = new MatchAggregator();
         m.init("");
-        assertNull(m.meta);
-        assertNull(m.query);
-        assertNull(m.collection);
+        assertNull(m.getMeta());
+        assertNull(m.getQuery());
+        assertNull(m.getCollection());
 
         m = new MatchAggregator();
         m.init(null);
-        assertNull(m.meta);
-        assertNull(m.query);
-        assertNull(m.collection);
+        assertNull(m.getMeta());
+        assertNull(m.getQuery());
+        assertNull(m.getCollection());
     };
 
     @Test
     public void testSampleInit () throws IOException {
         MatchAggregator m = new MatchAggregator();
         m.init("{\"meta\":{\"totalResults\":6}}");
-        assertEquals(m.meta.toString(),"{\"totalResults\":6}");
-        assertNull(m.query);
-        assertNull(m.collection);
+        assertEquals(m.getMeta().toString(),"{\"totalResults\":6}");
+        assertNull(m.getQuery());
+        assertNull(m.getCollection());
     };
   
     @Test
     public void testMatchesInit () throws IOException {
         MatchAggregator m = new MatchAggregator();
         m.init("{\"matches\":[\"first\",\"second\"]}");
-        assertNull(m.meta);
-        assertNull(m.query);
-        assertNull(m.collection);
+        assertNull(m.getMeta());
+        assertNull(m.getQuery());
+        assertNull(m.getCollection());
     };
 
     @Test

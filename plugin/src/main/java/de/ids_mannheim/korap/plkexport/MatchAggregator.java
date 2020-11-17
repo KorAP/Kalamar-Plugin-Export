@@ -39,7 +39,7 @@ public class MatchAggregator {
 
     private File file;
     
-    public JsonNode meta, query, collection;
+    private JsonNode meta, query, collection;
     private String fname, queryString;
 
     public String getMimeType() {
