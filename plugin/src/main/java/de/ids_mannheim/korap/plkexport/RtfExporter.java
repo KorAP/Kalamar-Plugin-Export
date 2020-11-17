@@ -80,11 +80,18 @@ public class RtfExporter extends MatchAggregator implements Exporter {
 
         // Add Information table
         if (this.getQueryString() != null) {
-            w.append("{\\pard Query: \\f1 ")
-                .append(this.getQueryString())
-                .append("\\par}\n");
+            w.append("{\\pard Query: \\f1 ");
+            rtfText(w, this.getQueryString());
+            w.append("\\par}\n");
         };
-        
+
+        // Add Information table
+        if (this.getCorpusQueryString() != null) {
+            w.append("{\\pard Corpus: \\f1 ");
+            rtfText(w, this.getCorpusQueryString());
+            w.append("\\par}\n");
+        };
+
         if (this.getMeta() != null) {
             JsonNode m = this.getMeta();
             int totalResults = m.at("/totalResults").asInt();

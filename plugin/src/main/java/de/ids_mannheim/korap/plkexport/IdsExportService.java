@@ -56,6 +56,7 @@ import freemarker.template.Template;
  * - Test Snippet-Export with cutted matches.
  * - Add progress mechanism.
  * - Add CSV export format.
+ * - Add table layout to RTF information.
  */
 
 @Path("/")
@@ -113,6 +114,7 @@ public class IdsExportService {
         @FormParam("fname") String fname,
         @FormParam("format") String format,
         @FormParam("q") String q,
+        @FormParam("cq") String cq,
         @FormParam("ql") String ql,
         @FormParam("cutoff") String cutoffStr
         // @FormParam("islimit") String il,
@@ -136,7 +138,6 @@ public class IdsExportService {
                             + params[i][0] + "\"" + " is missing or empty")
                     .build());
         };
-
 
         int totalhits = -1;
         
@@ -166,6 +167,10 @@ public class IdsExportService {
             .queryParam("ql", ql)
             ;
 
+        if (cq != null)
+            uri = uri.queryParam("cq", cq);
+
+        
         if (path != "") {
             uri = uri.path(path);
         };
@@ -188,7 +193,7 @@ public class IdsExportService {
         String resp;
         WebTarget resource;
         Invocation.Builder reqBuilder;
-                        
+                                
         try {
             resource = client.target(uri.build());
             reqBuilder = resource.request(MediaType.APPLICATION_JSON);
@@ -211,6 +216,7 @@ public class IdsExportService {
         };
 
         exp.setQueryString(q);
+        exp.setCorpusQueryString(cq);
         
         // set filename based on query (if not already set)
         if (fname != null) {
@@ -219,7 +225,7 @@ public class IdsExportService {
         
         // Initialize exporter (with meta data and first matches)
         exp.init(resp);
-        
+
         // If only one page should be exported there is no need
         // for a temporary export file
         if (cutoff) {

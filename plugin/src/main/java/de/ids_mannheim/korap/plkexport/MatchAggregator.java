@@ -40,7 +40,7 @@ public class MatchAggregator {
     private File file;
     
     private JsonNode meta, query, collection;
-    private String fname, queryString;
+    private String fname, queryString, corpusQueryString;
 
     public String getMimeType() {
         return "text/plain";
@@ -69,6 +69,14 @@ public class MatchAggregator {
 
     public String getQueryString () {
         return this.queryString;
+    };
+
+    public void setCorpusQueryString (String query) {
+        this.corpusQueryString = query;
+    };
+
+    public String getCorpusQueryString () {
+        return this.corpusQueryString;
     };
     
     public void setMeta (JsonNode meta) {
@@ -112,7 +120,7 @@ public class MatchAggregator {
 
         if (resp == null)
             return;
-
+        
         JsonParser parser = mapper.getFactory().createParser(resp);
         JsonNode actualObj = mapper.readTree(parser);
 

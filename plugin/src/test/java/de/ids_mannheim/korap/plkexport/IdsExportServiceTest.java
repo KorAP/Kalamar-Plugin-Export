@@ -222,7 +222,7 @@ public class IdsExportServiceTest extends JerseyTest {
 
         Response responsejson = target("/export").request()
                 .post(Entity.form(frmap));
-        
+
         assertEquals("Request JSON: Http Response should be 200: ",
                 Status.OK.getStatusCode(), responsejson.getStatus());
     };
@@ -304,6 +304,40 @@ public class IdsExportServiceTest extends JerseyTest {
         }
     }
 
+    @Test
+    public void testExportWsRTFcorpusQuery () {
+        mockClient.reset().when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Fragerunde")
+            .withQueryStringParameter("cq", "corpusSigle = \"WPD17\"")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_fragerunde_1.json"))
+                .withStatusCode(200)
+                );
+
+        MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<String, String>();
+        frmap.add("format", "rtf");
+        frmap.add("q", "Fragerunde");
+        frmap.add("ql", "poliqarp");
+        frmap.add("cq", "corpusSigle = \"WPD17\"");
+        frmap.add("cutoff", "true");
+        String filenamer = "dateiRtf";
+        frmap.putSingle("fname", filenamer);
+
+        Response responsertf = target("/export").request()
+            .post(Entity.form(frmap));
+        assertEquals("Request RTF: Http Response should be 200: ",
+                Status.OK.getStatusCode(), responsertf.getStatus());
+        String str = responsertf.readEntity(String.class);
+
+        assertTrue("Corpus info", str.contains("{\\pard Corpus: \\f1 corpusSigle = \"WPD17\"\\par}"));
+    }
+    
 
     @Test
     public void testExportWsRTFEmpty () {

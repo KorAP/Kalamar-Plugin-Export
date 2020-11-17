@@ -58,6 +58,16 @@ public class MatchAggregatorTest {
     };
 
     @Test
+    public void testStrings () throws IOException {
+        MatchAggregator m = new MatchAggregator();
+        m.setQueryString("Beispiel-Query");
+        assertEquals(m.getQueryString(),"Beispiel-Query");
+
+        m.setCorpusQueryString("Beispiel-Corpus");
+        assertEquals(m.getCorpusQueryString(),"Beispiel-Corpus");
+    };
+
+    @Test
     public void testFileName () throws IOException {
         MatchAggregator m = new MatchAggregator();
         assertEquals(m.getFileName(),"export");

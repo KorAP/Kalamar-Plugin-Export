@@ -20,6 +20,8 @@ interface Exporter {
     public void setFileName (String s);
     public String getQueryString ();
     public void setQueryString (String s);
+    public String getCorpusQueryString ();
+    public void setCorpusQueryString (String s);
 
     // Implemented by Exporter
     public ResponseBuilder serve();
