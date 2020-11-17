@@ -224,7 +224,17 @@ public class IdsExportService {
         };
         
         // Initialize exporter (with meta data and first matches)
-        exp.init(resp);
+        try {
+            exp.init(resp);
+        } catch (Exception e) {
+
+            throw new WebApplicationException(
+                responseForm(
+                    Status.INTERNAL_SERVER_ERROR,
+                    e.getMessage()
+                    )
+                );
+        }
 
         // If only one page should be exported there is no need
         // for a temporary export file
@@ -256,16 +266,26 @@ public class IdsExportService {
 
             uri.queryParam("offset", "{offset}");
 
-            // Iterate over all results
-            for (int i = 2; i <= pg; i++) {
-                resource = client.target(
-                    uri.build((i * pageSize) - pageSize)
+            try {
+            
+                // Iterate over all results
+                for (int i = 2; i <= pg; i++) {
+                    resource = client.target(
+                        uri.build((i * pageSize) - pageSize)
+                        );
+               
+                    reqBuilder = resource.request(MediaType.APPLICATION_JSON);
+                    resp = authBuilder(reqBuilder, xff, auth).get(String.class);
+                    exp.appendMatches(resp);
+                }
+            } catch (Exception e) {
+                throw new WebApplicationException(
+                    responseForm(
+                        Status.INTERNAL_SERVER_ERROR,
+                        e.getMessage()
+                        )
                     );
-
-                reqBuilder = resource.request(MediaType.APPLICATION_JSON);
-                resp = authBuilder(reqBuilder, xff, auth).get(String.class);
-                exp.appendMatches(resp);
-            }
+            };
 
             builder = exp.serve();
         };        

@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -112,7 +113,7 @@ public class MatchAggregator {
      * Create new match aggregator and parse initial Json
      * file to get header information and initial matches.
      */
-    public void init (String resp) throws IOException {
+    public void init (String resp) throws IOException, JsonParseException {
 
         this.file = null;
 
@@ -123,7 +124,7 @@ public class MatchAggregator {
         
         JsonParser parser = mapper.getFactory().createParser(resp);
         JsonNode actualObj = mapper.readTree(parser);
-
+        
         if (actualObj == null)
             return;
 

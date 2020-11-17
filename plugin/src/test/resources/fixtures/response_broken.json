@@ -1,0 +1,1 @@
+{"@context":"http://korap.ids-mannheim.de/ns/KoralQuery/v0.3/context.jsonld","meta":{"cutOff":false,"count":5,"startIndex":0,"timeout":10000,"context":{"left":["token",40],"right":["token",40]},"fields":["ID","UID","textSigle","corpusID","author","title","subTitle","te

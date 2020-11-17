@@ -336,6 +336,83 @@ public class IdsExportServiceTest extends JerseyTest {
         String str = responsertf.readEntity(String.class);
 
         assertTrue("Corpus info", str.contains("{\\pard Corpus: \\f1 corpusSigle = \"WPD17\"\\par}"));
+        assertFalse("Errors", str.contains("dynCall("));
+    }
+
+    @Test
+    public void testExportWsRTFbroken () {
+        mockClient.reset().when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_broken.json"))
+                .withStatusCode(200)
+                );
+
+        MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<String, String>();
+        frmap.add("format", "rtf");
+        frmap.add("q", "???");
+        frmap.add("ql", "poliqarp");
+        frmap.add("cq", "corpusSigle = \"WPD17\"");
+        frmap.add("cutoff", "true");
+        String filenamer = "dateiRtf";
+        frmap.putSingle("fname", filenamer);
+
+        Response responsertf = target("/export").request()
+            .post(Entity.form(frmap));
+        assertEquals("Request RTF: Http Response should be 500: ",
+                500, responsertf.getStatus());
+        String str = responsertf.readEntity(String.class);
+
+        assertTrue("Title", str.contains("<title>Export</title>"));
+        assertTrue("Error", str.contains("line: 1, column: 539"));
+
+        // Check paging with broken second page
+        mockClient.reset().when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Plagegeist")
+            .withQueryStringParameter("count", "5")
+            .withQueryStringParameter("offset", "5")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_broken.json"))
+                .withStatusCode(200)
+                );
+
+        mockClient.when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Plagegeist")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_plagegeist_1.json"))
+                .withStatusCode(200)
+                );
+        frmap = new MultivaluedHashMap<String, String>();
+        frmap.add("format", "rtf");
+        frmap.add("q", "Plagegeist");
+        frmap.add("ql", "poliqarp");
+        frmap.putSingle("fname", filenamer);
+
+        responsertf = target("/export").request()
+            .post(Entity.form(frmap));
+        assertEquals("Request RTF: Http Response should be 500: ",
+                500, responsertf.getStatus());
+
+        str = responsertf.readEntity(String.class);
+        assertTrue("Title", str.contains("<title>Export</title>"));
+        assertTrue("Error", str.contains("line: 1, column: 539"));
     }
     
 
