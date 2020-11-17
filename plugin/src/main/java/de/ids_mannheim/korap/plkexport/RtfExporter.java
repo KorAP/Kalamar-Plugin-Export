@@ -57,16 +57,30 @@ public class RtfExporter extends MatchAggregator implements Exporter {
     @Override
     public void writeHeader (Writer w) throws IOException {
         w.append("{")
-            .append("\\rtf1\\ansi\\deff0")
-            .append("\n{\\fonttbl")
-            .append("{\\f0 Times New Roman;}")
-            .append("}");
+            .append("\\rtf1\\ansi\\deff0\n")
+            .append("{\\colortbl;\\red0\\green0\\blue0;\\red127\\green127\\blue127;}\n")
+            .append("{\\fonttbl{\\f0\\fcharset0 Times New Roman;}{\\f1\\fcharset1 Courier;}}\n");
+
+        w.append("{\\footer\\pard\\ql\\fs18\\f0 ");
+        rtfText(w, "@ Institut für Deutsche Sprache, Mannheim");
+
+        // Page number
+        w.append("  \\endash  \\chpgn / {\\field{\\*\\fldinst{\\fs18\\f0 NUMPAGES}}}");
+        w.append("\\par}\n");
+
+        // Title
+        if (this.getQueryString() != null) {
+            w.append("{\\pard\\fs28\\b\\f1\\ldblquote ");
+            rtfText(w, this.getQueryString());
+            w.append("\\rdblquote\\par}");
+        };
+
+        addVersion(w);
     };
     
 
     @Override
     public void writeFooter (Writer w) throws IOException {
-        addVersion(w);
         w.append("}");
     };
     
@@ -83,8 +97,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             w.append("\\line ");
 
             // Snippet
-            w.append("{\\pard ");
-            w.append("\\qj ");
+            w.append("{\\pard\\fs22\\f0\\qj ");
             if (s.hasMoreLeft()) {
                 w.append("[...] ");
             };
@@ -100,7 +113,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
 
             // Reference
             w.append("{\\pard");
-            w.append("\\qr ");
+            w.append("\\qr\\fs20\\cf2\\f0 ");
             w.append("{\\b ");
             rtfText(w, match.getTitle());
             w.append(" von ");
@@ -111,9 +124,11 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             w.append("\\par}");
 
             // TextSigle
-            w.append("{\\pard\\qr\\b [");
+            w.append("{\\pard\\qr\\b\\fs20\\cf2\\f1 [");
             rtfText(w, match.getTextSigle());
             w.append("]\\par}");
+
+            w.append("\n");
 
         } catch (JsonProcessingException jpe) {
             System.err.println(jpe);
@@ -135,15 +150,9 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             null
             );
 
-        // w.append("\\footer ");
-        w.append("{\\pard");
-        w.append("\\ql ");
-        rtfText(w, "@ Institut für Deutsche Sprache, Mannheim");
-        w.append("\\par}");
-
-        w.append("{\\pard IDSExportPlugin-Version: ")
+        w.append("{\\pard\\fs18\\f1 IDSExportPlugin-Version: ")
             .append(version.toString())
-            .append(" \\par}");
+            .append("\\par}\n");
         return;
     };
 
