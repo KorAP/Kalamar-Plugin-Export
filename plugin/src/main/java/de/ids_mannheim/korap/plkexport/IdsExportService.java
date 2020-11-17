@@ -47,9 +47,7 @@ import freemarker.template.Template;
 
 /**
  * TODO:
- * - Paging export works only for rtf, JSON has to be integrated
  * - Delete the temp file of the export at the end
- * - Get variable cutoff from URL
  * - Right now, the web service returns one page (cutoff=1) or
  *   all pages.
  * - Handle timeout results (with minimum total results).
@@ -57,7 +55,6 @@ import freemarker.template.Template;
  * - Add mime type to exporters
  * - Add format to exporters
  * - Add file suffix to exporters
- * - Add "..." to snippets in RTF exporter
  * - Test Snippet-Export with multiple classes.
  * - Test Snippet-Export with cutted matches.
  */
