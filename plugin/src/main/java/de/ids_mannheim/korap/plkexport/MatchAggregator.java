@@ -22,6 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import static de.ids_mannheim.korap.plkexport.Util.*;
+
 /**
  * Base class for collecting matches and header information
  * for exporters implementing the Exporter interface.
@@ -38,6 +40,7 @@ public class MatchAggregator {
     private File file;
     
     public JsonNode meta, query, collection;
+    private String fname;
 
     public String getMimeType() {
         return "text/plain";
@@ -45,6 +48,16 @@ public class MatchAggregator {
 
     public String getSuffix() {
         return "txt";
+    };
+
+    public void setFname (String fname) {
+        this.fname = fname;
+    };
+
+    public String getFname () {
+        if (this.fname == null)
+            return "unknown";
+        return sanitizeFileName(this.fname);
     };
 
     public void setMeta (JsonNode meta) {
@@ -177,7 +190,15 @@ public class MatchAggregator {
                 rb = Response.ok(this.file);
             };
 
-            return rb.type(this.getMimeType());
+            return rb
+                .type(this.getMimeType())
+                .header(
+                    "Content-Disposition",
+                    "attachment; filename=" +
+                    this.getFname() +
+                    '.' +
+                    this.getSuffix()
+                    );
         }
 
         // Catch error

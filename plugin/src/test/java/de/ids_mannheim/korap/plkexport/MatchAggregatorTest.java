@@ -45,4 +45,15 @@ public class MatchAggregatorTest {
         assertNull(m.query);
         assertNull(m.collection);
     };
+
+    @Test
+    public void testAttributes () throws IOException {
+        MatchAggregator m = new MatchAggregator();
+        m.setFname("Beispiel");
+        assertEquals(m.getFname(),"Beispiel");
+        m.setFname("contains(<s name=\"okay\">,[orth='Test'])");
+        assertEquals(m.getFname(),"contains(s-name-okay-orth-Test)");
+        assertEquals(m.getMimeType(),"text/plain");
+        assertEquals(m.getSuffix(),"txt");
+    };
 };

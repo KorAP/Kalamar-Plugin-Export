@@ -16,6 +16,8 @@ interface Exporter {
     public JsonNode getQuery();
     public JsonNode getCollection();
     public void appendMatches (String s) throws IOException;
+    public String getFname ();
+    public void setFname (String s);
 
     // Implemented by Exporter
     public ResponseBuilder serve();

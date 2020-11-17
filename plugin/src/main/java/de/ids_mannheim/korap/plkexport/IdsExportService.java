@@ -201,11 +201,6 @@ public class IdsExportService {
                 );
         }
 
-        // set filename based on query (if not already set)
-        if (fname == null) {
-            fname = q;
-        };
-
         Exporter exp;
 
         // Choose the correct exporter
@@ -216,6 +211,14 @@ public class IdsExportService {
             exp = new RtfExporter();
         };
 
+        // set filename based on query (if not already set)
+        if (fname != null) {
+            exp.setFname(fname);
+        }
+        else {
+            exp.setFname(q);
+        };
+        
         // Initialize exporter (with meta data and first matches)
         exp.init(resp);
         
@@ -263,13 +266,6 @@ public class IdsExportService {
             builder = exp.serve();
         };        
 
-        builder.header(
-            "Content-Disposition",
-            "attachment; filename=" +
-            sanitizeFileName(fname) +
-            '.' +
-            exp.getSuffix()
-            );
         return builder.build();
     };
 

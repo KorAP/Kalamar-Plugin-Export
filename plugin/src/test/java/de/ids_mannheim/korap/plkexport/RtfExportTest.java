@@ -17,10 +17,10 @@ public class RtfExportTest {
 
     @Test
     public void testInit () throws IOException {
-        RtfExporter json = new RtfExporter();
-        json.init("{\"query\":\"cool\"}");
+        RtfExporter rtf = new RtfExporter();
+        rtf.init("{\"query\":\"cool\"}");
 
-        Response resp = json.serve().build();
+        Response resp = rtf.serve().build();
         String x = (String) resp.getEntity();
         resp.close();
         assertTrue(x.contains("{\\pard\\ql @ Institut"));
@@ -29,8 +29,8 @@ public class RtfExportTest {
 
     @Test
     public void testInitFull () throws IOException {
-        RtfExporter json = new RtfExporter();
-        json.init("{\"meta\":\"ja\",\"collection\":\"hm\",\"query\":\"cool\"," +
+        RtfExporter rtf = new RtfExporter();
+        rtf.init("{\"meta\":\"ja\",\"collection\":\"hm\",\"query\":\"cool\"," +
                   "\"matches\":["+
                   "{\"author\":\"Goethe\","+
                   "\"title\":\"Title1\","+
@@ -47,7 +47,7 @@ public class RtfExportTest {
                   "<span class=\\\"more\\\"></span></span>\"}"+
                   "]}");
 
-        Response resp = json.serve().build();
+        Response resp = rtf.serve().build();
         String x = (String) resp.getEntity();
         resp.close();
         assertTrue(x.contains("{\\b match1}"));
@@ -59,5 +59,14 @@ public class RtfExportTest {
         assertTrue(x.contains("\\qj [...] Simpler "));
         assertTrue(x.contains("Snippet\\par}"));
         assertTrue(x.contains("Snippet [...]\\par}"));
+    };
+
+    @Test
+    public void testAttributes () throws IOException {
+        RtfExporter rtf = new RtfExporter();
+        rtf.setFname("Beispiel");
+        assertEquals(rtf.getFname(),"Beispiel");
+        assertEquals(rtf.getMimeType(),"application/rtf");
+        assertEquals(rtf.getSuffix(),"rtf");
     };
 };

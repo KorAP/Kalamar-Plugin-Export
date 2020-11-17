@@ -51,7 +51,17 @@ public class JsonExportTest {
         resp.close();
         assertEquals(slurp(x),"{\"query\":\"cool\",\"meta\":\"ja\",\"collection\":\"hm\",\"matches\":[\"first\",\"second\",\"third\",\"fourth\"]}");
     };
+
+    @Test
+    public void testAttributes () throws IOException {
+        JsonExporter json = new JsonExporter();
+        json.setFname("Beispiel");
+        assertEquals(json.getFname(),"Beispiel");
+        assertEquals(json.getMimeType(),"application/json");
+        assertEquals(json.getSuffix(),"json");
+    };
     
+
     public static String slurp (File file) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(file)); 	  
         String string; 
