@@ -1,8 +1,10 @@
 package de.ids_mannheim.korap.plkexport;
 
+import javax.ws.rs.core.MediaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.io.Writer;
+
 
 /**
  * This is a streaming exporter class for Json, so it's based on
@@ -16,6 +18,19 @@ public class JsonExporter extends MatchAggregator implements Exporter {
         {
             firstMatch = true;
         }
+
+
+    @Override
+    public String getMimeType () {
+        return MediaType.APPLICATION_JSON;
+    };
+
+
+    @Override
+    public String getSuffix () {
+        return "json";
+    };
+
     
     @Override
     public void writeHeader (Writer w) throws IOException {

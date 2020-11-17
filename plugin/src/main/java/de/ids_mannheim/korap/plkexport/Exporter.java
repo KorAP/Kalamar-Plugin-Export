@@ -24,4 +24,6 @@ interface Exporter {
     public void writeHeader (Writer w) throws IOException;
     public void addMatch (JsonNode n, Writer w) throws IOException;
     public void writeFooter (Writer w) throws IOException;
+    public String getMimeType ();
+    public String getSuffix ();
 };

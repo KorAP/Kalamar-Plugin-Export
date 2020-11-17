@@ -88,6 +88,7 @@ public class IdsExportService {
     @Context
     private HttpServletRequest req; 
     
+
     /**
      * WebService calls Kustvakt Search Webservices and returns
      * response as json (all of the response) and
@@ -155,6 +156,7 @@ public class IdsExportService {
         String path   = properties.getProperty("api.path", "");
         int pageSize  = Integer.parseInt(properties.getProperty("conf.page_size", "5"));
 
+        // Create initial search uri
         UriBuilder uri = UriBuilder.fromPath("/api/v1.0/search")
             .host(host)
             .port(Integer.parseInt(port))
@@ -202,33 +204,25 @@ public class IdsExportService {
         // set filename based on query (if not already set)
         if (fname == null) {
             fname = q;
-        }
+        };
 
         Exporter exp;
 
+        // Choose the correct exporter
         if (format.equals("json")) {
             exp = new JsonExporter();
         }
         else {
             exp = new RtfExporter();
         };
-        
+
+        // Initialize exporter (with meta data and first matches)
         exp.init(resp);
         
         // If only one page should be exported there is no need
         // for a temporary export file
         if (cutoff) {
-
             builder = exp.serve();
-
-            if (format.equals("json")) {
-                builder.type(MediaType.APPLICATION_JSON);
-            }
-
-            else {
-                builder.type("application/rtf");
-                format = "rtf";
-            };
         }
 
         // Page through results
@@ -265,16 +259,8 @@ public class IdsExportService {
                 resp = authBuilder(reqBuilder, xff, auth).get(String.class);
                 exp.appendMatches(resp);
             }
-            // builder = Response.ok(expTmp);
-            builder = exp.serve();
 
-            if (format.equals("json")) {
-                builder.type(MediaType.APPLICATION_JSON);
-            }
-            else {
-                builder.type("application/rtf");
-                format = "rtf";
-            };
+            builder = exp.serve();
         };        
 
         builder.header(
@@ -282,7 +268,7 @@ public class IdsExportService {
             "attachment; filename=" +
             sanitizeFileName(fname) +
             '.' +
-            format
+            exp.getSuffix()
             );
         return builder.build();
     };

@@ -39,6 +39,14 @@ public class MatchAggregator {
     
     public JsonNode meta, query, collection;
 
+    public String getMimeType() {
+        return "text/plain";
+    };
+
+    public String getSuffix() {
+        return "txt";
+    };
+
     public void setMeta (JsonNode meta) {
         this.meta = meta;
     };
@@ -156,14 +164,20 @@ public class MatchAggregator {
      */
     public ResponseBuilder serve () {
         try {
+            ResponseBuilder rb;
 
             this.writeFooter(this.writer);
             this.writer.close();
-            
+
+
             if (this.file == null) {
-                return Response.ok(writer.toString());
+                rb = Response.ok(writer.toString());
+            }
+            else {
+                rb = Response.ok(this.file);
             };
-            return Response.ok(this.file);            
+
+            return rb.type(this.getMimeType());
         }
 
         // Catch error

@@ -41,6 +41,18 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             firstMatch = true;
             sb = new StringBuilder(256);
         }
+
+    @Override
+    public String getMimeType () {
+        return "application/rtf";
+    };
+
+
+    @Override
+    public String getSuffix () {
+        return "rtf";
+    };
+    
     
     @Override
     public void writeHeader (Writer w) throws IOException {
