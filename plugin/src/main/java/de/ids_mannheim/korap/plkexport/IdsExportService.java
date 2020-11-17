@@ -52,11 +52,10 @@ import freemarker.template.Template;
  *   all pages.
  * - Handle timeout results (with minimum total results).
  * - Use offset instead of page parameter
- * - Add mime type to exporters
- * - Add format to exporters
- * - Add file suffix to exporters
  * - Test Snippet-Export with multiple classes.
  * - Test Snippet-Export with cutted matches.
+ * - Add progress mechanism.
+ * - Add CSV export format.
  */
 
 @Path("/")
@@ -115,9 +114,9 @@ public class IdsExportService {
         @FormParam("format") String format,
         @FormParam("q") String q,
         @FormParam("ql") String ql,
-        @FormParam("islimit") String il,
-        @FormParam("cutoff") String cutoffStr,
-        @FormParam("hitc") int hitc
+        @FormParam("cutoff") String cutoffStr
+        // @FormParam("islimit") String il,
+        // @FormParam("hitc") int hitc
         ) throws IOException {
 
         // These parameters are required

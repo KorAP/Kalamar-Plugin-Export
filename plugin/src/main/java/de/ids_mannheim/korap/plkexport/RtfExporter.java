@@ -65,7 +65,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
         rtfText(w, "@ Institut für Deutsche Sprache, Mannheim");
 
         // Page number
-        w.append("  \\endash  \\chpgn / {\\field{\\*\\fldinst{\\fs18\\f0 NUMPAGES}}}");
+        w.append(" \\endash  \\chpgn /{\\field{\\*\\fldinst{\\fs18\\f0 NUMPAGES}}}");
         w.append("\\par}\n");
 
         // Title
@@ -76,6 +76,28 @@ public class RtfExporter extends MatchAggregator implements Exporter {
         };
 
         addVersion(w);
+
+
+        // Add Information table
+        if (this.getQueryString() != null) {
+            w.append("{\\pard Query: \\f1 ")
+                .append(this.getQueryString())
+                .append("\\par}\n");
+        };
+        
+        if (this.getMeta() != null) {
+            JsonNode m = this.getMeta();
+            int totalResults = m.at("/totalResults").asInt();
+
+            if (totalResults != -1) {
+                w.append("{\\pard Count: \\f1 ")
+                    .append(m.at("/totalResults").asText())
+                    .append("\\par}\n");
+            };
+        };
+
+        // Add line
+        w.append("{\\pard\\brdrb\\brdrs\\brdrw2\\brsp20\\par}\n");
     };
     
 
@@ -97,7 +119,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             w.append("\\line ");
 
             // Snippet
-            w.append("{\\pard\\fs22\\f0\\qj ");
+            w.append("{\\pard\\fs20\\f0\\qj ");
             if (s.hasMoreLeft()) {
                 w.append("[...] ");
             };
@@ -113,7 +135,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
 
             // Reference
             w.append("{\\pard");
-            w.append("\\qr\\fs20\\cf2\\f0 ");
+            w.append("\\qr\\fs18\\cf2\\f0 ");
             w.append("{\\b ");
             rtfText(w, match.getTitle());
             w.append(" von ");
@@ -124,7 +146,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             w.append("\\par}");
 
             // TextSigle
-            w.append("{\\pard\\qr\\b\\fs20\\cf2\\f1 [");
+            w.append("{\\pard\\qr\\b\\fs18\\cf2\\f1 [");
             rtfText(w, match.getTextSigle());
             w.append("]\\par}");
 
