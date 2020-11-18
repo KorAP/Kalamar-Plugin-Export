@@ -8,14 +8,14 @@ import java.io.Writer;
 interface Exporter {
 
     // Implemented by MatchAggregator
-    public void init (String s) throws IOException;
+    public boolean init (String s) throws IOException;
     public void setMeta(JsonNode n);
     public void setQuery(JsonNode n);
     public void setCollection(JsonNode n);
     public JsonNode getMeta();
     public JsonNode getQuery();
     public JsonNode getCollection();
-    public void appendMatches (String s) throws IOException;
+    public boolean appendMatches (String s) throws IOException;
     public String getFileName ();
     public void setFileName (String s);
     public String getQueryString ();
@@ -24,6 +24,7 @@ interface Exporter {
     public void setCorpusQueryString (String s);
     public int getTotalResults ();
     public boolean hasTimeExceeded ();
+    public void setMaxResults (int m);
 
     // Implemented by Exporter
     public ResponseBuilder serve();

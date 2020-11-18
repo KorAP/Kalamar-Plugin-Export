@@ -44,6 +44,8 @@ public class MatchAggregator {
     private String fname, queryString, corpusQueryString;
     private boolean timeExceeded = false;
     private int totalResults = -1;
+    private int maxResults = -1;
+    private int fetchedResults = 0;
 
     public String getMimeType() {
         return "text/plain";
@@ -56,7 +58,7 @@ public class MatchAggregator {
     public int getTotalResults() {
         return this.totalResults;
     };
-
+    
     public boolean hasTimeExceeded() {
         return this.timeExceeded;
     };
@@ -102,6 +104,15 @@ public class MatchAggregator {
         this.query = query;
     };
 
+    // Needs to be set before first addMatch
+    public void setMaxResults (int maxResults) {
+        this.maxResults = maxResults;
+    };
+
+    public int getMaxResults () {
+        return this.maxResults;
+    };
+    
     public JsonNode getQuery () {
         return this.query;
     };
@@ -123,20 +134,20 @@ public class MatchAggregator {
      * Create new match aggregator and parse initial Json
      * file to get header information and initial matches.
      */
-    public void init (String resp) throws IOException, JsonParseException {
+    public boolean init (String resp) throws IOException, JsonParseException {
 
         this.file = null;
 
         matches = new LinkedList();
 
         if (resp == null)
-            return;
-        
+            return false;
+
         JsonParser parser = mapper.getFactory().createParser(resp);
         JsonNode actualObj = mapper.readTree(parser);
-        
+
         if (actualObj == null)
-            return;
+            return false;
 
         JsonNode meta = actualObj.get("meta");
         this.setMeta(meta);
@@ -155,24 +166,17 @@ public class MatchAggregator {
         writer = new StringWriter();
 
         this.writeHeader(writer);
-        
-        JsonNode mNodes = actualObj.get("matches");
 
-        if (mNodes == null)
-            return;
-        
-        // Iterate over the results of the current file
-        Iterator<JsonNode> mNode = mNodes.elements();
-        while (mNode.hasNext()) {
-            this.addMatch(mNode.next(), writer);
-        };
+        return this.iterateThroughMatches(
+            actualObj.get("matches")
+            );
     };
 
 
     /**
      * Append more matches to the result set.
      */
-    public void appendMatches (String resp) throws IOException {
+    public boolean appendMatches (String resp) throws IOException {
 
         // Open a temp file if not already opened
         if (this.file == null) {
@@ -196,19 +200,11 @@ public class MatchAggregator {
         JsonNode actualObj = mapper.readTree(parser);
 
         if (actualObj == null)
-            return;
+            return false;
         
-        JsonNode mNodes = actualObj.get("matches");
-
-        if (mNodes == null)
-            return;
-
-        Iterator<JsonNode> mNode = mNodes.elements();
-        
-        MatchExport match;
-        while (mNode.hasNext()) {
-            this.addMatch(mNode.next(), writer);
-        };
+        return this.iterateThroughMatches(
+            actualObj.get("matches")
+            );
     };
 
 
@@ -248,5 +244,24 @@ public class MatchAggregator {
         // TODO:
         //   Return exporter error
         return Response.status(500).entity("error");
+    };
+
+
+    // Iterate through all matches
+    private boolean iterateThroughMatches (JsonNode mNodes) throws IOException {
+        if (mNodes == null)
+            return false;
+        
+        // Iterate over the results of the current file
+        Iterator<JsonNode> mNode = mNodes.elements();
+        while (mNode.hasNext()) {
+            this.addMatch(mNode.next(), writer);
+            this.fetchedResults++;
+            if (this.maxResults > 0 &&
+                this.fetchedResults > this.maxResults) {
+                return false;
+            };
+        };
+        return true;
     };
 };

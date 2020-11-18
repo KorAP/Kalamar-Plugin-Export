@@ -48,15 +48,12 @@ import freemarker.template.Template;
 /**
  * TODO:
  * - Delete the temp file of the export at the end
- * - Right now, the web service returns one page (cutoff=1) or
- *   all pages.
  * - Do not expect all meta data per match.
- * - Handle timeout results (with minimum total results).
- * - Use offset instead of page parameter
  * - Add progress mechanism.
  * - Add CSV export format.
  * - Add table layout to RTF information.
  * - Add loading marker.
+ * - Add hitc to form.
  */
 
 @Path("/")
@@ -116,9 +113,9 @@ public class IdsExportService {
         @FormParam("q") String q,
         @FormParam("cq") String cq,
         @FormParam("ql") String ql,
-        @FormParam("cutoff") String cutoffStr
+        @FormParam("cutoff") String cutoffStr,
         // @FormParam("islimit") String il,
-        // @FormParam("hitc") int hitc
+        @FormParam("hitc") int hitc
         ) throws IOException {
 
         // These parameters are required
@@ -138,24 +135,32 @@ public class IdsExportService {
                             + params[i][0] + "\"" + " is missing or empty")
                     .build());
         };
-
-        int totalResults = -1;
         
         // Retrieve cutoff value
         boolean cutoff = false;
-        if (cutoffStr != null && (cutoffStr.equals("true") || cutoffStr.equals("1"))) {
+        if (cutoffStr != null && (
+                cutoffStr.equals("true") ||
+                cutoffStr.equals("1"))
+            ) {
             cutoff = true;
         };
 
         ResponseBuilder builder = null;
         Client client = ClientBuilder.newClient();
 
-        String scheme = properties.getProperty("api.scheme", "https");
-        String port   = properties.getProperty("api.port", "8089");
-        String host   = properties.getProperty("api.host", "localhost");
-        String path   = properties.getProperty("api.path", "");
-        int pageSize  = Integer.parseInt(properties.getProperty("conf.page_size", "5"));
+        // Load configuration values
+        String scheme  = properties.getProperty("api.scheme", "https");
+        String port    = properties.getProperty("api.port", "8089");
+        String host    = properties.getProperty("api.host", "localhost");
+        String path    = properties.getProperty("api.path", "");
+        int pageSize   = Integer.parseInt(properties.getProperty("conf.page_size", "5"));
+        int maxResults = Integer.parseInt(properties.getProperty("conf.max_exp_limit", "10000"));
 
+        // Adjust the number of requested hits
+        if (hitc > 0 && hitc < maxResults) {
+            maxResults = hitc;
+        };
+               
         // Create initial search uri
         UriBuilder uri = UriBuilder.fromPath("/api/v1.0/search")
             .host(host)
@@ -169,12 +174,11 @@ public class IdsExportService {
 
         if (cq != null)
             uri = uri.queryParam("cq", cq);
-
         
         if (path != "") {
             uri = uri.path(path);
         };
-
+       
         uri = uri.queryParam("count", pageSize);
 
         // Get client IP, in case service is behind a proxy
@@ -183,9 +187,8 @@ public class IdsExportService {
         String auth = "";
         if (req != null) {
             xff = getClientIP(req.getHeader("X-Forwarded-For"));
-            if (xff == "") {
+            if (xff == "")
                 xff = req.getRemoteAddr();
-            };
 
             auth = authFromCookie(req);
         };
@@ -208,16 +211,15 @@ public class IdsExportService {
         Exporter exp;
 
         // Choose the correct exporter
-        if (format.equals("json")) {
+        if (format.equals("json"))
             exp = new JsonExporter();
-        }
-        else {
+        else
             exp = new RtfExporter();
-        };
 
+        exp.setMaxResults(maxResults);
         exp.setQueryString(q);
         exp.setCorpusQueryString(cq);
-        
+       
         // set filename based on query (if not already set)
         if (fname != null) {
             exp.setFileName(fname);
@@ -226,6 +228,7 @@ public class IdsExportService {
         // Initialize exporter (with meta data and first matches)
         try {
             exp.init(resp);
+
         } catch (Exception e) {
 
             throw new WebApplicationException(
@@ -234,47 +237,48 @@ public class IdsExportService {
                     e.getMessage()
                     )
                 );
-        }
+        };
 
+
+        /*
+         * Calculate how many results to fetch
+         */
+        int fetchCount = exp.getTotalResults();
+        if (exp.hasTimeExceeded() || fetchCount > maxResults) {
+            fetchCount = maxResults;
+        };
+
+        // The first page was already enough
+        if (fetchCount <= pageSize) {
+            cutoff = true;
+        };
+        
         // If only one page should be exported there is no need
         // for a temporary export file
         if (cutoff) {
             builder = exp.serve();
         }
 
-        // Page through results
+        // Page through all results
         else {
 
-            /*
-             * Get total results
-             */
-            totalResults = exp.getTotalResults();
+            // It's not important anymore to get totalResults
+            uri.queryParam("cutoff", "true");
 
-            /*
-             *  Get number of pages and the number of hits 
-             *  which should be exported at the last page
-             */
-            int pg = 1;
-            if (totalResults % pageSize > 0) {
-                pg = totalResults / pageSize + 1;
-            }
-            else {
-                pg = totalResults / pageSize;
-            }
-
+            // Set offset for paging as a template
             uri.queryParam("offset", "{offset}");
 
             try {
             
                 // Iterate over all results
-                for (int i = 2; i <= pg; i++) {
-                    resource = client.target(
-                        uri.build((i * pageSize) - pageSize)
-                        );
-               
+                for (int i = pageSize; i <= fetchCount; i+=pageSize) {
+                    resource = client.target(uri.build(i));
                     reqBuilder = resource.request(MediaType.APPLICATION_JSON);
                     resp = authBuilder(reqBuilder, xff, auth).get(String.class);
-                    exp.appendMatches(resp);
+
+                    // Stop when no more matches are allowed
+                    if (!exp.appendMatches(resp))
+                        break;
                 }
             } catch (Exception e) {
                 throw new WebApplicationException(

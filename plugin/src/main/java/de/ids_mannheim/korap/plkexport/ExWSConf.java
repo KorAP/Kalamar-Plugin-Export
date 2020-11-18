@@ -13,14 +13,7 @@ import java.lang.String;
 import java.util.Properties;
 
 public class ExWSConf {
-    /*
-     * maximum hits to be exported
-     * TODO: Define this constants after discussing it. 
-     * Maybe we need a distinction between users at the IDS and external users
-     * See also: https://www.ids-mannheim.de/cosmas2/script-app/hilfe/sitzung.html
-     */
-    public static final int MAX_EXP_LIMIT = 10000;
-    
+
     // Version of Export Plugin
     public static final int VERSION_MAJOR = 0;
     public static final int VERSION_MINOR = 1;

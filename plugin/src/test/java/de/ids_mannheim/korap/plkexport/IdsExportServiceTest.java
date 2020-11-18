@@ -110,7 +110,7 @@ public class IdsExportServiceTest extends JerseyTest {
         frmap.add("fname", filenamej);
         frmap.add("format", "json");
         frmap.add("q", "Wasser");
-        frmap.add("cutoff", "true");
+        frmap.add("cutoff", "1");
         frmap.add("ql", "poliqarp");
 
         String message;
@@ -483,6 +483,7 @@ public class IdsExportServiceTest extends JerseyTest {
         frmap.add("format", "rtf");
         frmap.add("q", "Plagegeist");
         frmap.add("ql", "poliqarp");
+        frmap.add("hitc", "30");
         String filenamer = "dateiPagingRtf";
         frmap.putSingle("fname", filenamer);
 
@@ -491,11 +492,27 @@ public class IdsExportServiceTest extends JerseyTest {
         assertEquals("Request RTF: Http Response should be 200: ",
                 Status.OK.getStatusCode(), responsertf.getStatus());
 
+        // With maxResults
         String str = responsertf.readEntity(String.class);
         assertTrue("Page 1 content", str.contains("Ironhoof"));
         assertTrue("Page 2 content", str.contains("Sinologie"));
         assertTrue("Unicode handling", str.contains("Hintergr\\u252\\'fcnde"));
         assertTrue("TotalResults", str.contains("Count: \\f1 9\\"));
+        assertFalse("Fetched", str.contains("Fetched:"));
+
+        frmap.putSingle("hitc", "7");
+
+        responsertf = target("/export").request()
+            .post(Entity.form(frmap));
+        assertEquals("Request RTF: Http Response should be 200: ",
+                Status.OK.getStatusCode(), responsertf.getStatus());
+
+        str = responsertf.readEntity(String.class);
+        assertTrue("Page 1 content", str.contains("Ironhoof"));
+        assertTrue("Page 2 content", str.contains("Sinologie"));
+        assertTrue("Unicode handling", str.contains("Hintergr\\u252\\'fcnde"));
+        assertTrue("TotalResults", str.contains("Count: \\f1 9\\"));
+        assertTrue("Fetched", str.contains("Fetched: \\f1 7\\"));
     }
 
     
@@ -534,6 +551,7 @@ public class IdsExportServiceTest extends JerseyTest {
         frmap.add("format", "rtf");
         frmap.add("q", "Plagegeist");
         frmap.add("ql", "poliqarp");
+        frmap.add("hitc", "30");
         String filenamer = "dateiPagingRtf";
         frmap.putSingle("fname", filenamer);
 
@@ -587,6 +605,7 @@ public class IdsExportServiceTest extends JerseyTest {
         frmap.add("format", "json");
         frmap.add("q", "Plagegeist");
         frmap.add("ql", "poliqarp");
+        frmap.add("hitc", "30");
         String filenamer = "dateiPagingJson";
         frmap.putSingle("fname", filenamer);
 
@@ -604,6 +623,65 @@ public class IdsExportServiceTest extends JerseyTest {
         assertEquals(obj.at("/matches/0/matchID").asText(),"match-WUD17/G59/34284-p4238-4239");
         assertEquals(obj.at("/matches/1/matchID").asText(),"match-WUD17/C53/60524-p736-737");
         assertEquals(obj.at("/matches/8/matchID").asText(),"match-WUD17/K35/39955-p16258-16259");
+        assertTrue(obj.at("/matches/0/snippet").asText().contains("<span class=\"context-right\">&quot;"));
+        assertTrue(obj.at("/matches/0/snippet").asText().contains("wie wär's"));
+    }    
+
+    @Test
+    public void testExportWsJsonWithMaxHitcFirstPage () throws IOException {
+
+        // This should ensure here to check that page 2 is not loaded
+        mockClient.reset().when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Plagegeist")
+            .withQueryStringParameter("count", "5")
+            .withQueryStringParameter("offset", "5")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_broken.json"))
+                .withStatusCode(200)
+                );
+
+        mockClient.when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Plagegeist")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_plagegeist_1.json"))
+                .withStatusCode(200)
+                );
+
+        MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<String, String>();
+        frmap.add("format", "json");
+        frmap.add("q", "Plagegeist");
+        frmap.add("ql", "poliqarp");
+        frmap.add("hitc", "3");
+        String filenamer = "dateiPagingJson";
+        frmap.putSingle("fname", filenamer);
+
+        Response responsejson = target("/export").request()
+            .post(Entity.form(frmap));
+        assertEquals("Request RTF: Http Response should be 200: ",
+                Status.OK.getStatusCode(), responsejson.getStatus());
+
+        String str = responsejson.readEntity(String.class);
+        JsonParser parser = mapper.getFactory().createParser(str);
+        JsonNode obj = mapper.readTree(parser);
+
+        assertEquals(obj.at("/query/@type").asText(),"koral:token");
+        assertEquals(obj.at("/meta/totalResults").asInt(),9);
+        assertEquals(obj.at("/matches/0/matchID").asText(),"match-WUD17/G59/34284-p4238-4239");
+        assertEquals(obj.at("/matches/1/matchID").asText(),"match-WUD17/C53/60524-p736-737");
+        assertEquals(obj.at("/matches/2/matchID").asText(),"match-WUD17/J34/49397-p19826-19827");
+        assertFalse(obj.has("/matches/3"));
         assertTrue(obj.at("/matches/0/snippet").asText().contains("<span class=\"context-right\">&quot;"));
         assertTrue(obj.at("/matches/0/snippet").asText().contains("wie wär's"));
     }    

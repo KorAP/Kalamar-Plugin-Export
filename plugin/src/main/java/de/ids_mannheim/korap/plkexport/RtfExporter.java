@@ -103,6 +103,13 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             w.append("\\par}\n");
         };
 
+        if (this.getTotalResults() == -1 ||
+            this.getTotalResults() > this.getMaxResults()) {
+            w.append("{\\pard Fetched: \\f1 ");
+            w.append(Integer.toString(this.getMaxResults()));
+            w.append("\\par}\n");
+        };
+
         // Add line
         w.append("{\\pard\\brdrb\\brdrs\\brdrw2\\brsp20\\par}\n");
     };
