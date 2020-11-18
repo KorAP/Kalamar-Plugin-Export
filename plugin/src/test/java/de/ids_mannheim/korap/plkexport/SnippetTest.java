@@ -49,4 +49,16 @@ public class SnippetTest {
         assertTrue(s.hasMoreLeft());
         assertTrue(s.hasMoreRight());
     };
+
+    @Test
+    public void testCuttedAndEmptyContext () {
+        Snippet s = new Snippet("<span class=\"context-left\"></span><span class=\"match\"><mark>Und dafür musstest Du extra ne neue Socke erstellen? Wieso traust Du Dich nicht, mit Deinem Account aufzutreten? - -- ωωσσI -  talk with me 09:17, 17. Dez. 2011 (CET) Der ist doch gesperrt. -- 09:21, 17. Dez. 2011 (CET) WWSS1, weil ich normalerweise mit IP schreibe und in dem Fall nicht möchte, dass</mark><span class=\"cutted\"></span></span><span class=\"context-right\"> meine IP öffentlich angezeigt wird. Über die IP kann man auf den Wohnort, den Provider und bei Aufenthalt am Arbeitsplatz auf den Arbeitgeber schließen, über Konto nicht. -- 09:24, 17. Dez. 2011 (CET) Bist Du denn nicht mehr selber Arbeitgeber? -- 09:31<span class=\"more\"></span></span>");
+        assertEquals(s.getLeft(), "");
+        assertEquals(s.getRight()," meine IP öffentlich angezeigt wird. Über die IP kann man auf den Wohnort, den Provider und bei Aufenthalt am Arbeitsplatz auf den Arbeitgeber schließen, über Konto nicht. -- 09:24, 17. Dez. 2011 (CET) Bist Du denn nicht mehr selber Arbeitgeber? -- 09:31");
+        assertEquals(s.getMark(),"Und dafür musstest Du extra ne neue Socke erstellen? Wieso traust Du Dich nicht, mit Deinem Account aufzutreten? - -- ωωσσI -  talk with me 09:17, 17. Dez. 2011 (CET) Der ist doch gesperrt. -- 09:21, 17. Dez. 2011 (CET) WWSS1, weil ich normalerweise mit IP schreibe und in dem Fall nicht möchte, dass");
+        assertTrue(s.isCutted());
+        assertFalse(s.hasMoreLeft());
+        assertTrue(s.hasMoreRight());
+        
+    };
 };

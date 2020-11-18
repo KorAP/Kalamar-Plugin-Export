@@ -77,7 +77,6 @@ public class RtfExporter extends MatchAggregator implements Exporter {
 
         addVersion(w);
 
-
         // Add Information table
         if (this.getQueryString() != null) {
             w.append("{\\pard Query: \\f1 ");
@@ -133,6 +132,9 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             rtfText(w, s.getLeft());
             w.append("{\\b ");
             rtfText(w, s.getMark());
+            if (s.isCutted()) {
+                w.append(" [!]");
+            };
             w.append("}");
             rtfText(w, s.getRight());
             if (s.hasMoreRight()) {

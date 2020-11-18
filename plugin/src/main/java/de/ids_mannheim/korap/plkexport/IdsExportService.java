@@ -52,8 +52,6 @@ import freemarker.template.Template;
  *   all pages.
  * - Handle timeout results (with minimum total results).
  * - Use offset instead of page parameter
- * - Test Snippet-Export with multiple classes.
- * - Test Snippet-Export with cutted matches.
  * - Add progress mechanism.
  * - Add CSV export format.
  * - Add table layout to RTF information.

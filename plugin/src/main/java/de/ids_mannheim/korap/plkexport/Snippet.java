@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 public class Snippet {
 
     private String left, right, mark;
-    private boolean leftMore, rightMore;
+    private boolean leftMore, rightMore, cuttedMark;
 
     private static Pattern snippetP =
         Pattern.compile("^(?i)<span[^>]+class=\"(?:[^\"]* )?context-left(?:[^\"]* )?\">(.*?)</span>" +
@@ -16,6 +16,9 @@ public class Snippet {
     private static Pattern moreP =
         Pattern.compile("(?i)<span[^>]+class=\"more\"></span>");
 
+    private static Pattern cuttedP =
+        Pattern.compile("(?i)<span[^>]+class=\"cutted\"></span>");
+    
     public Snippet (String snippetstr) {
 
         // Match with precise algorithm
@@ -35,6 +38,12 @@ public class Snippet {
                 this.setLeft(unescapeHTML(left));
             };
 
+            m = cuttedP.matcher(mark);
+            if (m.find()) {
+                mark = m.replaceAll("");
+                this.cuttedMark = true;
+            };
+            
             this.setMark(unescapeHTML(mark.replaceAll("</?mark[^>]*>", "")));
 
             if (right != null) {
@@ -105,6 +114,9 @@ public class Snippet {
         return rightMore;
     };
 
+    public boolean isCutted () {
+        return cuttedMark;
+    };
     
     private static String unescapeHTML (String text) {
         if (text == null)
