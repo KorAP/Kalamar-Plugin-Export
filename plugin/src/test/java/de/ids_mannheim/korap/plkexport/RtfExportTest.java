@@ -23,7 +23,7 @@ public class RtfExportTest {
         Response resp = rtf.serve().build();
         String x = (String) resp.getEntity();
         resp.close();
-        assertTrue(x.contains("\\footer\\pard\\ql\\fs18\\f0 @ Institut"));
+        assertTrue(x.contains("\\footer\\pard\\qr\\fs18\\f0 @ Institut"));
         assertTrue(x.contains("Institut f\\u252\\'fcr Deutsche"));
     };
 
@@ -31,21 +31,22 @@ public class RtfExportTest {
     public void testInitFull () throws IOException {
         RtfExporter rtf = new RtfExporter();
         rtf.init("{\"meta\":\"ja\",\"collection\":\"hm\",\"query\":\"cool\"," +
-                  "\"matches\":["+
-                  "{\"author\":\"Goethe\","+
-                  "\"title\":\"Title1\","+
-                  "\"pubDate\":\"20051103\","+
-                  "\"textSigle\":\"RTF/G59/34284\","+
-                  "\"snippet\":\"Simple <mark>match1</mark> Snippet\"}"+
-                  ","+
-                  "{\"author\":\"Schiller\","+
-                  "\"title\":\"Title2\","+
-                  "\"pubDate\":\"20051104\","+
-                  "\"textSigle\":\"RTF/G59/34285\","+
-                  "\"snippet\":\"<span class=\\\"context-left\\\"><span class=\\\"more\\\"></span>"+
-                  "Simpler <mark>&quot;match2&quot;</mark> Snippet"+
-                  "<span class=\\\"more\\\"></span></span>\"}"+
-                  "]}");
+                 "\"matches\":["+
+                 "{\"author\":\"Goethe\","+
+                 "\"title\":\"Title1\","+
+                 "\"pubDate\":\"20051103\","+
+                 "\"textSigle\":\"RTF/G59/34284\","+
+                 "\"snippet\":\"Simple <mark>match1</mark> Snippet\"}"+
+                 ","+
+                 "{\"author\":\"Schiller\","+
+                 "\"title\":\"Title2\","+
+                 "\"pubDate\":\"20051104\","+
+                 "\"textSigle\":\"RTF/G59/34285\","+
+                 "\"snippet\":\"<span class=\\\"context-left\\\"><span class=\\\"more\\\"></span>"+
+                 "Simpler </span><span class=\\\"match\\\"><mark>&quot;match2&quot;</mark></span>"+
+                 "<span class=\\\"context-right\\\"> Snippet"+
+                 "<span class=\\\"more\\\"></span></span>\"}"+
+                 "]}");
 
         Response resp = rtf.serve().build();
         String x = (String) resp.getEntity();

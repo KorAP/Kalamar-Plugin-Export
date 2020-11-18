@@ -61,7 +61,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             .append("{\\colortbl;\\red0\\green0\\blue0;\\red127\\green127\\blue127;}\n")
             .append("{\\fonttbl{\\f0\\fcharset0 Times New Roman;}{\\f1\\fcharset1 Courier;}}\n");
 
-        w.append("{\\footer\\pard\\ql\\fs18\\f0 ");
+        w.append("{\\footer\\pard\\qr\\fs18\\f0 ");
         rtfText(w, "@ Institut für Deutsche Sprache, Mannheim");
 
         // Page number
@@ -131,9 +131,9 @@ public class RtfExporter extends MatchAggregator implements Exporter {
                 w.append("[...] ");
             };
             rtfText(w, s.getLeft());
-            w.append(" {\\b ");
+            w.append("{\\b ");
             rtfText(w, s.getMark());
-            w.append("} ");
+            w.append("}");
             rtfText(w, s.getRight());
             if (s.hasMoreRight()) {
                 w.append(" [...]");

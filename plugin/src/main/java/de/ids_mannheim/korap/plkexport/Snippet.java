@@ -1,36 +1,69 @@
 package de.ids_mannheim.korap.plkexport;
 
 import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class Snippet {
 
     private String left, right, mark;
     private boolean leftMore, rightMore;
 
-    private static Pattern leftMoreP =
-        Pattern.compile("(?i)<span[^>]*?class=\"more\".+<mark>");
-    private static Pattern rightMoreP =
-        Pattern.compile("(?i)</mark>.+<span[^>]*?class=\"more\"");
+    private static Pattern snippetP =
+        Pattern.compile("^(?i)<span[^>]+class=\"(?:[^\"]* )?context-left(?:[^\"]* )?\">(.*?)</span>" +
+                        "<span[^>]+class=\"(?:[^\"]* )?match(?:[^\"]* )?\">(.+?)</span>" +
+                        "<span[^>]+class=\"(?:[^\"]* )?context-right(?:[^\"]* )?\">(.*?)</span>$");   
+
+    private static Pattern moreP =
+        Pattern.compile("(?i)<span[^>]+class=\"more\"></span>");
 
     public Snippet (String snippetstr) {
 
-        // Check the context
-        this.leftMore = this.rightMore = false;
-        if (leftMoreP.matcher(snippetstr).find()) {
-            this.leftMore = true;
-        };
-        if (rightMoreP.matcher(snippetstr).find()) {
-            this.rightMore = true;
-        };
+        // Match with precise algorithm
+        String left, right;
+        Matcher m = snippetP.matcher(snippetstr);
+        if (m.find()) {
+            left = m.group(1);
+            mark = m.group(2);
+            right = m.group(3);
 
-        // Split the match
-        String[] split = snippetstr
-            .replaceAll("(?i)</?span[^>]*>", "")
-            .split("</?mark>");
+            if (left != null) {
+                m = moreP.matcher(left);
+                if (m.find()) {
+                    left = m.replaceAll("");
+                    this.leftMore = true;
+                };
+                this.setLeft(unescapeHTML(left));
+            };
 
-        this.setLeft(unescapeHTML(split[0].trim()));
-        this.setMark(unescapeHTML(split[1].trim()));
-        this.setRight(unescapeHTML(split[2].trim()));
+            this.setMark(unescapeHTML(mark.replaceAll("</?mark[^>]*>", "")));
+
+            if (right != null) {
+                m = moreP.matcher(right);
+                if (m.find()) {
+                    right = m.replaceAll("");
+                    this.rightMore = true;
+                };
+                this.setRight(unescapeHTML(right));
+            };
+        }
+
+        // Simpler mark-split algorithm
+        else {
+            String[] splitted = snippetstr
+                .replaceAll("(?i)</?span[^>]*>","")
+                .split("(?i)</?mark[^>]*>");
+            if (splitted[0] != null) {
+                this.setLeft(splitted[0]);
+            };
+            if (splitted[1] != null) {
+                this.setMark(splitted[1]);
+            };
+            if (splitted[2] != null) {
+                this.setRight(splitted[2]);
+            };
+            
+            return;
+        };
     }
 
     public String getLeft () {

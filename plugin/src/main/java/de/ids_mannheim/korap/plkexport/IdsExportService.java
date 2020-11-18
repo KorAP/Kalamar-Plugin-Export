@@ -57,6 +57,7 @@ import freemarker.template.Template;
  * - Add progress mechanism.
  * - Add CSV export format.
  * - Add table layout to RTF information.
+ * - Add loading marker.
  */
 
 @Path("/")
