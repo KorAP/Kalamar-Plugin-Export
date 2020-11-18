@@ -91,15 +91,16 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             w.append("\\par}\n");
         };
 
-        if (this.getMeta() != null) {
-            JsonNode m = this.getMeta();
-            int totalResults = m.at("/totalResults").asInt();
-
-            if (totalResults != -1) {
-                w.append("{\\pard Count: \\f1 ")
-                    .append(m.at("/totalResults").asText())
-                    .append("\\par}\n");
+        if (this.getTotalResults() != -1) {
+            w.append("{\\pard Count: \\f1 ");
+            if (this.hasTimeExceeded()) {
+                w.append("> ");
             };
+            w.append(Integer.toString(this.getTotalResults()));
+            if (this.hasTimeExceeded()) {
+                w.append(" (Time exceeded)");
+            };
+            w.append("\\par}\n");
         };
 
         // Add line

@@ -495,8 +495,62 @@ public class IdsExportServiceTest extends JerseyTest {
         assertTrue("Page 1 content", str.contains("Ironhoof"));
         assertTrue("Page 2 content", str.contains("Sinologie"));
         assertTrue("Unicode handling", str.contains("Hintergr\\u252\\'fcnde"));
+        assertTrue("TotalResults", str.contains("Count: \\f1 9\\"));
     }
 
+    
+    @Test
+    public void testExportWsRTFPagingWithTimeout () {
+
+        mockClient.reset().when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Plagegeist")
+            .withQueryStringParameter("count", "5")
+            .withQueryStringParameter("offset", "5")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_plagegeist_2.json"))
+                .withStatusCode(200)
+                );
+
+        mockClient.when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Plagegeist")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_timeout.json"))
+                .withStatusCode(200)
+                );
+        
+        MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<String, String>();
+        frmap.add("format", "rtf");
+        frmap.add("q", "Plagegeist");
+        frmap.add("ql", "poliqarp");
+        String filenamer = "dateiPagingRtf";
+        frmap.putSingle("fname", filenamer);
+
+        Response responsertf = target("/export").request()
+            .post(Entity.form(frmap));
+        assertEquals("Request RTF: Http Response should be 200: ",
+                Status.OK.getStatusCode(), responsertf.getStatus());
+
+        String str = responsertf.readEntity(String.class);
+        assertTrue("Page 1 content", str.contains("Importwunsch"));
+        assertTrue("Page 2 content", str.contains("Sinologie"));
+        assertTrue("Unicode handling", str.contains("Hintergr\\u252\\'fcnde"));
+        assertTrue("TotalResults", str.contains("Count: \\f1 > 22 ("));
+    }
+
+
+    
 
     @Test
     public void testExportWsJsonPaging () throws IOException {

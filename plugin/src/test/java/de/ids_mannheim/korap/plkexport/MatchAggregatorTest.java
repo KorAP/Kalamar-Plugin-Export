@@ -68,6 +68,24 @@ public class MatchAggregatorTest {
     };
 
     @Test
+    public void testTimeout () throws IOException {
+        MatchAggregator m = new MatchAggregator();
+        m.init("{\"meta\":{\"totalResults\":6}}");
+        assertEquals(m.getTotalResults(),6);
+        assertFalse(m.hasTimeExceeded());
+
+        m = new MatchAggregator();
+        m.init("{\"meta\":{\"totalResults\":7,\"timeExceeded\":true}}");
+        assertEquals(m.getTotalResults(),7);
+        assertTrue(m.hasTimeExceeded());
+
+        m = new MatchAggregator();
+        m.init("{\"meta\":{\"totalResults\":8,\"timeExceeded\":false}}");
+        assertEquals(m.getTotalResults(),8);
+        assertFalse(m.hasTimeExceeded());
+    };
+    
+    @Test
     public void testFileName () throws IOException {
         MatchAggregator m = new MatchAggregator();
         assertEquals(m.getFileName(),"export");

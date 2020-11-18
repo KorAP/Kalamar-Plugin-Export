@@ -42,6 +42,8 @@ public class MatchAggregator {
     
     private JsonNode meta, query, collection;
     private String fname, queryString, corpusQueryString;
+    private boolean timeExceeded = false;
+    private int totalResults = -1;
 
     public String getMimeType() {
         return "text/plain";
@@ -51,6 +53,14 @@ public class MatchAggregator {
         return "txt";
     };
 
+    public int getTotalResults() {
+        return this.totalResults;
+    };
+
+    public boolean hasTimeExceeded() {
+        return this.timeExceeded;
+    };
+    
     public void setFileName (String fname) {
         this.fname = fname;
     };
@@ -128,9 +138,19 @@ public class MatchAggregator {
         if (actualObj == null)
             return;
 
-        this.setMeta(actualObj.get("meta"));
+        JsonNode meta = actualObj.get("meta");
+        this.setMeta(meta);
         this.setQuery(actualObj.get("query"));
         this.setCollection(actualObj.get("collection"));
+
+        if (meta != null) {
+            if (meta.has("totalResults")) {
+                this.totalResults = meta.get("totalResults").asInt();
+                if (meta.has("timeExceeded")) {
+                    this.timeExceeded = meta.get("timeExceeded").asBoolean();
+                };
+            };
+        };
 
         writer = new StringWriter();
 

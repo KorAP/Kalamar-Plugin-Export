@@ -50,6 +50,7 @@ import freemarker.template.Template;
  * - Delete the temp file of the export at the end
  * - Right now, the web service returns one page (cutoff=1) or
  *   all pages.
+ * - Do not expect all meta data per match.
  * - Handle timeout results (with minimum total results).
  * - Use offset instead of page parameter
  * - Add progress mechanism.
@@ -138,7 +139,7 @@ public class IdsExportService {
                     .build());
         };
 
-        int totalhits = -1;
+        int totalResults = -1;
         
         // Retrieve cutoff value
         boolean cutoff = false;
@@ -247,20 +248,18 @@ public class IdsExportService {
             /*
              * Get total results
              */
-            if (exp.getMeta() != null) {
-                totalhits = exp.getMeta().get("totalResults").asInt();
-            };
+            totalResults = exp.getTotalResults();
 
             /*
              *  Get number of pages and the number of hits 
              *  which should be exported at the last page
              */
             int pg = 1;
-            if (totalhits % pageSize > 0) {
-                pg = totalhits / pageSize + 1;
+            if (totalResults % pageSize > 0) {
+                pg = totalResults / pageSize + 1;
             }
             else {
-                pg = totalhits / pageSize;
+                pg = totalResults / pageSize;
             }
 
             uri.queryParam("offset", "{offset}");

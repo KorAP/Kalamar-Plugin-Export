@@ -22,6 +22,8 @@ interface Exporter {
     public void setQueryString (String s);
     public String getCorpusQueryString ();
     public void setCorpusQueryString (String s);
+    public int getTotalResults ();
+    public boolean hasTimeExceeded ();
 
     // Implemented by Exporter
     public ResponseBuilder serve();
