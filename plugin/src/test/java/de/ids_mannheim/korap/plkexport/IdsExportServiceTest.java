@@ -335,7 +335,8 @@ public class IdsExportServiceTest extends JerseyTest {
                 Status.OK.getStatusCode(), responsertf.getStatus());
         String str = responsertf.readEntity(String.class);
 
-        assertTrue("Corpus info", str.contains("{\\pard Corpus: \\f1 corpusSigle = \"WPD17\"\\par}"));
+        assertTrue("Corpus info", str.contains("Corpus:"));
+        assertTrue("Corpus def", str.contains("corpusSigle = \"WPD17\""));
         assertFalse("Errors", str.contains("dynCall("));
     }
 
@@ -497,7 +498,7 @@ public class IdsExportServiceTest extends JerseyTest {
         assertTrue("Page 1 content", str.contains("Ironhoof"));
         assertTrue("Page 2 content", str.contains("Sinologie"));
         assertTrue("Unicode handling", str.contains("Hintergr\\u252\\'fcnde"));
-        assertTrue("TotalResults", str.contains("Count: \\f1 9\\"));
+        assertTrue("TotalResults", str.contains("Count:"));
         assertFalse("Fetched", str.contains("Fetched:"));
 
         frmap.putSingle("hitc", "7");
@@ -511,8 +512,10 @@ public class IdsExportServiceTest extends JerseyTest {
         assertTrue("Page 1 content", str.contains("Ironhoof"));
         assertTrue("Page 2 content", str.contains("Sinologie"));
         assertTrue("Unicode handling", str.contains("\\u252\\'fcbersetzt"));
-        assertTrue("TotalResults", str.contains("Count: \\f1 9\\"));
-        assertTrue("Fetched", str.contains("Fetched: \\f1 7\\"));
+        assertTrue("TotalResults1", str.contains("Count:"));
+        assertTrue("TotalResults2", str.contains("9\\cell"));
+        assertTrue("Fetched1", str.contains("Fetched:"));
+        assertTrue("Fetched2", str.contains("7\\cell"));
     }
 
     
@@ -564,10 +567,8 @@ public class IdsExportServiceTest extends JerseyTest {
         assertTrue("Page 1 content", str.contains("Importwunsch"));
         assertTrue("Page 2 content", str.contains("Sinologie"));
         assertTrue("Unicode handling", str.contains("Hintergr\\u252\\'fcnde"));
-        assertTrue("TotalResults", str.contains("Count: \\f1 > 22 ("));
-    }
-
-
+        assertTrue("TotalResults", str.contains("> 22 ("));
+    };
     
 
     @Test
