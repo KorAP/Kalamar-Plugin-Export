@@ -55,6 +55,7 @@ import freemarker.template.Template;
  * - Add hitc to form.
  * - Add infos to JsonExporter.
  * - Add date info.
+ * - Adjust count, if hitc &lt; count.
  */
 
 @Path("/")
@@ -173,7 +174,7 @@ public class IdsExportService {
             .queryParam("ql", ql)
             ;
 
-        if (cq != null)
+        if (cq != null && cq.length() > 0)
             uri = uri.queryParam("cq", cq);
         
         if (path != "") {
@@ -204,6 +205,7 @@ public class IdsExportService {
             resp = authBuilder(reqBuilder, xff, auth).get(String.class);
             
         } catch (Exception e) {
+            System.err.println("Unable to reach: " + uri.build());
             throw new WebApplicationException(
                 responseForm(Status.BAD_GATEWAY, "Unable to reach Backend")
                 );

@@ -148,13 +148,16 @@ public class RtfExporter extends MatchAggregator implements Exporter {
 
     private void addInfoTable (Writer w) throws IOException {
 
+        String q = this.getQueryString();
+
         // Add Information table
-        if (this.getQueryString() != null) {
+        if (q != null && q.length() > 0) {
             this.addInfoRow(w, "Query", this.getQueryString());
         };
 
-        if (this.getCorpusQueryString() != null) {
-            this.addInfoRow(w, "Corpus", this.getCorpusQueryString());
+        q = this.getCorpusQueryString();
+        if (q != null && q.length() > 0) {
+            this.addInfoRow(w, "Corpus", q);
         };
 
         if (this.getTotalResults() != -1) {
@@ -175,8 +178,9 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             this.addInfoRow(w, "Fetched", this.getMaxResults());
         };
 
-        if (this.getSource() != null) {
-            this.addInfoRow(w, "Source", this.getSource());
+        q = this.getSource();
+        if (q != null && q.length() > 0) {
+            this.addInfoRow(w, "Source", q);
         };
 
         if (this.getMeta() != null && this.getMeta().has("version")) {

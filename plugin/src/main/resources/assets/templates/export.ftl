@@ -16,29 +16,35 @@
           <input type="hidden"  id="q" name="q">
           <input type="hidden" id="ql" name="ql">
           <input type="hidden" id="cq" name="cq">
-          
+
           <fieldset class="form-line">
             <legend>Dateiformat</legend>
-            <input type="radio" id="formatjson" name="format" value="json">
-            <label for="formatjson">JSON</label>
-            
-            <input type="radio" checked="checked" id="formathtml" name="format" value="rtf">  
-            <label for="formatrtf">RTF</label>
+
+            <div style="margin-top: 1em">
+              <input type="radio" checked="checked" id="formathtml" name="format" value="rtf" style="vertical-align: top">
+              <label for="formatrtf">
+                RTF
+                <br /><span style="font-size:8pt">Rich Text Format (Word etc.)</span>
+              </label>
+            </div>
+
+            <div style="margin-top: 1em">
+              <input type="radio" id="formatjson" name="format" value="json" style="vertical-align: top">
+              <label for="formatjson">
+                JSON
+                <br /><span style="font-size:8pt">Programmierung (JavaScript etc.)</span>
+              </label>
+            </div>
           </fieldset>
 
-          <!--
-              <div>
-                <label>
-                  <input type="checkbox" name="islimit" checked="checked" value="limited">
-                  Beschränken auf 
-                  <input name="hitc" type="number" min="1" max="1000" value="20">
-                  Treffer 
-                </label>
-              </div>
-              -->
-          <input type="submit" value="Exportieren">
+          <!-- <input type="checkbox" name="islimit" checked="checked" value="limited"> -->
+          
+          <fieldset class="form-line">
+            <legend>Zu exportierender Treffer</legend>
+            <input name="hitc" id="hitc" type="number" min="1" max="10000" value="20" />
+          </fieldset>
 
-          <p style="font-size: 80%">Das Export-Plugin befindet sich noch in einer experimentellen Phase. Derzeit können nur die ersten 50 Treffer exportiert werden.</p>
+          <input type="submit" value="Exportieren">
 
         </fieldset>
       </form>

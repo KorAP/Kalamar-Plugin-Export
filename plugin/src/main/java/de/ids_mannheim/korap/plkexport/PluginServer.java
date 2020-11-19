@@ -60,7 +60,7 @@ public class PluginServer {
                 properties.getProperty("api.scheme") +
                 "://" +
                 properties.getProperty("api.host") +
-                properties.getProperty("api.path") + ":" +
+                properties.getProperty("api.path","") + ":" +
                 properties.getProperty("api.port")
                 );
             jettyServer.join();
