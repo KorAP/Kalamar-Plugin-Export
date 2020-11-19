@@ -219,6 +219,7 @@ public class IdsExportService {
         exp.setMaxResults(maxResults);
         exp.setQueryString(q);
         exp.setCorpusQueryString(cq);
+        exp.setSource(host, path);
        
         // set filename based on query (if not already set)
         if (fname != null) {

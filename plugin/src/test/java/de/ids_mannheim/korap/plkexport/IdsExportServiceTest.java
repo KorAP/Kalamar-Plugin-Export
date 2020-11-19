@@ -56,7 +56,9 @@ public class IdsExportServiceTest extends JerseyTest {
     private static ClientAndServer mockServer;
 	private static MockServerClient mockClient;
     private ObjectMapper mapper = new ObjectMapper();
-            
+
+    private static final String CELLSPLIT = "\\cell\\cf0\\fs18\\b0\\f1 ";
+
     @BeforeClass
     public static void startServer() {
         // Define logging rules for Mock-Server
@@ -509,13 +511,13 @@ public class IdsExportServiceTest extends JerseyTest {
                 Status.OK.getStatusCode(), responsertf.getStatus());
 
         str = responsertf.readEntity(String.class);
+        System.err.println(str);
         assertTrue("Page 1 content", str.contains("Ironhoof"));
         assertTrue("Page 2 content", str.contains("Sinologie"));
         assertTrue("Unicode handling", str.contains("\\u252\\'fcbersetzt"));
-        assertTrue("TotalResults1", str.contains("Count:"));
-        assertTrue("TotalResults2", str.contains("9\\cell"));
-        assertTrue("Fetched1", str.contains("Fetched:"));
-        assertTrue("Fetched2", str.contains("7\\cell"));
+        assertTrue("TotalResults", str.contains("Count:" + CELLSPLIT + "9\\cell"));
+        assertTrue("Fetched", str.contains("Fetched:" + CELLSPLIT + "7\\cell"));
+        assertTrue("Source", str.contains("Source:" + CELLSPLIT + "localhost\\cell"));
     }
 
     

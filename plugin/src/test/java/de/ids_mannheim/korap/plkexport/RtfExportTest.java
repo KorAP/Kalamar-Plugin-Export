@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response;
 import de.ids_mannheim.korap.plkexport.JsonExporter;
 
 public class RtfExportTest {
-
+    
     @Test
     public void testInit () throws IOException {
         RtfExporter rtf = new RtfExporter();

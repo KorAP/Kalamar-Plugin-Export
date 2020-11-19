@@ -101,4 +101,21 @@ public class MatchAggregatorTest {
         m.setFileName("Beispiel");
         assertEquals(m.getFileName(),"Beispiel");
     };
+
+    @Test
+    public void testSource () throws IOException {
+        MatchAggregator m = new MatchAggregator();
+        assertNull(m.getSource());
+        m.setSource("localhost","");
+        assertEquals(m.getSource(),"localhost");
+        m.setSource("localhost",null);
+        assertEquals(m.getSource(),"localhost");
+        m.setSource("localhost","path");
+        assertEquals(m.getSource(),"localhost/path");
+        m.setSource("","path");
+        assertEquals(m.getSource(),"/path");
+        m.setSource(null,"path");
+        assertEquals(m.getSource(),"/path");
+    };
+
 };

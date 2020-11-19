@@ -41,7 +41,7 @@ public class MatchAggregator {
     private File file;
     
     private JsonNode meta, query, collection;
-    private String fname, queryString, corpusQueryString;
+    private String fname, queryString, corpusQueryString, src;
     private boolean timeExceeded = false;
     private int totalResults = -1;
     private int maxResults = -1;
@@ -90,6 +90,21 @@ public class MatchAggregator {
 
     public String getCorpusQueryString () {
         return this.corpusQueryString;
+    };
+
+    public void setSource (String host, String path) {
+        StringBuilder s = new StringBuilder(32);
+        if (host != null)
+            s.append(host);
+
+        if (path != null && path.length() > 0)
+            s.append('/').append(path);
+
+        this.src = s.toString();
+    };
+
+    public String getSource () {
+        return this.src;
     };
     
     public void setMeta (JsonNode meta) {

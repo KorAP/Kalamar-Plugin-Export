@@ -175,6 +175,10 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             this.addInfoRow(w, "Fetched", this.getMaxResults());
         };
 
+        if (this.getSource() != null) {
+            this.addInfoRow(w, "Source", this.getSource());
+        };
+
         this.addInfoRow(w, "Export-Plugin", this.getVersion().toString());
     };
 
