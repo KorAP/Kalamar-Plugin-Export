@@ -255,12 +255,12 @@ public class MatchAggregator {
         // Iterate over the results of the current file
         Iterator<JsonNode> mNode = mNodes.elements();
         while (mNode.hasNext()) {
-            this.addMatch(mNode.next(), writer);
-            this.fetchedResults++;
             if (this.maxResults > 0 &&
-                this.fetchedResults > this.maxResults) {
+                this.fetchedResults >= this.maxResults) {
                 return false;
             };
+            this.addMatch(mNode.next(), writer);
+            this.fetchedResults++;
         };
         return true;
     };

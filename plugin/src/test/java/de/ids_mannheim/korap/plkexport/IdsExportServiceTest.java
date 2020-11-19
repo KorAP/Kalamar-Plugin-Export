@@ -510,7 +510,7 @@ public class IdsExportServiceTest extends JerseyTest {
         str = responsertf.readEntity(String.class);
         assertTrue("Page 1 content", str.contains("Ironhoof"));
         assertTrue("Page 2 content", str.contains("Sinologie"));
-        assertTrue("Unicode handling", str.contains("Hintergr\\u252\\'fcnde"));
+        assertTrue("Unicode handling", str.contains("\\u252\\'fcbersetzt"));
         assertTrue("TotalResults", str.contains("Count: \\f1 9\\"));
         assertTrue("Fetched", str.contains("Fetched: \\f1 7\\"));
     }
@@ -611,7 +611,7 @@ public class IdsExportServiceTest extends JerseyTest {
 
         Response responsejson = target("/export").request()
             .post(Entity.form(frmap));
-        assertEquals("Request RTF: Http Response should be 200: ",
+        assertEquals("Request JSON: Http Response should be 200: ",
                 Status.OK.getStatusCode(), responsejson.getStatus());
 
         String str = responsejson.readEntity(String.class);
@@ -625,7 +625,27 @@ public class IdsExportServiceTest extends JerseyTest {
         assertEquals(obj.at("/matches/8/matchID").asText(),"match-WUD17/K35/39955-p16258-16259");
         assertTrue(obj.at("/matches/0/snippet").asText().contains("<span class=\"context-right\">&quot;"));
         assertTrue(obj.at("/matches/0/snippet").asText().contains("wie wär's"));
-    }    
+
+
+        frmap.putSingle("hitc", "7");
+
+        responsejson = target("/export").request()
+            .post(Entity.form(frmap));
+        assertEquals("Request JSON: Http Response should be 200: ",
+                Status.OK.getStatusCode(), responsejson.getStatus());
+
+        str = responsejson.readEntity(String.class);
+        parser = mapper.getFactory().createParser(str);
+        obj = mapper.readTree(parser);
+
+        assertEquals(obj.at("/query/@type").asText(),"koral:token");
+        assertEquals(obj.at("/meta/totalResults").asInt(),9);
+        assertEquals(obj.at("/matches/0/matchID").asText(),"match-WUD17/G59/34284-p4238-4239");
+        assertEquals(obj.at("/matches/1/matchID").asText(),"match-WUD17/C53/60524-p736-737");
+        assertEquals(obj.at("/matches/6/matchID").asText(),"match-WUD17/K35/39955-p16114-16115");
+        assertFalse(obj.has("/matches/7"));
+    };
+
 
     @Test
     public void testExportWsJsonWithMaxHitcFirstPage () throws IOException {
