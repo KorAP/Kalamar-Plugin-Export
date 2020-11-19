@@ -51,9 +51,10 @@ import freemarker.template.Template;
  * - Do not expect all meta data per match.
  * - Add progress mechanism.
  * - Add CSV export format.
- * - Add table layout to RTF information.
  * - Add loading marker.
  * - Add hitc to form.
+ * - Add infos to JsonExporter.
+ * - Add date info.
  */
 
 @Path("/")

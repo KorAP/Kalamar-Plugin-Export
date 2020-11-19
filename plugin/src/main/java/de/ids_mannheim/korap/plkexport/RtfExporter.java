@@ -179,7 +179,11 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             this.addInfoRow(w, "Source", this.getSource());
         };
 
-        this.addInfoRow(w, "Export-Plugin", this.getVersion().toString());
+        if (this.getMeta() != null && this.getMeta().has("version")) {
+            this.addInfoRow(w, "Backend-Version", this.getMeta().get("version").asText());
+        };
+
+        this.addInfoRow(w, "Export-Version", this.getVersion().toString());
     };
 
 
@@ -192,9 +196,11 @@ public class RtfExporter extends MatchAggregator implements Exporter {
     // Add information row
     private void addInfoRow (Writer w, String title, String value) throws IOException {
         w.append("{\\trowd\\trql\\lttrow")
+            .append("\\clbrdrt\\brdrs\\clbrdrl\\brdrs\\clbrdrb\\brdrs")
             .append("\\clpadl80\\clpadt80\\clpadb80\\clpadr80\\clcbpat2\\cellx2000")
+            .append("\\clbrdrt\\brdrs\\clbrdrl\\brdrs\\clbrdrb\\brdrs\\clbrdrr\\brdrs")
             .append("\\clpadl80\\clpadt80\\clpadb80\\clpadr80\\cellx9300")
-            .append("\\intbl\\cf3\\fs18\\b1\\f0 ");
+            .append("\\intbl\\cf3\\fs18\\b1\\f1 ");
         rtfText(w, title);
         w.append(":\\cell\\cf0\\fs18\\b0\\f1 ");
         rtfText(w, value);

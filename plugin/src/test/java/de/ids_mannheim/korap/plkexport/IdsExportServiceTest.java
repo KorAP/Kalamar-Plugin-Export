@@ -511,13 +511,14 @@ public class IdsExportServiceTest extends JerseyTest {
                 Status.OK.getStatusCode(), responsertf.getStatus());
 
         str = responsertf.readEntity(String.class);
-        System.err.println(str);
         assertTrue("Page 1 content", str.contains("Ironhoof"));
         assertTrue("Page 2 content", str.contains("Sinologie"));
         assertTrue("Unicode handling", str.contains("\\u252\\'fcbersetzt"));
         assertTrue("TotalResults", str.contains("Count:" + CELLSPLIT + "9\\cell"));
         assertTrue("Fetched", str.contains("Fetched:" + CELLSPLIT + "7\\cell"));
         assertTrue("Source", str.contains("Source:" + CELLSPLIT + "localhost\\cell"));
+        assertTrue("Backend-Version", str.contains("Backend-Version:" + CELLSPLIT + "0.59.2"));
+        assertTrue("Export-Version", str.contains("Export-Version:" + CELLSPLIT));
     }
 
     
