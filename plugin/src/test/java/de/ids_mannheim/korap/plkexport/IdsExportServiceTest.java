@@ -151,7 +151,7 @@ public class IdsExportServiceTest extends JerseyTest {
     }
 
     @Test
-    public void testFormHTML () {
+    public void testFormHtml () {
         Response responsehtml = target("/export").request()
                 .get();
         assertEquals("HTTP Code",
@@ -164,7 +164,7 @@ public class IdsExportServiceTest extends JerseyTest {
     }
 
     @Test
-    public void testFormHTML2 () {
+    public void testFormHtmlAssets () {
         Properties properties = ExWSConf.properties(null);
         String hostTemp = properties.getProperty("asset.host");
         String pathTemp = properties.getProperty("asset.path");
@@ -183,6 +183,23 @@ public class IdsExportServiceTest extends JerseyTest {
 
         properties.setProperty("asset.host", hostTemp);
         properties.setProperty("asset.path", pathTemp != null ? pathTemp : "");
+    }
+
+    @Test
+    public void testFormHtmlExporters () {
+        Response responsehtml = target("/export").request()
+                .get();
+        assertEquals("HTTP Code",
+                Status.OK.getStatusCode(), responsehtml.getStatus());
+        String str = responsehtml.readEntity(String.class);
+        assertTrue("HTTP Body", str.contains("<title>Export</title>"));
+        assertTrue("RTF", str.contains("id=\"formatrtf\""));
+        assertTrue("RTF-Label", str.contains("for=\"formatrtf\""));
+        assertTrue("JSON", str.contains("id=\"formatjson\""));
+        assertTrue("JSON-Label", str.contains("for=\"formatjson\""));
+        assertTrue("CSV", str.contains("id=\"formatcsv\""));
+        assertTrue("CSV-Label", str.contains("for=\"formatcsv\""));
+        assertFalse("DOC", str.contains("id=\"formatdoc\""));
     }
 
     
@@ -650,6 +667,73 @@ public class IdsExportServiceTest extends JerseyTest {
         assertFalse(obj.has("/matches/7"));
     };
 
+
+    @Test
+    public void testExportWsCsvPaging () throws IOException {
+
+        mockClient.reset().when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Plagegeist")
+            .withQueryStringParameter("count", "5")
+            .withQueryStringParameter("offset", "5")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_plagegeist_2.json"))
+                .withStatusCode(200)
+                );
+
+        mockClient.when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Plagegeist")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_plagegeist_1.json"))
+                .withStatusCode(200)
+                );
+        
+        MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<String, String>();
+        frmap.add("format", "csv");
+        frmap.add("q", "Plagegeist");
+        frmap.add("ql", "poliqarp");
+        frmap.add("hitc", "30");
+        String filenamer = "dateiPagingCsv";
+        frmap.putSingle("fname", filenamer);
+
+        Response responsecsv = target("/export").request()
+            .post(Entity.form(frmap));
+        assertEquals("Request CSV: Http Response should be 200: ",
+                Status.OK.getStatusCode(), responsecsv.getStatus());
+
+        String str = responsecsv.readEntity(String.class);
+        String[] lines = str.split("\n");
+
+        assertEquals(lines.length,10);
+        assertEquals(lines[0],"HasMoreLeft,leftContext,Match,rightContext,HasMoreRight,isCutted,textSigle,author,pubDate,title");
+        assertEquals(lines[1],"...,\"1 Tag gesperrt. 24h Urlaub.^^ LG;--  17:40, 11. Jan. 2011 (CET) Danke ich habe die nahezu zeitgleichen VMs von Dir und Ironhoof gesehen. Ob es ein Grund zum Jubeln ist, sei dahin gestellt. Immerhin habe ich für 24 Stunden einen \"\"\",Plagegeist,\"\"\" weniger. Sag mal, zum Kölner Stammtisch isses doch nicht so weit ... wie wär's ? Besten  17:49, 11. Jan. 2011 (CET) Er wurde gesperrt. Nach dem Theater hier zurecht. ABER: auch deine Beiträge hier, die er versuchte zu löschen, sorgen nicht für\",...,,WUD17/G59/34284,\"Umherirrender, u.a.\",2017-07-01,\"Benutzer Diskussion:Gruß Tom/Archiv/2011\"");
+
+        frmap.putSingle("hitc", "7");
+
+        responsecsv = target("/export").request()
+            .post(Entity.form(frmap));
+        assertEquals("Request CSV: Http Response should be 200: ",
+                Status.OK.getStatusCode(), responsecsv.getStatus());
+
+        str = responsecsv.readEntity(String.class);
+        lines = str.split("\n");
+
+        assertEquals(lines.length,8);
+        assertEquals(lines[0],"HasMoreLeft,leftContext,Match,rightContext,HasMoreRight,isCutted,textSigle,author,pubDate,title");
+        assertEquals(lines[7],"...,\"vielleicht eine neue Schloss-Einstein-Antragswelle unterbinden.-- 07:36, 23. Jun. 2008 (CEST)  Mentor  Lieber Kriddl, als ich mir die Liste der Mentoren anschaute, fiel mein Augenmerk auf Dich als Jurist. Könntest Du mir jungen Wikipedianer (aber nicht jung an Jahren) helfen, einen\",Plagegeist,\", der mich seit meiner ersten Teilnahme als IP mobbt, helfen? Wenn ja, so schau Dir doch als Einstieg bitte meinen Wiederherstellungs-Antrag zum Artikel Meton-Periode an: WP:LP, 26.Juni 08. Dort ist nicht nur der Sachverhalt, in den man sich nicht\",...,,WUD17/K35/39955,\"TaxonBot, u.a.\",2017-07-01,\"Benutzer Diskussion:Kriddl/Archiv\"");
+    };
+    
 
     @Test
     public void testExportWsJsonWithMaxHitcFirstPage () throws IOException {

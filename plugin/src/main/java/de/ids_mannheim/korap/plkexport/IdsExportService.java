@@ -5,8 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.lang.Thread;
 import java.io.InputStream;
+import java.lang.Thread;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -14,9 +14,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Properties;
+import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Base64;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.WebApplicationException;
@@ -50,7 +50,7 @@ import freemarker.template.Template;
  * - Delete the temp file of the export at the end
  * - Do not expect all meta data per match.
  * - Add progress mechanism.
- * - Add CSV export format.
+ * - Upgrade default pageSize to 50.
  * - Add loading marker.
  * - Add hitc to form.
  * - Add infos to JsonExporter.
@@ -61,7 +61,7 @@ import freemarker.template.Template;
 @Path("/")
 public class IdsExportService {
 
-    Properties properties = ExWSConf.properties(null);
+    Properties prop = ExWSConf.properties(null);
 
     private final ClassLoader cl = Thread.currentThread().getContextClassLoader();
    
@@ -85,8 +85,7 @@ public class IdsExportService {
     private final static Base64.Decoder b64Dec = Base64.getDecoder();
 
     @Context
-    private HttpServletRequest req; 
-    
+    private HttpServletRequest req;     
 
     /**
      * WebService calls Kustvakt Search Webservices and returns
@@ -116,8 +115,8 @@ public class IdsExportService {
         @FormParam("cq") String cq,
         @FormParam("ql") String ql,
         @FormParam("cutoff") String cutoffStr,
-        // @FormParam("islimit") String il,
         @FormParam("hitc") int hitc
+        // @FormParam("islimit") String il
         ) throws IOException {
 
         // These parameters are required
@@ -151,12 +150,12 @@ public class IdsExportService {
         Client client = ClientBuilder.newClient();
 
         // Load configuration values
-        String scheme  = properties.getProperty("api.scheme", "https");
-        String port    = properties.getProperty("api.port", "8089");
-        String host    = properties.getProperty("api.host", "localhost");
-        String path    = properties.getProperty("api.path", "");
-        int pageSize   = Integer.parseInt(properties.getProperty("conf.page_size", "5"));
-        int maxResults = Integer.parseInt(properties.getProperty("conf.max_exp_limit", "10000"));
+        String scheme  = prop.getProperty("api.scheme", "https");
+        String port    = prop.getProperty("api.port", "8089");
+        String host    = prop.getProperty("api.host", "localhost");
+        String path    = prop.getProperty("api.path", "");
+        int pageSize   = Integer.parseInt(prop.getProperty("conf.page_size", "5"));
+        int maxResults = Integer.parseInt(prop.getProperty("conf.max_exp_limit", "10000"));
 
         // Adjust the number of requested hits
         if (hitc > 0 && hitc < maxResults) {
@@ -180,7 +179,8 @@ public class IdsExportService {
         if (path != "") {
             uri = uri.path(path);
         };
-       
+
+        // Set the page count to the given pagesize
         uri = uri.queryParam("count", pageSize);
 
         // Get client IP, in case service is behind a proxy
@@ -198,14 +198,13 @@ public class IdsExportService {
         String resp;
         WebTarget resource;
         Invocation.Builder reqBuilder;
-                                
+
         try {
             resource = client.target(uri.build());
             reqBuilder = resource.request(MediaType.APPLICATION_JSON);
             resp = authBuilder(reqBuilder, xff, auth).get(String.class);
             
         } catch (Exception e) {
-            System.err.println("Unable to reach: " + uri.build());
             throw new WebApplicationException(
                 responseForm(Status.BAD_GATEWAY, "Unable to reach Backend")
                 );
@@ -216,6 +215,8 @@ public class IdsExportService {
         // Choose the correct exporter
         if (format.equals("json"))
             exp = new JsonExporter();
+        else if (format.equals("csv"))
+            exp = new CsvExporter();
         else
             exp = new RtfExporter();
 
@@ -244,15 +245,13 @@ public class IdsExportService {
         };
 
 
-        /*
-         * Calculate how many results to fetch
-         */
+        // Calculate how many results to fetch
         int fetchCount = exp.getTotalResults();
         if (exp.hasTimeExceeded() || fetchCount > maxResults) {
             fetchCount = maxResults;
         };
 
-        // The first page was already enough
+        // The first page was already enough - ignore paging
         if (fetchCount <= pageSize) {
             cutoff = true;
         };
@@ -339,7 +338,11 @@ public class IdsExportService {
         // This is a temporary solution using session riding - only
         // valid for the time being
         Cookie[] cookies = r.getCookies();
-        String cookiePath = properties.getProperty("cookie.path", "");
+
+        if (cookies == null)
+            return "";
+        
+        String cookiePath = prop.getProperty("cookie.path", "");
 
         // Iterate through all cookies for a Kalamar session
         for (int i = 0; i < cookies.length; i++) {
@@ -390,25 +393,25 @@ public class IdsExportService {
         StringWriter out = new StringWriter();
         HashMap<String, Object> templateData = new HashMap<String, Object>();
 
-        String scheme = properties.getProperty("asset.scheme", "https");
-        String port = properties.getProperty("asset.port", "");
-        String host = properties.getProperty("asset.host", "korap.ids-mannheim.de");
-        String path = properties.getProperty("asset.path", "");
+        // Build uri for assets
+        String scheme = prop.getProperty("asset.scheme", "https");
+        String port = prop.getProperty("asset.port", "");
+        String host = prop.getProperty("asset.host", "korap.ids-mannheim.de");
+        String path = prop.getProperty("asset.path", "");
 
         UriBuilder uri = UriBuilder.fromPath("")
             .host(host)
             .scheme(scheme);
 
-        if (path != "") {
+        if (path != "")
             uri = uri.path(path);
-        };
 
-        if (port != "") {
+        if (port != "")
             uri = uri.port(Integer.parseInt(port));
-        };
 
         templateData.put("assetPath", uri.build());
 
+        // There is an error code to pass
         if (code != null) {
             templateData.put("code", code.getStatusCode());
             templateData.put("msg", msg);            
@@ -419,6 +422,8 @@ public class IdsExportService {
             Template template = cfg.getTemplate("export.ftl");
             template.process(templateData, out);
         }
+
+        // Unable to find template
         catch (Exception e) {
             return Response
                 .ok(new String("Template not found"))
@@ -428,15 +433,16 @@ public class IdsExportService {
 
         ResponseBuilder resp = Response.ok(out.toString(), "text/html");
 
-        if (code != null)  {
+        if (code != null)
             resp = resp.status(code);
-        };
 
         return resp.build();
     };    
 
 
     /*
+     * Get the origin user IP.
+     *
      * This function is a simplification of
      * Mojolicious::Plugin::ClientIP
      */
@@ -447,10 +453,9 @@ public class IdsExportService {
 
         String[] ips = xff.split("\\s*,\\s*");
 
-        for (int i = ips.length - 1; i >= 0; i--){
-            if (ips[i].matches(ipre)) {
+        for (int i = ips.length - 1; i >= 0; i--) {
+            if (ips[i].matches(ipre))
                 return ips[i];
-            };
         };
 
         return "";

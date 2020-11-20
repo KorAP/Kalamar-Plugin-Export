@@ -21,7 +21,7 @@
             <legend>Dateiformat</legend>
 
             <div style="margin-top: 1em">
-              <input type="radio" checked="checked" id="formathtml" name="format" value="rtf" style="vertical-align: top">
+              <input type="radio" checked="checked" id="formatrtf" name="format" value="rtf" style="vertical-align: top">
               <label for="formatrtf">
                 RTF
                 <br /><span style="font-size:8pt">Rich Text Format (Word etc.)</span>
@@ -29,10 +29,18 @@
             </div>
 
             <div style="margin-top: 1em">
+              <input type="radio" id="formatcsv" name="format" value="csv" style="vertical-align: top">
+              <label for="formatcsv">
+                CSV
+                <br /><span style="font-size:8pt">Comma-separated Values (Excel etc.)</span>
+              </label>
+            </div>
+
+            <div style="margin-top: 1em">
               <input type="radio" id="formatjson" name="format" value="json" style="vertical-align: top">
               <label for="formatjson">
                 JSON
-                <br /><span style="font-size:8pt">Programmierung (JavaScript etc.)</span>
+                <br /><span style="font-size:8pt">JavaScript Object Notation (JavaScript etc.)</span>
               </label>
             </div>
           </fieldset>

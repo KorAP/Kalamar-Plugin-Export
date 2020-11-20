@@ -7,10 +7,8 @@ import java.io.Writer;
 
 
 /**
- * This is a streaming exporter class for Json, so it's based on
- * a string buffer.
+ * Streaming JSON exporter.
  */
-
 public class JsonExporter extends MatchAggregator implements Exporter {
 
     private boolean firstMatch;

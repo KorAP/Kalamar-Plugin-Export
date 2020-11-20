@@ -16,8 +16,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * This is a streaming exporter class for Rtf, so it's based on
- * a string buffer.
+ * Streaming RTF exporter.
  */
 /*
  * TODO:

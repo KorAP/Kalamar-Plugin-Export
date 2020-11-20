@@ -14,8 +14,6 @@ import org.junit.Test;
 
 import javax.ws.rs.core.Response;
 
-import de.ids_mannheim.korap.plkexport.JsonExporter;
-
 public class JsonExportTest {
 
     @Test

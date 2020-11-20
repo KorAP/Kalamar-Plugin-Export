@@ -16,8 +16,8 @@ public class ExWSConf {
 
     // Version of Export Plugin
     public static final int VERSION_MAJOR = 0;
-    public static final int VERSION_MINOR = 1;
-    public static final int VERSION_PATCHLEVEL= 1;
+    public static final int VERSION_MINOR = 2;
+    public static final int VERSION_PATCHLEVEL= 0;
 
     private static Properties prop;
 
