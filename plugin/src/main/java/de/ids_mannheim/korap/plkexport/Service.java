@@ -8,6 +8,7 @@ import java.io.StringWriter;
 import java.io.InputStream;
 import java.lang.Thread;
 import java.net.URLEncoder;
+import java.net.ConnectException;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,8 +36,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.sse.Sse;
+import javax.ws.rs.sse.SseEventSink;
+import javax.ws.rs.sse.OutboundSseEvent;
 import javax.servlet.http.Cookie;
-import java.net.ConnectException;
 import javax.servlet.http.HttpServletRequest;
 
 import static de.ids_mannheim.korap.plkexport.Util.*;
@@ -107,7 +110,7 @@ public class Service {
     @POST
     @Path("export")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response export (
+    public Response staticExport (
         @FormParam("fname") String fname,
         @FormParam("format") String format,
         @FormParam("q") String q,
@@ -118,6 +121,9 @@ public class Service {
         // @FormParam("islimit") String il
         ) throws IOException {
 
+        // Exporter exp = 
+        // return progressExport(fname, format, q, cq, ql, cutoffStr, hitc, null, null);
+        
         // These parameters are required
         String[][] params = {
             { "format", format },
@@ -230,6 +236,10 @@ public class Service {
             exp.setFileName(fname);
         };
 
+        // if (sse != null && sink != null) {
+        //   exp.setSSE(sse, sink);
+        // };
+
         // Initialize exporter (with meta data and first matches)
         try {
             exp.init(resp);
@@ -244,12 +254,16 @@ public class Service {
                 );
         };
 
-
         // Calculate how many results to fetch
         int fetchCount = exp.getTotalResults();
         if (exp.hasTimeExceeded() || fetchCount > maxResults) {
             fetchCount = maxResults;
         };
+        // TODO:
+        // else {
+        //   setMaxResults()???
+        // }
+
 
         // The first page was already enough - ignore paging
         if (fetchCount <= pageSize) {
@@ -259,46 +273,71 @@ public class Service {
         // If only one page should be exported there is no need
         // for a temporary export file
         if (cutoff) {
-            builder = exp.serve();
-        }
+
+            // TODO:
+            //   Add method serveAndBuild()
+            return exp.serve().build();
+        };
 
         // Page through all results
-        else {
 
-            // It's not important anymore to get totalResults
-            uri.queryParam("cutoff", "true");
+        // It's not important anymore to get totalResults
+        uri.queryParam("cutoff", "true");
 
-            // Set offset for paging as a template
-            uri.queryParam("offset", "{offset}");
+        // Set offset for paging as a template
+        uri.queryParam("offset", "{offset}");
 
-            try {
+        try {
             
-                // Iterate over all results
-                for (int i = pageSize; i <= fetchCount; i+=pageSize) {
-                    resource = client.target(uri.build(i));
-                    reqBuilder = resource.request(MediaType.APPLICATION_JSON);
-                    resp = authBuilder(reqBuilder, xff, auth).get(String.class);
+            // Iterate over all results
+            for (int i = pageSize; i <= fetchCount; i+=pageSize) {
+                resource = client.target(uri.build(i));
+                reqBuilder = resource.request(MediaType.APPLICATION_JSON);
+                resp = authBuilder(reqBuilder, xff, auth).get(String.class);
 
-                    // Stop when no more matches are allowed
-                    if (!exp.appendMatches(resp))
-                        break;
-                }
-            } catch (Exception e) {
-                throw new WebApplicationException(
-                    responseForm(
-                        Status.INTERNAL_SERVER_ERROR,
-                        e.getMessage()
-                        )
-                    );
-            };
-
-            builder = exp.serve();
-        };        
-
-        return builder.build();
+                // Stop when no more matches are allowed
+                if (!exp.appendMatches(resp))
+                    break;
+            }
+        } catch (Exception e) {
+            throw new WebApplicationException(
+                responseForm(
+                    Status.INTERNAL_SERVER_ERROR,
+                    e.getMessage()
+                    )
+                );
+        };
+        
+        return exp.serve().build();
     };
 
 
+    @GET
+	@Path("export")
+	@Produces("text/event-stream")
+	public void progressExport(@Context SseEventSink sseEventSink,
+                               @Context Sse sse) throws InterruptedException {
+
+        // Exporter exp = 
+        //   progressExport(fname, format, q, cq, ql, cutoffStr, hitc, null, null);
+
+        // https://www.baeldung.com/java-ee-jax-rs-sse
+        // https://www.howopensource.com/2016/01/java-sse-chat-example/
+        // https://csetutorials.com/jersey-sse-tutorial.html
+        sseEventSink.send(sse.newEvent("Init", "Start"));
+
+        int x = 0;
+        while (x < 100) {
+            x++;
+            sseEventSink.send(sse.newEvent("Progress", ""+x));
+        };
+
+        sseEventSink.send(sse.newEvent("Relocate", "location"));
+
+        sseEventSink.close();
+    };
+
+    
     @GET
     @Path("export")
     @Produces(MediaType.TEXT_HTML)

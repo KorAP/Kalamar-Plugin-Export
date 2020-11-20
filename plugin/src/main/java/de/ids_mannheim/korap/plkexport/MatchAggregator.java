@@ -23,6 +23,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import javax.ws.rs.sse.Sse;
+import javax.ws.rs.sse.SseEventSink;
+
 import static de.ids_mannheim.korap.plkexport.Util.*;
 
 /**
@@ -46,6 +49,9 @@ public class MatchAggregator {
     private int totalResults = -1;
     private int maxResults = -1;
     private int fetchedResults = 0;
+
+    private SseEventSink sink;
+    private Sse sse;
 
     public String getMimeType() {
         return "text/plain";
@@ -143,7 +149,25 @@ public class MatchAggregator {
     public void writeHeader (Writer w) throws IOException { };
     public void writeFooter (Writer w) throws IOException { };
     public void addMatch (JsonNode n, Writer w) throws IOException { };
-   
+
+    public void setSse (SseEventSink sink, Sse sse) {
+        this.sink = sink;
+        this.sse = sse;
+    };
+
+    // Send the progress
+    private void sendProgress () {
+
+        if (this.sink == null)
+            return;
+        
+        double calc = Math.ceil(
+            (
+                (float) this.fetchedResults / (float) this.maxResults
+                ) * 100
+            );
+        this.sink.send(this.sse.newEvent("progress", String.valueOf(calc)));
+    };
 
     /**
      * Create new match aggregator and parse initial Json
@@ -255,7 +279,7 @@ public class MatchAggregator {
         // Catch error
         catch (IOException io) {
         };
-
+        
         // TODO:
         //   Return exporter error
         return Response.status(500).entity("error");
@@ -264,6 +288,9 @@ public class MatchAggregator {
 
     // Iterate through all matches
     private boolean iterateThroughMatches (JsonNode mNodes) throws IOException {
+
+        this.sendProgress();
+
         if (mNodes == null)
             return false;
         

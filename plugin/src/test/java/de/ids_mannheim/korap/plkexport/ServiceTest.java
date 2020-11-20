@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.net.URLDecoder;
 
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -35,6 +36,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+// Sse testing
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import org.glassfish.jersey.media.sse.EventListener;
+import org.glassfish.jersey.media.sse.EventSource;
+import org.glassfish.jersey.media.sse.InboundEvent;
+import org.glassfish.jersey.media.sse.SseFeature;
+import java.util.concurrent.TimeUnit;
+import javax.ws.rs.sse.SseEventSource;
+import javax.ws.rs.client.WebTarget;
+import java.util.concurrent.CountDownLatch;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -68,6 +81,7 @@ public class ServiceTest extends JerseyTest {
          .getLogger("org.mockserver"))
             .setLevel(ch.qos.logback.classic.Level.OFF);
 
+        // Unfortunately this means the tests can't run in parallel
         mockServer = ClientAndServer.startClientAndServer(34765);
         mockClient = new MockServerClient("localhost", mockServer.getPort());
 
@@ -770,6 +784,51 @@ public class ServiceTest extends JerseyTest {
         properties.setProperty("api.port", portTemp);
     };
 
+    @Test
+    public void testExportWsProgress () throws InterruptedException {
+        // Based on https://stackoverflow.com/questions/35499655/
+        //   how-to-test-server-sent-events-with-spring
+        //   &
+        // https://github.com/jersey/jersey/blob/master/examples/
+        //   server-sent-events-jersey/src/test/java/org/glassfish/
+        //   jersey/examples/sse/jersey/ServerSentEventsTest.java
+
+        final LinkedList<String> events = new LinkedList<>();
+        final int eventCount = 102;
+
+
+        // Expect 102 messages:
+        final CountDownLatch latch = new CountDownLatch(eventCount);
+        
+        // Create SSE client
+        Client client = ClientBuilder
+            .newBuilder()
+            .register(SseFeature.class)
+            .build();
+
+        EventSource eventSource = EventSource
+            .target(target("/export"))
+            .reconnectingEvery(300, TimeUnit.SECONDS)
+            .build();
+
+        EventListener listener = inboundEvent -> {
+            events.add(inboundEvent.getName() + ":" + inboundEvent.readData(String.class));
+            latch.countDown();
+        };
+
+        eventSource.register(listener);
+        eventSource.open();
+
+        latch.await(1000, TimeUnit.SECONDS);
+
+        Thread.sleep(1000);
+
+        assertEquals(events.getFirst(), "Init:Start");
+        assertEquals(events.getLast(), "Relocate:location");
+        assertEquals(events.size(), eventCount);
+
+        eventSource.close();
+    };
 
     @Test
     public void testClientIP () {
