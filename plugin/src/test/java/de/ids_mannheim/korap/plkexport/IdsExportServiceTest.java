@@ -732,6 +732,19 @@ public class IdsExportServiceTest extends JerseyTest {
         assertEquals(lines.length,8);
         assertEquals(lines[0],"HasMoreLeft,leftContext,Match,rightContext,HasMoreRight,isCutted,textSigle,author,pubDate,title");
         assertEquals(lines[7],"...,\"vielleicht eine neue Schloss-Einstein-Antragswelle unterbinden.-- 07:36, 23. Jun. 2008 (CEST)  Mentor  Lieber Kriddl, als ich mir die Liste der Mentoren anschaute, fiel mein Augenmerk auf Dich als Jurist. Könntest Du mir jungen Wikipedianer (aber nicht jung an Jahren) helfen, einen\",Plagegeist,\", der mich seit meiner ersten Teilnahme als IP mobbt, helfen? Wenn ja, so schau Dir doch als Einstieg bitte meinen Wiederherstellungs-Antrag zum Artikel Meton-Periode an: WP:LP, 26.Juni 08. Dort ist nicht nur der Sachverhalt, in den man sich nicht\",...,,WUD17/K35/39955,\"TaxonBot, u.a.\",2017-07-01,\"Benutzer Diskussion:Kriddl/Archiv\"");
+
+        // Check for pageSize adjustments
+        frmap.putSingle("hitc", "2");
+
+        responsecsv = target("/export").request()
+            .post(Entity.form(frmap));
+        assertEquals("Request CSV: Http Response should be 200: ",
+                Status.OK.getStatusCode(), responsecsv.getStatus());
+
+        str = responsecsv.readEntity(String.class);
+        lines = str.split("\n");
+
+        assertEquals(lines.length,3);
     };
     
 

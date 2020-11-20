@@ -55,7 +55,6 @@ import freemarker.template.Template;
  * - Add hitc to form.
  * - Add infos to JsonExporter.
  * - Add date info.
- * - Adjust count, if hitc &lt; count.
  */
 
 @Path("/")
@@ -158,9 +157,12 @@ public class IdsExportService {
         int maxResults = Integer.parseInt(prop.getProperty("conf.max_exp_limit", "10000"));
 
         // Adjust the number of requested hits
-        if (hitc > 0 && hitc < maxResults) {
+        if (hitc > 0 && hitc < maxResults)
             maxResults = hitc;
-        };
+
+        // If less than pageSize results are requested - dont't fetch more
+        if (maxResults < pageSize)
+            pageSize = maxResults;
                
         // Create initial search uri
         UriBuilder uri = UriBuilder.fromPath("/api/v1.0/search")
@@ -171,6 +173,7 @@ public class IdsExportService {
             // .queryParam("context", "sentence")
             .queryParam("context", "40-t,40-t") // Not yet supported
             .queryParam("ql", ql)
+            .queryParam("count", pageSize)
             ;
 
         if (cq != null && cq.length() > 0)
@@ -179,9 +182,6 @@ public class IdsExportService {
         if (path != "") {
             uri = uri.path(path);
         };
-
-        // Set the page count to the given pagesize
-        uri = uri.queryParam("count", pageSize);
 
         // Get client IP, in case service is behind a proxy
         String xff = "";
@@ -229,7 +229,7 @@ public class IdsExportService {
         if (fname != null) {
             exp.setFileName(fname);
         };
-        
+
         // Initialize exporter (with meta data and first matches)
         try {
             exp.init(resp);
