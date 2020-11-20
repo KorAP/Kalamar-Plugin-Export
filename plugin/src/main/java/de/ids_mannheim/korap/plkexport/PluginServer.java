@@ -50,7 +50,7 @@ public class PluginServer {
         // Tells the Jersey Servlet which REST service/class to load.
         servletHolder.setInitParameter(
                 "jersey.config.server.provider.classnames",
-                IdsExportService.class.getCanonicalName());
+                Service.class.getCanonicalName());
 
         try {
             jettyServer.start();

@@ -58,7 +58,7 @@ import freemarker.template.Template;
  */
 
 @Path("/")
-public class IdsExportService {
+public class Service {
 
     Properties prop = ExWSConf.properties(null);
 
@@ -69,7 +69,7 @@ public class IdsExportService {
 
     Configuration cfg = new Configuration();
     {
-        cfg.setClassForTemplateLoading(IdsExportService.class, "/assets/templates");
+        cfg.setClassForTemplateLoading(Service.class, "/assets/templates");
         cfg.setDefaultEncoding("UTF-8");
     }
 

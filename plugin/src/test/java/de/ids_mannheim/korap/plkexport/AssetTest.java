@@ -23,7 +23,7 @@ public class AssetTest extends JerseyTest {
     
     @Override
     protected Application configure () {
-        return new ResourceConfig(IdsExportService.class);
+        return new ResourceConfig(Service.class);
     }
 
     @Test

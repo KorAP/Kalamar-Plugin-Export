@@ -44,14 +44,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
-import de.ids_mannheim.korap.plkexport.IdsExportService;
-import de.ids_mannheim.korap.plkexport.ExWSConf;
 
 import org.eclipse.jetty.server.Request;
 
-import static de.ids_mannheim.korap.plkexport.IdsExportService.getClientIP;
+import static de.ids_mannheim.korap.plkexport.Service.getClientIP;
 
-public class IdsExportServiceTest extends JerseyTest {
+public class ServiceTest extends JerseyTest {
 
     private static ClientAndServer mockServer;
 	private static MockServerClient mockClient;
@@ -86,7 +84,7 @@ public class IdsExportServiceTest extends JerseyTest {
     
     @Override
     protected Application configure () {
-        return new ResourceConfig(IdsExportService.class);
+        return new ResourceConfig(Service.class);
     }
 
     // Client is pre-configured in JerseyTest
