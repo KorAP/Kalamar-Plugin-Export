@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import javax.ws.rs.core.Response;
 
-public class RtfExportTest {
+public class RtfExporterTest {
     
     @Test
     public void testInit () throws IOException {

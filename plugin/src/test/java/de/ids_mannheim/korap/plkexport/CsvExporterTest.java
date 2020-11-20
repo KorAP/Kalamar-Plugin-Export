@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import javax.ws.rs.core.Response;
 
-public class CsvExportTest {
+public class CsvExporterTest {
     
     @Test
     public void testInit () throws IOException {

@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import javax.ws.rs.core.Response;
 
-public class JsonExportTest {
+public class JsonExporterTest {
 
     @Test
     public void testInit () throws IOException {
