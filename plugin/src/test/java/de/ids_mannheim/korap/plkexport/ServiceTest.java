@@ -785,19 +785,11 @@ public class ServiceTest extends JerseyTest {
     };
 
     @Test
-    public void testExportWsProgress () throws InterruptedException {
-        // Based on https://stackoverflow.com/questions/35499655/
-        //   how-to-test-server-sent-events-with-spring
-        //   &
-        // https://github.com/jersey/jersey/blob/master/examples/
-        //   server-sent-events-jersey/src/test/java/org/glassfish/
-        //   jersey/examples/sse/jersey/ServerSentEventsTest.java
-
+    public void testExportWsProgressError () throws InterruptedException {
         final LinkedList<String> events = new LinkedList<>();
-        final int eventCount = 102;
+        final int eventCount = 3;
 
-
-        // Expect 102 messages:
+        // Expect messages:
         final CountDownLatch latch = new CountDownLatch(eventCount);
         
         // Create SSE client
@@ -820,16 +812,92 @@ public class ServiceTest extends JerseyTest {
         eventSource.open();
 
         latch.await(1000, TimeUnit.SECONDS);
+        Thread.sleep(2000);
 
-        Thread.sleep(1000);
-
-        assertEquals(events.getFirst(), "Init:Start");
-        assertEquals(events.getLast(), "Relocate:location");
-        assertEquals(events.size(), eventCount);
-
+        // Check error
+        assertEquals(events.getFirst(), "Process:Init");
+        assertEquals(events.get(1), "Error:HTTP 400 Bad Request");
+        assertEquals(events.getLast(), "Process:Done");
+        assertEquals(events.size(), 3);
         eventSource.close();
     };
 
+
+    @Test
+    public void testExportWsProgress () throws InterruptedException {
+        mockClient.reset().when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Plagegeist")
+            .withQueryStringParameter("count", "5")
+            .withQueryStringParameter("offset", "5")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_plagegeist_2.json"))
+                .withStatusCode(200)
+                );
+
+        mockClient.when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Plagegeist")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_plagegeist_1.json"))
+                .withStatusCode(200)
+                );
+
+        // Based on https://stackoverflow.com/questions/35499655/
+        //   how-to-test-server-sent-events-with-spring
+        //   &
+        // https://github.com/jersey/jersey/blob/master/examples/
+        //   server-sent-events-jersey/src/test/java/org/glassfish/
+        //   jersey/examples/sse/jersey/ServerSentEventsTest.java
+
+        final LinkedList<String> events = new LinkedList<>();
+
+        // Create SSE client
+        Client client = ClientBuilder
+            .newBuilder()
+            .register(SseFeature.class)
+            .build();
+
+        EventSource eventSource = EventSource
+            .target(target("/export")
+                    .queryParam("q", "Plagegeist")
+                    .queryParam("ql","poliqarp")
+                    .queryParam("format","rtf"))
+            .reconnectingEvery(300, TimeUnit.SECONDS)
+            .build();
+
+        EventListener listener = inboundEvent -> {
+            events.add(inboundEvent.getName() + ":" + inboundEvent.readData(String.class));
+        };
+
+        eventSource.register(listener);
+        eventSource.open();
+
+        Thread.sleep(3000);
+
+        // Check error
+        assertEquals(events.getFirst(), "Process:Init");
+        assertEquals(events.get(1), "Progress:0");
+        assertEquals(events.get(2), "Progress:56");
+        assertEquals(events.get(3), "Relocate:...");
+        assertEquals(events.getLast(), "Process:Done");
+        assertEquals(events.size(), 5);
+        eventSource.close();
+    };
+
+    
+
+    
     @Test
     public void testClientIP () {
         assertEquals(getClientIP("10.0.4.6"), "10.0.4.6");

@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -89,40 +90,17 @@ public class Service {
     @Context
     private HttpServletRequest req;     
 
-    /**
-     * WebService calls Kustvakt Search Webservices and returns
-     * response as json (all of the response) and
-     * as rtf (matches)
-     * 
-     * @param fname
-     *            file name
-     * @param format
-     *            the file format value rtf or json.
-     * @param q
-     *            the query
-     * @param ql
-     *            the query language
-     * @param cutoff
-     *            Export more than the first page
-     * 
-     * 
-     */
-    @POST
-    @Path("export")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response staticExport (
-        @FormParam("fname") String fname,
-        @FormParam("format") String format,
-        @FormParam("q") String q,
-        @FormParam("cq") String cq,
-        @FormParam("ql") String ql,
-        @FormParam("cutoff") String cutoffStr,
-        @FormParam("hitc") int hitc
-        // @FormParam("islimit") String il
-        ) throws IOException {
-
-        // Exporter exp = 
-        // return progressExport(fname, format, q, cq, ql, cutoffStr, hitc, null, null);
+    // Private method to run the export,
+    // either static or streaming
+    private Exporter export (String fname,
+                             String format,
+                             String q,
+                             String cq,
+                             String ql,
+                             String cutoffStr,
+                             int hitc,
+                             SseEventSink sink,
+                             Sse sse) throws WebApplicationException {
         
         // These parameters are required
         String[][] params = {
@@ -134,12 +112,11 @@ public class Service {
         // Check that all parameters are available
         for (int i = 0; i < params.length; i++) {
             if (params[i][1] == null || params[i][1].trim().isEmpty())
-                throw new BadRequestException(
-                    Response
-                    .status(Status.BAD_REQUEST)
-                    .entity("Parameter " + "\""
-                            + params[i][0] + "\"" + " is missing or empty")
-                    .build());
+                throw new WebApplicationException(
+                    responseForm(Status.BAD_REQUEST,
+                                 "Parameter " + "\""
+                                 + params[i][0] + "\"" +
+                                 " is missing or empty"));
         };
         
         // Retrieve cutoff value
@@ -150,9 +127,6 @@ public class Service {
             ) {
             cutoff = true;
         };
-
-        ResponseBuilder builder = null;
-        Client client = ClientBuilder.newClient();
 
         // Load configuration values
         String scheme  = prop.getProperty("api.scheme", "https");
@@ -169,7 +143,10 @@ public class Service {
         // If less than pageSize results are requested - dont't fetch more
         if (maxResults < pageSize)
             pageSize = maxResults;
-               
+
+        ResponseBuilder builder = null;
+        Client client = ClientBuilder.newClient();
+        
         // Create initial search uri
         UriBuilder uri = UriBuilder.fromPath("/api/v1.0/search")
             .host(host)
@@ -236,10 +213,15 @@ public class Service {
             exp.setFileName(fname);
         };
 
-        // if (sse != null && sink != null) {
-        //   exp.setSSE(sse, sink);
-        // };
+        // set progress mechanism, if required
+        if (sse != null && sink != null)
+            exp.setSse(sink, sse);
 
+        // TODO:
+        //   The following could be subsumed in the MatchAggregator
+        //   as a "run()" routine.
+
+        
         // Initialize exporter (with meta data and first matches)
         try {
             exp.init(resp);
@@ -258,12 +240,10 @@ public class Service {
         int fetchCount = exp.getTotalResults();
         if (exp.hasTimeExceeded() || fetchCount > maxResults) {
             fetchCount = maxResults;
-        };
-        // TODO:
-        // else {
-        //   setMaxResults()???
-        // }
+        }
 
+        // fetchCount may be different to maxResults now, so reset after init
+        exp.setMaxResults(fetchCount);
 
         // The first page was already enough - ignore paging
         if (fetchCount <= pageSize) {
@@ -273,10 +253,7 @@ public class Service {
         // If only one page should be exported there is no need
         // for a temporary export file
         if (cutoff) {
-
-            // TODO:
-            //   Add method serveAndBuild()
-            return exp.serve().build();
+            return exp;
         };
 
         // Page through all results
@@ -307,34 +284,96 @@ public class Service {
                     )
                 );
         };
+
+        return exp;
+    };
+
+    
+    /**
+     * WebService calls Kustvakt Search Webservices and returns
+     * response as json (all of the response) and
+     * as rtf (matches)
+     * 
+     * @param fname
+     *            file name
+     * @param format
+     *            the file format value rtf or json.
+     * @param q
+     *            the query
+     * @param ql
+     *            the query language
+     * @param cutoff
+     *            Export more than the first page
+     * 
+     * 
+     */
+    @POST
+    @Path("export")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response staticExport (
+        @FormParam("fname") String fname,
+        @FormParam("format") String format,
+        @FormParam("q") String q,
+        @FormParam("cq") String cq,
+        @FormParam("ql") String ql,
+        @FormParam("cutoff") String cutoffStr,
+        @FormParam("hitc") int hitc
+        // @FormParam("islimit") String il
+        ) throws IOException {
+
+        Exporter exp = export(fname, format, q, cq, ql, cutoffStr, hitc, null, null);
         
         return exp.serve().build();
     };
+    
 
-
+    /**
+     * Progress based counterpart to staticExport,
+     * that requires a GET due to the JavaScript API.
+     */
     @GET
 	@Path("export")
 	@Produces("text/event-stream")
-	public void progressExport(@Context SseEventSink sseEventSink,
-                               @Context Sse sse) throws InterruptedException {
-
-        // Exporter exp = 
-        //   progressExport(fname, format, q, cq, ql, cutoffStr, hitc, null, null);
+	public void progressExport(
+        @Context SseEventSink sink,
+        @Context Sse sse,
+        @QueryParam("fname") String fname,
+        @QueryParam("format") String format,
+        @QueryParam("q") String q,
+        @QueryParam("cq") String cq,
+        @QueryParam("ql") String ql,
+        @QueryParam("cutoff") String cutoffStr,
+        @QueryParam("hitc") int hitc
+        ) throws InterruptedException {
 
         // https://www.baeldung.com/java-ee-jax-rs-sse
         // https://www.howopensource.com/2016/01/java-sse-chat-example/
         // https://csetutorials.com/jersey-sse-tutorial.html
-        sseEventSink.send(sse.newEvent("Init", "Start"));
 
-        int x = 0;
-        while (x < 100) {
-            x++;
-            sseEventSink.send(sse.newEvent("Progress", ""+x));
+        // Send initial event
+        sink.send(sse.newEvent("Process", "Init"));
+
+        try {
+            Exporter exp = export(
+                fname,
+                format,
+                q,
+                cq,
+                ql,
+                cutoffStr,
+                hitc,
+                sink,
+                sse
+                );
+            sink.send(sse.newEvent("Relocate", "..."));
+        }
+        catch (WebApplicationException wae) {
+            sink.send(sse.newEvent("Error",wae.getMessage()));
         };
 
-        sseEventSink.send(sse.newEvent("Relocate", "location"));
-
-        sseEventSink.close();
+        sink.send(sse.newEvent("Process", "Done"));
+        
+        sink.close();
     };
 
     

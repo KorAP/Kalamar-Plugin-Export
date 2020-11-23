@@ -5,6 +5,10 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import java.io.IOException;
 import java.io.Writer;
 
+import javax.ws.rs.sse.Sse;
+import javax.ws.rs.sse.SseEventSink;
+
+
 interface Exporter {
 
     // Implemented by MatchAggregator
@@ -24,10 +28,10 @@ interface Exporter {
     public void setCorpusQueryString (String s);
     public String getSource ();
     public void setSource (String h, String p);
-
     public int getTotalResults ();
     public boolean hasTimeExceeded ();
     public void setMaxResults (int m);
+    public void setSse (SseEventSink sink, Sse sse);
 
     // Implemented by Exporter
     public ResponseBuilder serve();

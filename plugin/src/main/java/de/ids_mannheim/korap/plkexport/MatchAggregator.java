@@ -158,15 +158,11 @@ public class MatchAggregator {
     // Send the progress
     private void sendProgress () {
 
-        if (this.sink == null)
+        if (this.sink == null || this.maxResults == 0)
             return;
         
-        double calc = Math.ceil(
-            (
-                (float) this.fetchedResults / (float) this.maxResults
-                ) * 100
-            );
-        this.sink.send(this.sse.newEvent("progress", String.valueOf(calc)));
+        int calc = (int) Math.ceil(((double) this.fetchedResults / this.maxResults) * 100);
+        this.sink.send(this.sse.newEvent("Progress", String.valueOf(calc)));
     };
 
     /**
