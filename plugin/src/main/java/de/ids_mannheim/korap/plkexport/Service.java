@@ -383,9 +383,11 @@ public class Service {
 
                         if (eventOutput.isClosed())
                             return;
+                        
                         eventBuilder.name("Relocate");
-                        eventBuilder.data(exp.getExportID());
+                        eventBuilder.data(exp.getExportID() + ";" + exp.getFileName());
                         eventOutput.write(eventBuilder.build());
+                        
                     } catch (Exception e) {
                         try {
                             if (eventOutput.isClosed())

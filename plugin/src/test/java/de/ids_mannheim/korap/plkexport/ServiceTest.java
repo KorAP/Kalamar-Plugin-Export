@@ -892,14 +892,15 @@ public class ServiceTest extends JerseyTest {
         assertEquals(events.get(1), "Progress:0");
         assertEquals(events.get(2), "Progress:56");
         assertTrue(events.get(3).startsWith("Relocate:"));
+        assertTrue(events.get(3).contains(";"));
         assertEquals(events.getLast(), "Process:done");
         assertEquals(events.size(), 5);
         eventSource.close();
 
         // Now fetch the file!
-        String fileLoc = events.get(3).substring(9);
-        
-        String filename = "ExampleHui";
+        String[] splits = events.get(3).substring(9).split(";");
+        String fileLoc = splits[0];        
+        String filename = splits[1];
         Response response = target("/export/" + fileLoc).queryParam("fname", filename).request().get();
 
         String str = response.readEntity(String.class);
@@ -926,6 +927,60 @@ public class ServiceTest extends JerseyTest {
         assertTrue("Content", str.contains("Benutzer Diskussion:Kriddl"));
     };
 
+
+    @Test
+    public void testExportWsProgressSinglePage () throws InterruptedException {
+        mockClient.reset().when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            )
+            .respond(
+                response()
+                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withBody(getFixture("response_water.json"))
+                .withStatusCode(200)
+                );
+
+        final LinkedList<String> events = new LinkedList<>();
+
+        // Create SSE client
+        Client client = ClientBuilder
+            .newBuilder()
+            .register(SseFeature.class)
+            .build();
+
+        EventSource eventSource = EventSource
+            .target(target("/export")
+                    .queryParam("q", "Wasser")
+                    .queryParam("ql","poliqarp")
+                    .queryParam("hitc","1")
+                    .queryParam("format","json"))
+            .reconnectingEvery(300, TimeUnit.SECONDS)
+            .build();
+
+        EventListener listener = inboundEvent -> {
+            events.add(inboundEvent.getName() + ":" + inboundEvent.readData(String.class));
+        };
+
+        eventSource.register(listener);
+        eventSource.open();
+
+        Thread.sleep(3000);
+
+        // Check error
+        assertEquals(events.getFirst(), "Process:init");
+        assertEquals(events.get(1), "Progress:0");
+        assertTrue(events.get(2).startsWith("Relocate:"));       
+        assertEquals(events.getLast(), "Process:done");
+        assertEquals(events.size(), 4);
+        eventSource.close();
+
+        String fileLoc = events.get(2).substring(9);
+        assertTrue(fileLoc.length() > 5);
+        assertTrue(fileLoc.contains(";"));
+    };
+    
 
     @Test
     public void testFileServingError () {

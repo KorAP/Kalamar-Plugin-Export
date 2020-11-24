@@ -40,8 +40,6 @@ public class MatchAggregator {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    private LinkedList<JsonNode> matches;
-
     private Writer writer;
 
     private File file;
@@ -268,10 +266,6 @@ public class MatchAggregator {
      */
     public boolean init (String resp) throws IOException, JsonParseException {
 
-        this.file = null;
-
-        matches = new LinkedList();
-
         if (resp == null)
             return false;
 
@@ -295,7 +289,12 @@ public class MatchAggregator {
             };
         };
 
-        writer = new StringWriter();
+        // In case the writer is already set (e.g. forceFile() was issued),
+        // write in the header
+        if (writer == null) {
+            this.file = null;
+            writer = new StringWriter();
+        };
 
         this.writeHeader(writer);
 
