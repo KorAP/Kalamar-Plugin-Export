@@ -11,7 +11,7 @@
     <div class="banner" data-note="Experimental"></div>
     <h1>Export: <code id="export-query"></code></h1>
     <section>
-      <form id="frmid" class="form-table" action="export" method="POST">
+      <form id="export" class="form-table" action="export" method="POST">
         <fieldset>
           <input type="hidden"  id="q" name="q">
           <input type="hidden" id="ql" name="ql">
@@ -53,6 +53,8 @@
           </fieldset>
 
           <input type="submit" value="Exportieren">
+
+          <progress id="progress" value="0" max="100" style="display: none;">0%</progress>
 
         </fieldset>
       </form>
