@@ -27,6 +27,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -37,9 +38,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.sse.Sse;
-import javax.ws.rs.sse.SseEventSink;
-import javax.ws.rs.sse.OutboundSseEvent;
+
+import org.glassfish.jersey.media.sse.EventOutput;
+import org.glassfish.jersey.media.sse.OutboundEvent;
+import org.glassfish.jersey.media.sse.SseFeature;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -53,6 +56,7 @@ import freemarker.template.Template;
  * TODO:
  * - Delete the temp file of the export at the end
  * - Do not expect all meta data per match.
+ * - Abort processing when eventsource is closed.
  * - Add progress mechanism.
  * - Upgrade default pageSize to 50.
  * - Add loading marker.
@@ -99,8 +103,8 @@ public class Service {
                              String ql,
                              String cutoffStr,
                              int hitc,
-                             SseEventSink sink,
-                             Sse sse) throws WebApplicationException {
+                             EventOutput eventOutput
+        ) throws WebApplicationException {
         
         // These parameters are required
         String[][] params = {
@@ -127,7 +131,7 @@ public class Service {
             ) {
             cutoff = true;
         };
-
+        
         // Load configuration values
         String scheme  = prop.getProperty("api.scheme", "https");
         String port    = prop.getProperty("api.port", "8089");
@@ -214,8 +218,8 @@ public class Service {
         };
 
         // set progress mechanism, if required
-        if (sse != null && sink != null)
-            exp.setSse(sink, sse);
+        if (eventOutput != null)
+            exp.setSse(eventOutput);
 
         // TODO:
         //   The following could be subsumed in the MatchAggregator
@@ -321,11 +325,11 @@ public class Service {
         // @FormParam("islimit") String il
         ) throws IOException {
 
-        Exporter exp = export(fname, format, q, cq, ql, cutoffStr, hitc, null, null);
+        Exporter exp = export(fname, format, q, cq, ql, cutoffStr, hitc, null);
         
         return exp.serve().build();
     };
-    
+
 
     /**
      * Progress based counterpart to staticExport,
@@ -333,10 +337,9 @@ public class Service {
      */
     @GET
 	@Path("export")
-	@Produces("text/event-stream")
-	public void progressExport(
-        @Context SseEventSink sink,
-        @Context Sse sse,
+    @Produces(SseFeature.SERVER_SENT_EVENTS)
+    @Consumes(SseFeature.SERVER_SENT_EVENTS)
+	public Response progressExport(
         @QueryParam("fname") String fname,
         @QueryParam("format") String format,
         @QueryParam("q") String q,
@@ -349,31 +352,67 @@ public class Service {
         // https://www.baeldung.com/java-ee-jax-rs-sse
         // https://www.howopensource.com/2016/01/java-sse-chat-example/
         // https://csetutorials.com/jersey-sse-tutorial.html
+        // https://eclipse-ee4j.github.io/jersey.github.io/documentation/latest/sse.html
+        
+        final EventOutput eventOutput = new EventOutput();
 
         // Send initial event
-        sink.send(sse.newEvent("Process", "Init"));
+        if (eventOutput.isClosed())
+            return Response.ok("EventSource closed").build();
 
-        try {
-            Exporter exp = export(
-                fname,
-                format,
-                q,
-                cq,
-                ql,
-                cutoffStr,
-                hitc,
-                sink,
-                sse
-                );
-            sink.send(sse.newEvent("Relocate", "..."));
-        }
-        catch (WebApplicationException wae) {
-            sink.send(sse.newEvent("Error",wae.getMessage()));
-        };
+        new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
+                    try {
+                        eventBuilder.name("Process");
+                        eventBuilder.data("init");
+                        eventOutput.write(eventBuilder.build());
+                        Exporter exp = export(
+                            fname,
+                            format,
+                            q,
+                            cq,
+                            ql,
+                            cutoffStr,
+                            hitc,
+                            eventOutput
+                            );
+                        if (eventOutput.isClosed())
+                            return;
+                        eventBuilder.name("Relocate");
+                        eventBuilder.data("...");
+                        eventOutput.write(eventBuilder.build());
+                    } catch (Exception e) {
+                        try {
+                            if (eventOutput.isClosed())
+                                return;
+                            eventBuilder.name("Error");
+                            eventBuilder.data(e.getMessage());
+                            eventOutput.write(eventBuilder.build());
+                        } catch (IOException ioe) {
+                            throw new RuntimeException("Error when writing event output.", ioe);
+                        };
+                    } finally {
+                        try {
+                            if (eventOutput.isClosed())
+                                return;
 
-        sink.send(sse.newEvent("Process", "Done"));
-        
-        sink.close();
+                            eventBuilder.name("Process");
+                            eventBuilder.data("done");
+                            eventOutput.write(eventBuilder.build());                        
+                            eventOutput.close();
+                        } catch (IOException ioClose) {
+                            throw new RuntimeException("Error when closing the event output.", ioClose);
+                        }
+                    };
+                    return;
+                }
+            }).start();      
+
+        return Response.ok(eventOutput, SseFeature.SERVER_SENT_EVENTS_TYPE)
+            .header("Access-Control-Allow-Origin", "*")
+            .build();
     };
 
     

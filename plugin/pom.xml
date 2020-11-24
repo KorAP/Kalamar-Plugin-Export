@@ -4,7 +4,7 @@
   <groupId>de.ids_mannheim.korap</groupId>
   <artifactId>KalamarExportPlugin</artifactId>
   <packaging>jar</packaging>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
   <name>KalamarExportPlugin</name>
   <url>http://maven.apache.org</url>
   
@@ -55,10 +55,17 @@
       <version>${jersey.version}</version>
     </dependency>
     <dependency>
+    <groupId>org.glassfish.jersey.containers</groupId>
+    <artifactId>jersey-container-servlet</artifactId>
+    <version>${jersey.version}</version>
+    </dependency>
+    <!--
+    <dependency>
       <groupId>org.glassfish.jersey.containers</groupId>
       <artifactId>jersey-container-servlet-core</artifactId>
       <version>${jersey.version}</version>
-    </dependency>
+      </dependency>
+      -->
 
     <!-- Jersey test framework -->
     <dependency>

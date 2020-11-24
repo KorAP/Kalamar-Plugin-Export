@@ -37,7 +37,7 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-// Sse testing
+// SSE testing
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import org.glassfish.jersey.media.sse.EventListener;
@@ -45,7 +45,6 @@ import org.glassfish.jersey.media.sse.EventSource;
 import org.glassfish.jersey.media.sse.InboundEvent;
 import org.glassfish.jersey.media.sse.SseFeature;
 import java.util.concurrent.TimeUnit;
-import javax.ws.rs.sse.SseEventSource;
 import javax.ws.rs.client.WebTarget;
 import java.util.concurrent.CountDownLatch;
 
@@ -815,9 +814,9 @@ public class ServiceTest extends JerseyTest {
         Thread.sleep(2000);
 
         // Check error
-        assertEquals(events.getFirst(), "Process:Init");
+        assertEquals(events.getFirst(), "Process:init");
         assertEquals(events.get(1), "Error:HTTP 400 Bad Request");
-        assertEquals(events.getLast(), "Process:Done");
+        assertEquals(events.getLast(), "Process:done");
         assertEquals(events.size(), 3);
         eventSource.close();
     };
@@ -886,16 +885,14 @@ public class ServiceTest extends JerseyTest {
         Thread.sleep(3000);
 
         // Check error
-        assertEquals(events.getFirst(), "Process:Init");
+        assertEquals(events.getFirst(), "Process:init");
         assertEquals(events.get(1), "Progress:0");
         assertEquals(events.get(2), "Progress:56");
         assertEquals(events.get(3), "Relocate:...");
-        assertEquals(events.getLast(), "Process:Done");
+        assertEquals(events.getLast(), "Process:done");
         assertEquals(events.size(), 5);
         eventSource.close();
     };
-
-    
 
     
     @Test

@@ -5,8 +5,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import java.io.IOException;
 import java.io.Writer;
 
-import javax.ws.rs.sse.Sse;
-import javax.ws.rs.sse.SseEventSink;
+import org.glassfish.jersey.media.sse.EventOutput;
 
 
 interface Exporter {
@@ -31,7 +30,7 @@ interface Exporter {
     public int getTotalResults ();
     public boolean hasTimeExceeded ();
     public void setMaxResults (int m);
-    public void setSse (SseEventSink sink, Sse sse);
+    public void setSse (EventOutput sse);
 
     // Implemented by Exporter
     public ResponseBuilder serve();

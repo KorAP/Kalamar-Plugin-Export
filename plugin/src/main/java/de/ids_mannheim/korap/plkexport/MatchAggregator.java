@@ -23,8 +23,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import javax.ws.rs.sse.Sse;
-import javax.ws.rs.sse.SseEventSink;
+import org.glassfish.jersey.media.sse.EventOutput;
+import org.glassfish.jersey.media.sse.OutboundEvent;
 
 import static de.ids_mannheim.korap.plkexport.Util.*;
 
@@ -50,9 +50,8 @@ public class MatchAggregator {
     private int maxResults = -1;
     private int fetchedResults = 0;
 
-    private SseEventSink sink;
-    private Sse sse;
-
+    private EventOutput evOut;
+    
     public String getMimeType() {
         return "text/plain";
     };
@@ -150,19 +149,30 @@ public class MatchAggregator {
     public void writeFooter (Writer w) throws IOException { };
     public void addMatch (JsonNode n, Writer w) throws IOException { };
 
-    public void setSse (SseEventSink sink, Sse sse) {
-        this.sink = sink;
-        this.sse = sse;
+    public void setSse (EventOutput eventOutput) {
+        this.evOut = eventOutput;
     };
-
+    
     // Send the progress
     private void sendProgress () {
 
-        if (this.sink == null || this.maxResults == 0)
+        if (this.evOut == null || this.maxResults == 0)
             return;
-        
+
+        if (this.evOut.isClosed())
+            return;
+         
         int calc = (int) Math.ceil(((double) this.fetchedResults / this.maxResults) * 100);
-        this.sink.send(this.sse.newEvent("Progress", String.valueOf(calc)));
+
+        final OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
+        eventBuilder.name("Progress");
+        eventBuilder.data(String.valueOf(calc));
+
+        try {
+            this.evOut.write(eventBuilder.build());
+        } catch (IOException e) {
+            return;
+        };
     };
 
     /**
