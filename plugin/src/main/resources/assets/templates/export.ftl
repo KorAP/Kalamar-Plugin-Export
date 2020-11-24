@@ -6,6 +6,14 @@
     <title>Export</title>
     <script src="${assetPath}/js/korap-plugin-latest.js"></script>
     <link href="${assetPath}/css/kalamar-plugin-latest.css" type="text/css" rel="stylesheet" />
+    <style>
+      progress {
+      min-width: 20em;
+      width: 20%;
+      padding:8px;
+      margin-top: 2em;
+      };
+    </style>   
   </head>
   <body>
     <div class="banner" data-note="Experimental"></div>

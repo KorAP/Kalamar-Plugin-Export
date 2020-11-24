@@ -81,18 +81,20 @@ function reqStream (target) {
     window.plugin.log(0, e.data);
   });
   sse.addEventListener('Relocate', function (e) {
-    prog.style.display = "none";
-    sse.close();
-    console.log(e.data);
+    window.Plugin.log(0,e.data);
+    // Todo:
+    //   Start a timer to automatically close
+    //   the eventsource
   });
   sse.addEventListener('Process', function (e) {
-    prog.style.display = "display";
+    prog.style.display = "block";
     if (e.data == "init") {
       prog.value = 0;
       prog.textualData = "0%";
-      P.resize();
+      window.Plugin.resize();
     }
     else if (e.data == 'done') {
+      sse.close();
       prog.value = 100;
       prog.textualData = "100%";
     }
