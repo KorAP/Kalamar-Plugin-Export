@@ -43,7 +43,7 @@ function pluginit(P) {
     const form = e.target;
     const url = new URL(form.action !== undefined ? form.action : "", location);
     const query = url.searchParams;
-
+    
     let field;
     let inputs = form.querySelectorAll("input:not([type=radio]):not([type=checkbox])");
     for (let i = 0; i < inputs.length; i++) {
@@ -60,7 +60,7 @@ function pluginit(P) {
         query.append(inputs[i].name, inputs[i].value)
       };
     };
-
+    
     reqStream(url.href);
     return false;
   };
@@ -69,34 +69,66 @@ function pluginit(P) {
 
 // Create an eventsource listener for target
 function reqStream (target) {
+
+  let relocationURL;
+
   const sse = new EventSource(target);
   const prog = document.getElementById('progress');
+
   sse.addEventListener('Progress', function (e) {
     prog.value = e.data;
     prog.textualData = e.data + "%";
   });
+
   sse.addEventListener('Error', function (e) {
     prog.style.display = "none";
     sse.close();
-    window.plugin.log(0, e.data);
+    window.Plugin.log(0, e.data);
   });
+
   sse.addEventListener('Relocate', function (e) {
-    window.Plugin.log(0,e.data);
+    if (e.data == undefined || e.data.length == 0) {
+      window.Plugin.log(0,"Unable to export file");
+      return;
+    };
+
+    const data = e.data.split(";");
+
+    if (data.length == 2 && data[0]) {
+
+      relocationURL = new URL(target);
+      relocationURL.search = '';
+      relocationURL.pathname += '/' + data[0];
+
+      if (data[1] != null && data[1].length > 0) {
+        relocationURL.searchParams.append("fname",data[1]);
+      };
+      
+      return;
+    };
+
+    window.Plugin.log(0,"Unable to export file");
+    
     // Todo:
     //   Start a timer to automatically close
     //   the eventsource
+
   });
+
   sse.addEventListener('Process', function (e) {
     prog.style.display = "block";
     if (e.data == "init") {
-      prog.value = 0;
-      prog.textualData = "0%";
+      prog.value = 1;
+      prog.textualData = "1%";
       window.Plugin.resize();
     }
     else if (e.data == 'done') {
       sse.close();
       prog.value = 100;
       prog.textualData = "100%";
+
+      if (relocationURL != null)
+        location.href = relocationURL.href;
     }
   });
 };

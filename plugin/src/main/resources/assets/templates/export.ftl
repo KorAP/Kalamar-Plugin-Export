@@ -60,9 +60,9 @@
             <input name="hitc" id="hitc" type="number" min="1" max="10000" value="20" />
           </fieldset>
 
-          <input type="submit" value="Exportieren">
-
           <progress id="progress" value="0" max="100" style="display: none;">0%</progress>
+          
+          <input type="submit" value="Exportieren">
 
         </fieldset>
       </form>
