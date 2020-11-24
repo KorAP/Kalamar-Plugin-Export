@@ -23,6 +23,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -38,6 +39,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
+
+import static org.apache.commons.io.FilenameUtils.getExtension;
 
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
@@ -55,9 +58,9 @@ import freemarker.template.Template;
 /**
  * TODO:
  * - Delete the temp file of the export at the end
+ *   of the serving.
  * - Do not expect all meta data per match.
  * - Abort processing when eventsource is closed.
- * - Add progress mechanism.
  * - Upgrade default pageSize to 50.
  * - Add loading marker.
  * - Add hitc to form.
@@ -68,7 +71,7 @@ import freemarker.template.Template;
 @Path("/")
 public class Service {
 
-    Properties prop = ExWSConf.properties(null);
+    private Properties prop = ExWSConf.properties(null);
 
     private final ClassLoader cl = Thread.currentThread().getContextClassLoader();
    
@@ -96,7 +99,7 @@ public class Service {
 
     // Private method to run the export,
     // either static or streaming
-    private Exporter export (String fname,
+    private Exporter export(String fname,
                              String format,
                              String q,
                              String cq,
@@ -197,16 +200,7 @@ public class Service {
                 );
         }
 
-        Exporter exp;
-
-        // Choose the correct exporter
-        if (format.equals("json"))
-            exp = new JsonExporter();
-        else if (format.equals("csv"))
-            exp = new CsvExporter();
-        else
-            exp = new RtfExporter();
-
+        Exporter exp = getExporter(format);
         exp.setMaxResults(maxResults);
         exp.setQueryString(q);
         exp.setCorpusQueryString(cq);
@@ -218,20 +212,15 @@ public class Service {
         };
 
         // set progress mechanism, if required
-        if (eventOutput != null)
+        if (eventOutput != null) {
             exp.setSse(eventOutput);
+            exp.forceFile();
+        };
 
-        // TODO:
-        //   The following could be subsumed in the MatchAggregator
-        //   as a "run()" routine.
-
-        
         // Initialize exporter (with meta data and first matches)
         try {
             exp.init(resp);
-
         } catch (Exception e) {
-
             throw new WebApplicationException(
                 responseForm(
                     Status.INTERNAL_SERVER_ERROR,
@@ -257,6 +246,16 @@ public class Service {
         // If only one page should be exported there is no need
         // for a temporary export file
         if (cutoff) {
+            try {
+                exp.finish();
+            } catch (Exception e) {
+                throw new WebApplicationException(
+                    responseForm(
+                        Status.INTERNAL_SERVER_ERROR,
+                        e.getMessage()
+                        )
+                    );
+            };
             return exp;
         };
 
@@ -280,6 +279,9 @@ public class Service {
                 if (!exp.appendMatches(resp))
                     break;
             }
+
+            exp.finish();
+
         } catch (Exception e) {
             throw new WebApplicationException(
                 responseForm(
@@ -378,10 +380,11 @@ public class Service {
                             hitc,
                             eventOutput
                             );
+
                         if (eventOutput.isClosed())
                             return;
                         eventBuilder.name("Relocate");
-                        eventBuilder.data("...");
+                        eventBuilder.data(exp.getExportID());
                         eventOutput.write(eventBuilder.build());
                     } catch (Exception e) {
                         try {
@@ -415,6 +418,32 @@ public class Service {
             .build();
     };
 
+
+    /**
+     * This is the relocation target to which the event
+     * stream points to.
+     */
+    @GET
+    @Path("export/{file}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public Response fileExport(
+        @PathParam("file") String fileStr,
+        @QueryParam("fname") String fname
+        ) {
+
+        String format = getExtension(fileStr);
+
+        // Get exporter object
+        Exporter exp = getExporter(format);
+        if (fname != null) {
+            exp.setFileName(fname);
+        };
+        exp.setFile(fileStr);
+
+        // Return without init
+        return exp.serve().build();
+    };
+    
     
     @GET
     @Path("export")
@@ -432,7 +461,18 @@ public class Service {
             .ok(exportJsStr, "application/javascript")
             .build();
     };
-    
+
+    // Get exporter by format
+    private Exporter getExporter (String format) {
+        // Choose the correct exporter
+        if (format.equals("json"))
+            return new JsonExporter();
+        else if (format.equals("csv"))
+            return new CsvExporter();
+        
+        return new RtfExporter();
+    };
+   
 
     // Decorate request with auth headers
     private Invocation.Builder authBuilder (Invocation.Builder reqBuilder,

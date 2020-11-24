@@ -1,6 +1,6 @@
 /**
  * 
- * @author helge
+ * @author helge, ndiewald
  * 
  * Class to define the constants of the export web service, 
  * like the maximum hits to be exported

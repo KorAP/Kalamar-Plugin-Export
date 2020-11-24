@@ -17,6 +17,7 @@ public class CsvExporterTest {
     public void testInit () throws IOException {
         CsvExporter csv = new CsvExporter();
         csv.init("{\"query\":\"cool\"}");
+        csv.finish();
 
         Response resp = csv.serve().build();
         String x = (String) resp.getEntity();
@@ -45,6 +46,7 @@ public class CsvExporterTest {
                  "<span class=\\\"context-right\\\"> Snippet"+
                  "<span class=\\\"more\\\"></span></span>\"}"+
                  "]}");
+        csv.finish();
 
         Response resp = csv.serve().build();
         String x = (String) resp.getEntity();

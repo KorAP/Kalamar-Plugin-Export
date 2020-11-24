@@ -13,7 +13,7 @@ public class Util {
             .replaceFirst("^-+","")
             .replaceFirst("-+$","")
             ;
-    }
+    };
 
 	public static String streamToString (InputStream in) {
         StringBuilder sb = new StringBuilder();
@@ -30,5 +30,5 @@ public class Util {
         }
 
 		return sb.toString();
-	}
-}
+	};
+};

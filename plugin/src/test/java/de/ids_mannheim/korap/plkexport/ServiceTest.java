@@ -785,11 +785,14 @@ public class ServiceTest extends JerseyTest {
 
     @Test
     public void testExportWsProgressError () throws InterruptedException {
+
+        // TODO:
+        //   Make this threadsafe
         final LinkedList<String> events = new LinkedList<>();
-        final int eventCount = 3;
+        // final int eventCount = 3;
 
         // Expect messages:
-        final CountDownLatch latch = new CountDownLatch(eventCount);
+        // final CountDownLatch latch = new CountDownLatch(eventCount);
         
         // Create SSE client
         Client client = ClientBuilder
@@ -804,13 +807,13 @@ public class ServiceTest extends JerseyTest {
 
         EventListener listener = inboundEvent -> {
             events.add(inboundEvent.getName() + ":" + inboundEvent.readData(String.class));
-            latch.countDown();
+            // latch.countDown();
         };
 
         eventSource.register(listener);
         eventSource.open();
 
-        latch.await(1000, TimeUnit.SECONDS);
+        // latch.await(1000, TimeUnit.SECONDS);
         Thread.sleep(2000);
 
         // Check error
@@ -888,12 +891,52 @@ public class ServiceTest extends JerseyTest {
         assertEquals(events.getFirst(), "Process:init");
         assertEquals(events.get(1), "Progress:0");
         assertEquals(events.get(2), "Progress:56");
-        assertEquals(events.get(3), "Relocate:...");
+        assertTrue(events.get(3).startsWith("Relocate:"));
         assertEquals(events.getLast(), "Process:done");
         assertEquals(events.size(), 5);
         eventSource.close();
+
+        // Now fetch the file!
+        String fileLoc = events.get(3).substring(9);
+        
+        String filename = "ExampleHui";
+        Response response = target("/export/" + fileLoc).queryParam("fname", filename).request().get();
+
+        String str = response.readEntity(String.class);
+        
+        assertEquals("HTTP Code",
+                     Status.OK.getStatusCode(), response.getStatus());
+        assertTrue(
+            "Request: Results should not be displayed inline, but saved and displayed locally",
+            response.getHeaderString(HttpHeaders.CONTENT_DISPOSITION)
+            .contains("attachment"));
+
+        assertTrue("Request: Filename should be set correctly: ",
+                   response.getHeaderString(HttpHeaders.CONTENT_DISPOSITION)
+                   .contains("filename=" + filename + ".rtf"));
+
+        // An RTF document should be returned
+        assertEquals("Request RTF: Http Content-Type should be: ",
+                "application/rtf",
+                response.getHeaderString(HttpHeaders.CONTENT_TYPE));
+
+        
+        assertTrue("Intro", str.contains("{\\rtf1\\ansi\\deff0"));
+        assertTrue("Outro", str.contains("{\\pard\\brdrb\\brdrs\\brdrw2\\brsp20\\par}"));
+        assertTrue("Content", str.contains("Benutzer Diskussion:Kriddl"));
     };
 
+
+    @Test
+    public void testFileServingError () {
+        String fileLoc = "hjGHJghjgHJGhjghj";
+        Response response = target("/export/" + fileLoc).request().get();
+
+        assertEquals("HTTP Code",
+                     Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        
+    };
+    
     
     @Test
     public void testClientIP () {

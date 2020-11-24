@@ -20,7 +20,7 @@ public class JsonExporterTest {
     public void testInit () throws IOException {
         JsonExporter json = new JsonExporter();
         json.init("{\"query\":\"cool\"}");
-
+        json.finish();
         Response resp = json.serve().build();
         String x = (String) resp.getEntity();
         resp.close();
@@ -31,6 +31,7 @@ public class JsonExporterTest {
     public void testInitFull () throws IOException {
         JsonExporter json = new JsonExporter();
         json.init("{\"meta\":\"ja\",\"collection\":\"hm\",\"query\":\"cool\",\"matches\":[\"first\",\"second\"]}");
+        json.finish();
 
         Response resp = json.serve().build();
         String x = (String) resp.getEntity();
@@ -43,6 +44,7 @@ public class JsonExporterTest {
         JsonExporter json = new JsonExporter();
         json.init("{\"meta\":\"ja\",\"collection\":\"hm\",\"query\":\"cool\",\"matches\":[\"first\",\"second\"]}");
         json.appendMatches("{\"meta\":\"ja2\",\"collection\":\"hm2\",\"query\":\"cool2\",\"matches\":[\"third\",\"fourth\"]}");
+        json.finish();
 
         Response resp = json.serve().build();
         File x = (File) resp.getEntity();

@@ -27,7 +27,7 @@ public class MatchAggregatorTest {
         assertNull(m.getQuery());
         assertNull(m.getCollection());
     };
-
+    
     @Test
     public void testSampleInit () throws IOException {
         MatchAggregator m = new MatchAggregator();
@@ -118,4 +118,11 @@ public class MatchAggregatorTest {
         assertEquals(m.getSource(),"/path");
     };
 
+    @Test
+    public void testFileHandling () throws IOException {
+        MatchAggregator m = new MatchAggregator();
+        assertEquals(m.getExportID(), "");
+        m.forceFile();
+        assertTrue(m.getExportID().contains("idsexp-"));
+    };
 };

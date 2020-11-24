@@ -17,6 +17,7 @@ public class RtfExporterTest {
     public void testInit () throws IOException {
         RtfExporter rtf = new RtfExporter();
         rtf.init("{\"query\":\"cool\"}");
+        rtf.finish();
 
         Response resp = rtf.serve().build();
         String x = (String) resp.getEntity();
@@ -45,6 +46,7 @@ public class RtfExporterTest {
                  "<span class=\\\"context-right\\\"> Snippet"+
                  "<span class=\\\"more\\\"></span></span>\"}"+
                  "]}");
+        rtf.finish();
 
         Response resp = rtf.serve().build();
         String x = (String) resp.getEntity();
@@ -70,6 +72,7 @@ public class RtfExporterTest {
                  "\"textSigle\":\"RTF/G59/34284\","+
                  "\"snippet\":\"<span class=\\\"context-left\\\"></span><span class=\\\"match\\\"><mark>Und dafür musstest Du extra ne neue Socke erstellen? Wieso traust Du Dich nicht, mit Deinem Account aufzutreten? - -- ωωσσI -  talk with me 09:17, 17. Dez. 2011 (CET) Der ist doch gesperrt. -- 09:21, 17. Dez. 2011 (CET) WWSS1, weil ich normalerweise mit IP schreibe und in dem Fall nicht möchte, dass</mark><span class=\\\"cutted\\\"></span></span><span class=\\\"context-right\\\"> meine IP öffentlich angezeigt wird. Über die IP kann man auf den Wohnort, den Provider und bei Aufenthalt am Arbeitsplatz auf den Arbeitgeber schließen, über Konto nicht. -- 09:24, 17. Dez. 2011 (CET) Bist Du denn nicht mehr selber Arbeitgeber? -- 09:31<span class=\\\"more\\\"></span></span>\"}"+
                  "]}");
+        rtf.finish();
 
         Response resp = rtf.serve().build();
         String x = (String) resp.getEntity();
