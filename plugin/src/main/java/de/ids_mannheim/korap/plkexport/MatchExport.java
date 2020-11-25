@@ -51,7 +51,7 @@ public class MatchExport {
     /**
      * Get snippet object of the match.
      */
-    public Snippet getSnippetO () {
+    public Snippet getSnippet () {
         return snippeto;
     };
     

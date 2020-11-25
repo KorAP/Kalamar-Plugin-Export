@@ -66,10 +66,8 @@ import freemarker.template.Template;
  * - Add opaque source, in case source is an internal IP.
  * - Change to "Leibniz-Institut" in Copyright notice.
  * - Improve Readme.
- * - Initialize progress bar with indeterminate state.
  * - 100 matches as default for export form.
  * - Rename MatchExport to Match.
- * - Rename MatchExport/SnippetO to Snippet.
  * - Test ExWsConf.
  *
  * TODO:

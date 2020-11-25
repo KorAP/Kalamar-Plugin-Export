@@ -91,7 +91,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
 
             MatchExport match = mapper.treeToValue(n, MatchExport.class);
 
-            Snippet s = match.getSnippetO();
+            Snippet s = match.getSnippet();
 
             w.append("\\line ");
 

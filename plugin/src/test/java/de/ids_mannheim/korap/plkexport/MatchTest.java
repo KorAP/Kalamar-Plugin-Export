@@ -37,7 +37,7 @@ public class MatchTest {
         
         assertTrue(matchObj.getSnippetString().contains("<span class"));
 
-        assertEquals(matchObj.getSnippetO().getMark(),
+        assertEquals(matchObj.getSnippet().getMark(),
                      "Und dafür, dass");
         
     };
