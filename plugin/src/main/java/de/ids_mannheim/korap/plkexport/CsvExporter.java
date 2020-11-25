@@ -10,7 +10,7 @@ import java.io.Writer;
  */
 public class CsvExporter extends MatchAggregator implements Exporter {
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public String getMimeType () {
@@ -22,8 +22,8 @@ public class CsvExporter extends MatchAggregator implements Exporter {
     public String getSuffix () {
         return "csv";
     };
+   
 
-    
     @Override
     public void writeHeader (Writer w) throws IOException {
         this.addRecord(
@@ -43,15 +43,18 @@ public class CsvExporter extends MatchAggregator implements Exporter {
             );
     };
     
+
     @Override
     public void addMatch (JsonNode n, Writer w) throws IOException {
         MatchExport m = mapper.treeToValue(n, MatchExport.class);
         Snippet s = m.getSnippetO();
 
-        String left  = s.getLeft();
-        String mark  = s.getMark();
-        String right = s.getRight();
+        String left = s.getLeft(),
+            mark = s.getMark(),
+            right = s.getRight();
 
+        // For CSV export the Snippet
+        // fragments are trimmed
         if (left != null)
             left = left.trim();
 
@@ -78,7 +81,9 @@ public class CsvExporter extends MatchAggregator implements Exporter {
     };
 
 
-    // Add a CSV row to the CSV stream
+    /*
+     * Add a CSV row to the CSV stream
+     */
     private void addRecord (Writer w, String[] ss) throws IOException {
         this.addCell(w , ss[0]);
         for (int i = 1; i < 10; i++) {
@@ -89,7 +94,9 @@ public class CsvExporter extends MatchAggregator implements Exporter {
     };
     
 
-    // Add a CSV cell to the CSV row
+    /*
+     * Add a CSV cell to the CSV row
+     */
     private void addCell (Writer w, String s) throws IOException {
 
         // If meta characters exist, make a quote
@@ -99,6 +106,9 @@ public class CsvExporter extends MatchAggregator implements Exporter {
             s.contains(" ")  ||
             s.contains("\t") ||
             s.contains(";")) {
+
+            // Iterate over all characters
+            // and turn '"' into '""'.
             w.append('"');
             for (int i = 0; i < s.length(); i++) {
                 final char c = s.charAt(i);
@@ -112,6 +122,7 @@ public class CsvExporter extends MatchAggregator implements Exporter {
             w.append('"');
         }
 
+        // No escaping required
         else {
             w.append(s);
         };

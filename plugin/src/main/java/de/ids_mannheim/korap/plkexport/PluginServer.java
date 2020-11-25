@@ -14,6 +14,9 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 import org.glassfish.jersey.servlet.ServletContainer;
 
+/**
+ * Server to provide the export web service
+ */
 public class PluginServer {
     public static void main (String[] args) throws Exception {
 
@@ -24,7 +27,7 @@ public class PluginServer {
 
         Properties properties = ExWSConf.properties(null);
         
-        //Default: Server is available under http://localhost:7070/
+        // Default: Server is available under http://localhost:7070/
         String portStr = properties.getProperty("server.port", "7070");
         String host = properties.getProperty("server.host", "localhost");
         int port = Integer.parseInt(portStr);

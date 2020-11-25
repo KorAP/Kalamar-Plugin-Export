@@ -56,16 +56,48 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 
 /**
- * TODO:
+ * TODO for release:
+ * - Rename to "Kalamar-Plugin-Export".
+ * - Remove 'plugin' root folder.
+ * - Localize.
  * - Delete the temp file of the export at the end
- *   of the serving.
- * - Do not expect all meta data per match.
+ *   of serving.
+ * - Add date info.
+ * - Add opaque source, in case source is an internal IP.
+ * - Change to "Leibniz-Institut" in Copyright notice.
+ * - Improve Readme.
+ * - Initialize progress bar with indeterminate state.
+ * - 100 matches as default for export form.
+ * - Rename MatchExport to Match.
+ * - Rename MatchExport/SnippetO to Snippet.
+ * - Test ExWsConf.
+ *
+ * TODO:
  * - Abort processing when eventsource is closed.
+ * - Do not expect all meta data per match.
  * - Upgrade default pageSize to 50.
  * - Add loading marker.
- * - Add hitc to form.
+ * - Use a central logging mechanism.
  * - Add infos to JsonExporter.
- * - Add date info.
+ * - Check pageSize after init (so pageSize is not
+ *   greater than what the server supports).
+ * - Restrict CORS to meaningful sources.
+ * - Add arbitrary information for RTF header
+ *   - Add Citation information.
+ * - Add information regarding max_exp_limit
+ *   to export form.
+ * - Maybe set matches from parent window
+ *   (if available) as export default (if
+ *   smaller than max_exp_limit)
+ * - IDS-internal user should be allowed 100.000
+ *   matches per export, while external users
+ *   should be limited to 10.000.
+ * - Add 1000-separator to numbers.
+ *
+ * IDEAS:
+ * - Create a template mechanism for RTF export.
+ * - Prettify VC in RTF export (maybe similar to
+ *   the visualisation in Kalamar)
  */
 
 @Path("/")
@@ -97,8 +129,11 @@ public class Service {
     @Context
     private HttpServletRequest req;     
 
-    // Private method to run the export,
-    // either static or streaming
+
+    /*
+     * Private method to run the export,
+     * either static or streaming
+     */
     private Exporter export(String fname,
                              String format,
                              String q,
@@ -109,14 +144,14 @@ public class Service {
                              EventOutput eventOutput
         ) throws WebApplicationException {
         
-        // These parameters are required
+        // These parameters are mandatory
         String[][] params = {
             { "format", format },
             { "q", q },
             { "ql", ql }
         };
 
-        // Check that all parameters are available
+        // Check that all mandatory parameters are available
         for (int i = 0; i < params.length; i++) {
             if (params[i][1] == null || params[i][1].trim().isEmpty())
                 throw new WebApplicationException(
@@ -160,23 +195,23 @@ public class Service {
             .port(Integer.parseInt(port))
             .scheme(scheme)
             .queryParam("q", q)
-            // .queryParam("context", "sentence")
-            .queryParam("context", "40-t,40-t") // Not yet supported
+            .queryParam("context", "40-t,40-t")
             .queryParam("ql", ql)
             .queryParam("count", pageSize)
             ;
 
+        // Not yet supported:
+        // .queryParam("context", "sentence")
+        
         if (cq != null && cq.length() > 0)
             uri = uri.queryParam("cq", cq);
         
-        if (path != "") {
+        if (path != "")
             uri = uri.path(path);
-        };
 
         // Get client IP, in case service is behind a proxy
-        String xff = "";
         // Get auth (temporarily) via Session riding
-        String auth = "";
+        String xff = "", auth = "";
         if (req != null) {
             xff = getClientIP(req.getHeader("X-Forwarded-For"));
             if (xff == "")
@@ -193,34 +228,44 @@ public class Service {
             resource = client.target(uri.build());
             reqBuilder = resource.request(MediaType.APPLICATION_JSON);
             resp = authBuilder(reqBuilder, xff, auth).get(String.class);
-            
-        } catch (Exception e) {
+        }
+
+        catch (Exception e) {
             throw new WebApplicationException(
                 responseForm(Status.BAD_GATEWAY, "Unable to reach Backend")
                 );
         }
 
+        // Get and initialize exporter based on requested format
         Exporter exp = getExporter(format);
         exp.setMaxResults(maxResults);
         exp.setQueryString(q);
         exp.setCorpusQueryString(cq);
         exp.setSource(host, path);
        
-        // set filename based on query (if not already set)
-        if (fname != null) {
+        // Set filename
+        if (fname != null)
             exp.setFileName(fname);
-        };
 
-        // set progress mechanism, if required
+        // Set progress mechanism, if passed
         if (eventOutput != null) {
             exp.setSse(eventOutput);
+
+            // Progress requires the creation
+            // of temporary files
             exp.forceFile();
         };
 
-        // Initialize exporter (with meta data and first matches)
+        // Initialize export with meta data
+        // and first matches
         try {
+
+            // TODO:
+            //   Check return value.
             exp.init(resp);
-        } catch (Exception e) {
+        }
+
+        catch (Exception e) {
             throw new WebApplicationException(
                 responseForm(
                     Status.INTERNAL_SERVER_ERROR,
@@ -231,24 +276,26 @@ public class Service {
 
         // Calculate how many results to fetch
         int fetchCount = exp.getTotalResults();
-        if (exp.hasTimeExceeded() || fetchCount > maxResults) {
+        if (exp.hasTimeExceeded() || fetchCount > maxResults)
             fetchCount = maxResults;
-        }
 
-        // fetchCount may be different to maxResults now, so reset after init
+        // fetchCount may be different to maxResults now,
+        // so reset after init (for accurate progress)
         exp.setMaxResults(fetchCount);
 
-        // The first page was already enough - ignore paging
-        if (fetchCount <= pageSize) {
-            cutoff = true;
-        };
-        
         // If only one page should be exported there is no need
-        // for a temporary export file
-        if (cutoff) {
+        // for a temporary export file, unless progress is
+        // requested. In case all matches are already fetched,
+        // stop here as well.
+        if (cutoff || fetchCount <= pageSize) {
+
             try {
+
+                // Close all export writers
                 exp.finish();
-            } catch (Exception e) {
+            }
+
+            catch (Exception e) {
                 throw new WebApplicationException(
                     responseForm(
                         Status.INTERNAL_SERVER_ERROR,
@@ -259,7 +306,9 @@ public class Service {
             return exp;
         };
 
-        // Page through all results
+        /*
+         * Page through all results
+         */
 
         // It's not important anymore to get totalResults
         uri.queryParam("cutoff", "true");
@@ -271,6 +320,7 @@ public class Service {
             
             // Iterate over all results
             for (int i = pageSize; i <= fetchCount; i+=pageSize) {
+
                 resource = client.target(uri.build(i));
                 reqBuilder = resource.request(MediaType.APPLICATION_JSON);
                 resp = authBuilder(reqBuilder, xff, auth).get(String.class);
@@ -280,9 +330,12 @@ public class Service {
                     break;
             }
 
+            // Close all export writers
             exp.finish();
 
-        } catch (Exception e) {
+        }
+
+        catch (Exception e) {
             throw new WebApplicationException(
                 responseForm(
                     Status.INTERNAL_SERVER_ERROR,
@@ -296,22 +349,25 @@ public class Service {
 
     
     /**
-     * WebService calls Kustvakt Search Webservices and returns
-     * response as json (all of the response) and
-     * as rtf (matches)
+     * WebService that retrieves data from the Kustvakt
+     * Webservice and returns response in different formats.
+     *
+     * Returns an octet stream.
      * 
      * @param fname
      *            file name
      * @param format
-     *            the file format value rtf or json.
+     *            the file format value
      * @param q
      *            the query
+     * @param cq
+     *            the corpus query
      * @param ql
      *            the query language
      * @param cutoff
-     *            Export more than the first page
-     * 
-     * 
+     *            Only export the first page
+     * @param hitc
+     *            Number of matches to fetch
      */
     @POST
     @Path("export")
@@ -324,7 +380,6 @@ public class Service {
         @FormParam("ql") String ql,
         @FormParam("cutoff") String cutoffStr,
         @FormParam("hitc") int hitc
-        // @FormParam("islimit") String il
         ) throws IOException {
 
         Exporter exp = export(fname, format, q, cq, ql, cutoffStr, hitc, null);
@@ -334,8 +389,25 @@ public class Service {
 
 
     /**
-     * Progress based counterpart to staticExport,
-     * that requires a GET due to the JavaScript API.
+     * WebService that retrieves data from the Kustvakt
+     * Webservice and returns response in different formats.
+     *
+     * Returns an event stream.
+     * 
+     * @param fname
+     *            file name
+     * @param format
+     *            the file format value
+     * @param q
+     *            the query
+     * @param cq
+     *            the corpus query
+     * @param ql
+     *            the query language
+     * @param cutoff
+     *            Only export the first page
+     * @param hitc
+     *            Number of matches to fetch
      */
     @GET
 	@Path("export")
@@ -351,10 +423,11 @@ public class Service {
         @QueryParam("hitc") int hitc
         ) throws InterruptedException {
 
-        // https://www.baeldung.com/java-ee-jax-rs-sse
-        // https://www.howopensource.com/2016/01/java-sse-chat-example/
-        // https://csetutorials.com/jersey-sse-tutorial.html
-        // https://eclipse-ee4j.github.io/jersey.github.io/documentation/latest/sse.html
+        // See
+        //   https://www.baeldung.com/java-ee-jax-rs-sse
+        //   https://www.howopensource.com/2016/01/java-sse-chat-example/
+        //   https://csetutorials.com/jersey-sse-tutorial.html
+        //   https://eclipse-ee4j.github.io/jersey.github.io/documentation/latest/sse.html
         
         final EventOutput eventOutput = new EventOutput();
 
@@ -362,7 +435,9 @@ public class Service {
         if (eventOutput.isClosed())
             return Response.ok("EventSource closed").build();
 
-        new Thread(new Runnable() {
+        new Thread(
+            new Runnable() {
+
                 @Override
                 public void run() {
                     final OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
@@ -371,14 +446,7 @@ public class Service {
                         eventBuilder.data("init");
                         eventOutput.write(eventBuilder.build());
                         Exporter exp = export(
-                            fname,
-                            format,
-                            q,
-                            cq,
-                            ql,
-                            cutoffStr,
-                            hitc,
-                            eventOutput
+                            fname, format, q, cq, ql, cutoffStr, hitc, eventOutput
                             );
 
                         if (eventOutput.isClosed())
@@ -388,17 +456,26 @@ public class Service {
                         eventBuilder.data(exp.getExportID() + ";" + exp.getFileName());
                         eventOutput.write(eventBuilder.build());
                         
-                    } catch (Exception e) {
+                    }
+
+                    catch (Exception e) {
                         try {
                             if (eventOutput.isClosed())
                                 return;
+
                             eventBuilder.name("Error");
                             eventBuilder.data(e.getMessage());
                             eventOutput.write(eventBuilder.build());
-                        } catch (IOException ioe) {
-                            throw new RuntimeException("Error when writing event output.", ioe);
+                        }
+
+                        catch (IOException ioe) {
+                            throw new RuntimeException(
+                                "Error when writing event output.", ioe
+                                );
                         };
-                    } finally {
+                    }
+
+                    finally {
                         try {
                             if (eventOutput.isClosed())
                                 return;
@@ -407,8 +484,12 @@ public class Service {
                             eventBuilder.data("done");
                             eventOutput.write(eventBuilder.build());                        
                             eventOutput.close();
-                        } catch (IOException ioClose) {
-                            throw new RuntimeException("Error when closing the event output.", ioClose);
+                        }
+
+                        catch (IOException ioClose) {
+                            throw new RuntimeException(
+                                "Error when closing the event output.", ioClose
+                                );
                         }
                     };
                     return;
@@ -422,8 +503,15 @@ public class Service {
 
 
     /**
-     * This is the relocation target to which the event
+     * Relocation target to which the event
      * stream points to.
+     *
+     * Returns an octet stream.
+     * 
+     * @param fname
+     *            file name
+     * @param file
+     *            the file to fetch
      */
     @GET
     @Path("export/{file}")
@@ -434,12 +522,13 @@ public class Service {
         ) {
 
         String format = getExtension(fileStr);
-
+        
         // Get exporter object
         Exporter exp = getExporter(format);
-        if (fname != null) {
+
+        if (fname != null)
             exp.setFileName(fname);
-        };
+
         exp.setFile(fileStr);
 
         // Return without init
@@ -447,6 +536,11 @@ public class Service {
     };
     
     
+    /**
+     * The export form.
+     *
+     * Returns a HTML file.
+     */
     @GET
     @Path("export")
     @Produces(MediaType.TEXT_HTML)
@@ -455,6 +549,11 @@ public class Service {
     };
 
 
+    /**
+     * The export script.
+     *
+     * Returns a static JavaScript file.
+     */
     @GET
     @Path("export.js")
     @Produces("application/javascript")
@@ -464,7 +563,10 @@ public class Service {
             .build();
     };
 
-    // Get exporter by format
+
+    /*
+     * Get exporter object by format
+     */
     private Exporter getExporter (String format) {
         // Choose the correct exporter
         if (format.equals("json"))
@@ -476,22 +578,28 @@ public class Service {
     };
    
 
-    // Decorate request with auth headers
-    private Invocation.Builder authBuilder (Invocation.Builder reqBuilder,
-                                            String xff,
-                                            String auth) {
-        if (xff != "") {
+    /*
+     * Decorate request with auth headers
+     */
+    private Invocation.Builder authBuilder (
+        Invocation.Builder reqBuilder,
+        String xff,
+        String auth
+        ) {
+
+        if (xff != "")
             reqBuilder = reqBuilder.header("X-Forwarded-For", xff);
-        };
-        if (auth != "") {
+
+        if (auth != "")
             reqBuilder = reqBuilder.header("Authorization", auth);
-        };
 
         return reqBuilder;
     };
 
 
-    // Get authorization token from cookie
+    /*
+     * Get authorization token from cookie
+     */
     private String authFromCookie (HttpServletRequest r) {
 
         // This is a temporary solution using session riding - only
@@ -507,14 +615,12 @@ public class Service {
         for (int i = 0; i < cookies.length; i++) {
                 
             // Check the valid path
-            if (cookiePath != "" && cookies[i].getPath() != cookiePath) {
+            if (cookiePath != "" && cookies[i].getPath() != cookiePath)
                 continue;
-            };
 
             // Ignore irrelevant cookies
-            if (!cookies[i].getName().matches("^kalamar(-.+?)?$")) {
+            if (!cookies[i].getName().matches("^kalamar(-.+?)?$"))
                 continue;
-            };
 
             // Get the value
             String b64 = cookies[i].getValue();

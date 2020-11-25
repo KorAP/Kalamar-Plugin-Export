@@ -66,21 +66,22 @@ public class JsonExporter extends MatchAggregator implements Exporter {
             w.append(',');
 
         w.append("\"matches\":[");
-    }
+    };
+
 
     @Override
     public void writeFooter (Writer w) throws IOException {
         w.append("]}");
     };
     
+
     @Override
     public void addMatch (JsonNode n, Writer w) throws IOException {
-        if (firstMatch) {
+        if (firstMatch)
             firstMatch = false;
-        }
-        else {
+        else
             w.append(',');
-        };
+
         w.append(n.toString());
         return;
     };    

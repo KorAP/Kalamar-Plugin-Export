@@ -18,19 +18,14 @@ import java.io.Writer;
 /**
  * Streaming RTF exporter.
  */
-/*
- * TODO:
- *   - Create a template
- */
 public class RtfExporter extends MatchAggregator implements Exporter {
 
-    private static final String HLINE = "{\\pard\\brdrb\\brdrs\\brdrw2\\brsp20\\par}\n";
+    // Horizontal line
+    private static final String HLINE =
+        "{\\pard\\brdrb\\brdrs\\brdrw2\\brsp20\\par}\n";
     
-    private boolean firstMatch;
+    private static final ObjectMapper mapper = new ObjectMapper();
 
-    private ObjectMapper mapper = new ObjectMapper();
-
-    // final static Charset charset = Charset.forName("Windows-1252");
     final static CharsetEncoder charsetEncoder =
         Charset
         .forName("Windows-1252")
@@ -38,12 +33,6 @@ public class RtfExporter extends MatchAggregator implements Exporter {
         .onMalformedInput(REPORT)
         .onUnmappableCharacter(REPORT);
 
-    StringBuilder sb;
-
-        {
-            firstMatch = true;
-            sb = new StringBuilder(256);
-        }
 
     @Override
     public String getMimeType () {
@@ -61,13 +50,16 @@ public class RtfExporter extends MatchAggregator implements Exporter {
     public void writeHeader (Writer w) throws IOException {
         w.append("{")
             .append("\\rtf1\\ansi\\deff0\n")
+
+            // Color table
             .append("{\\colortbl;\\red0\\green0\\blue0;\\red127\\green127\\blue127;\\red255\\green255\\blue255;}\n")
+
+            // Font table
             .append("{\\fonttbl{\\f0\\fcharset0 Times New Roman;}{\\f1\\fcharset1 Courier;}}\n");
 
+        // Footer on every page, containing the page number
         w.append("{\\footer\\pard\\qr\\fs18\\f0 ");
         rtfText(w, "@ Institut für Deutsche Sprache, Mannheim");
-
-        // Page number
         w.append(" \\endash  \\chpgn /{\\field{\\*\\fldinst{\\fs18\\f0 NUMPAGES}}}");
         w.append("\\par}\n");
 
@@ -80,6 +72,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
 
         w.append("\n{\\pard \\par}\n");
 
+        // Add info table
         this.addInfoTable(w);
     };
     
@@ -145,20 +138,25 @@ public class RtfExporter extends MatchAggregator implements Exporter {
         };
     };
 
+
+    /*
+     * Table with meta information about the export.
+     */
     private void addInfoTable (Writer w) throws IOException {
 
+        // Query information
         String q = this.getQueryString();
-
-        // Add Information table
         if (q != null && q.length() > 0) {
             this.addInfoRow(w, "Query", this.getQueryString());
         };
 
+        // Corpus query information
         q = this.getCorpusQueryString();
         if (q != null && q.length() > 0) {
             this.addInfoRow(w, "Corpus", q);
         };
 
+        // Match count information
         if (this.getTotalResults() != -1) {
             StringBuilder str = new StringBuilder(32);
             if (this.hasTimeExceeded()) {
@@ -172,16 +170,19 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             this.addInfoRow(w, "Count", str.toString());
         };
 
+        // Fetched match count information
         if (this.getTotalResults() == -1 ||
             this.getTotalResults() > this.getMaxResults()) {
             this.addInfoRow(w, "Fetched", this.getMaxResults());
         };
 
+        // Source information
         q = this.getSource();
         if (q != null && q.length() > 0) {
             this.addInfoRow(w, "Source", q);
         };
 
+        // Version information
         if (this.getMeta() != null && this.getMeta().has("version")) {
             this.addInfoRow(w, "Backend-Version", this.getMeta().get("version").asText());
         };
@@ -190,14 +191,20 @@ public class RtfExporter extends MatchAggregator implements Exporter {
     };
 
 
-    // Add information row
+    /*
+     * Add information table row
+     */
     private void addInfoRow (Writer w, String title, int value) throws IOException {
         this.addInfoRow(w, title, Integer.toString(value));
     };
     
 
-    // Add information row
+    /*
+     * Add information tablerow
+     */
     private void addInfoRow (Writer w, String title, String value) throws IOException {
+
+        // Some border and color informations
         w.append("{\\trowd\\trql\\lttrow")
             .append("\\clbrdrt\\brdrs\\clbrdrl\\brdrs\\clbrdrb\\brdrs")
             .append("\\clpadl80\\clpadt80\\clpadb80\\clpadr80\\clcbpat2\\cellx2000")
@@ -210,7 +217,11 @@ public class RtfExporter extends MatchAggregator implements Exporter {
         w.append("\\cell\\row}\n");
     };
     
-    // Get version for RTF document 
+
+    /*
+     * Get version of the plugin
+     * (maybe read from pom?) 
+     */
     private Version getVersion () {
         return new Version(
             ExWSConf.VERSION_MAJOR,
@@ -222,7 +233,12 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             );
     };
 
-    // Based on jrtf by Christian Ullenboom
+
+    /*
+     * Convert a string to RTF compliant encoding.
+     *
+     * Based on jrtf by Christian Ullenboom
+     */
     private static void rtfText(Writer w, String rawText) throws IOException {
         char c;
         for (int i = 0; i < rawText.length(); i++) {
@@ -262,6 +278,6 @@ public class RtfExporter extends MatchAggregator implements Exporter {
                 catch (CharacterCodingException err) {
                 };
             };
-        }
+        };
     };
 };

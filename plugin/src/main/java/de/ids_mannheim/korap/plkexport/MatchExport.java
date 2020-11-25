@@ -2,74 +2,73 @@ package de.ids_mannheim.korap.plkexport;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/**
+ * Representation of a match.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MatchExport {
 
-    private String textSigle;
-    private String author;
-    private String pubDate;
+    private String textSigle,
+        author,
+        pubDate,
+        snippet,
+        title;
+
     private Snippet snippeto;
-    private String snippet;
-    private String title;
 
-
+    /**
+     * Get author of the match.
+     */
     public String getAuthor () {
         return author;
-    }
+    };
 
 
-    public void setAuthor (String author) {
-        this.author = author;
-    }
-
-
+    /**
+     * Get textSigle of the match.
+     */
     public String getTextSigle () {
         return textSigle;
-    }
+    };
 
-
-    public void setTextSigle (String textSigle) {
-        this.textSigle = textSigle;
-    }
-
-
-    public Snippet getSnippetO () {
-        return snippeto;
-    }
-
-
-    public void setSnippetO (Snippet snippet) {
-        this.snippeto = snippet;
-    }
-
-
-    public String getSnippet () {
-        return snippet;
-    }
-
-
-    public void setSnippet (String snippet) {
-        this.snippet = snippet;
-        this.snippeto = new Snippet(this.snippet);
-    }
-
-
+    
+    /**
+     * Get title of the match.
+     */
     public String getTitle () {
         return title;
-    }
+    };
 
-
-    public void setTitle (String title) {
-        this.title = title;
-    }
-
-
+    
+    /**
+     * Get publication date of the match.
+     */
     public String getPubDate () {
         return pubDate;
-    }
+    };
 
+    
+    /**
+     * Get snippet object of the match.
+     */
+    public Snippet getSnippetO () {
+        return snippeto;
+    };
+    
 
-    public void setPubDate (String pubDate) {
-        this.pubDate = pubDate;
-    }
-}
+    /**
+     * Get snippet string of the match.
+     */
+    public String getSnippetString () {
+        return snippet;
+    };
+
+    
+    /*
+     * Override setter object.
+     */
+    private void setSnippet (String snippet) {
+        this.snippet = snippet;
+        this.snippeto = new Snippet(this.snippet);
+    };
+};

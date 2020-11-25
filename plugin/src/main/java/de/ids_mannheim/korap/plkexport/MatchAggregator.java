@@ -33,46 +33,82 @@ import static de.ids_mannheim.korap.plkexport.Util.*;
  * Base class for collecting matches and header information
  * for exporters implementing the Exporter interface.
  */
-
 public class MatchAggregator {
 
     private final Properties prop = ExWSConf.properties(null);
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
+    // In-memory and persistant writer for data
     private Writer writer;
-
     private File file;
-    
+
+    // Meta information for result exports
     private JsonNode meta, query, collection;
     private String fname, queryString, corpusQueryString, src;
     private boolean timeExceeded = false;
-    private int totalResults = -1;
-    private int maxResults = -1;
-    private int fetchedResults = 0;
-    
+
+    // Result calculations (partially for progress)
+    private int totalResults = -1,
+        maxResults = -1,
+        fetchedResults = 0;
+
+    // Event writer for progress
     private EventOutput evOut;
-    
+
+
+    /**
+     * MimeType of the exporter -
+     * defaults to &quot;text/plain&quot; but
+     * should be overwritten.
+     */
     public String getMimeType() {
         return "text/plain";
     };
 
+
+    /**
+     * Suffix of the exported file -
+     * defaults to &quot;txt&quot; but
+     * should be overwritten.
+     */
     public String getSuffix() {
         return "txt";
     };
 
+    
+    /**
+     * Total results of exportable matches.
+     */
     public int getTotalResults() {
         return this.totalResults;
     };
+
     
+    /**
+     * Indicator if time was exceeded when
+     * fetching all matches. This means
+     * that &quot;totalResults&quot; needs
+     * to be treated as a minimum value.
+     */
     public boolean hasTimeExceeded() {
         return this.timeExceeded;
     };
+
     
+    /**
+     * Set the file name of the file to
+     * be exported.
+     */
     public void setFileName (String fname) {
         this.fname = fname;
     };
 
+    
+    /**
+     * Get the file name of the file to
+     * be exported.
+     */
     public String getFileName () {
         String s = this.fname;
         if (s == null)
@@ -82,22 +118,42 @@ public class MatchAggregator {
         return sanitizeFileName(s);
     };
 
+    
+    /**
+     * Set the query string.
+     */
     public void setQueryString (String query) {
         this.queryString = query;
     };
 
+    
+    /**
+     * Get the query string.
+     */
     public String getQueryString () {
         return this.queryString;
     };
 
+    
+    /**
+     * Set the corpus query string.
+     */
     public void setCorpusQueryString (String query) {
         this.corpusQueryString = query;
     };
 
+    
+    /**
+     * Get the corpus query string.
+     */
     public String getCorpusQueryString () {
         return this.corpusQueryString;
     };
 
+    
+    /**
+     * Set the source information.
+     */
     public void setSource (String host, String path) {
         StringBuilder s = new StringBuilder(32);
         if (host != null)
@@ -109,49 +165,94 @@ public class MatchAggregator {
         this.src = s.toString();
     };
 
+    
+    /**
+     * Get the source information.
+     */
     public String getSource () {
         return this.src;
     };
+
     
+    /**
+     * Set the meta JSON blob.
+     */
     public void setMeta (JsonNode meta) {
         this.meta = meta;
     };
 
+    
+    /**
+     * Get the meta JSON blob.
+     */
     public JsonNode getMeta () {
         return this.meta;
     };
+
     
+    /**
+     * Set the query JSON blob.
+     */
     public void setQuery (JsonNode query) {
         this.query = query;
     };
 
-    // Needs to be set before first addMatch
-    public void setMaxResults (int maxResults) {
-        this.maxResults = maxResults;
-    };
-
-    public int getMaxResults () {
-        return this.maxResults;
-    };
     
+    /**
+     * Get the query JSON blob.
+     */
     public JsonNode getQuery () {
         return this.query;
     };
 
+    
+    /**
+     * Set the collection JSON blob.
+     */
     public void setCollection (JsonNode collection) {
         this.collection = collection;
     };
 
+    
+    /**
+     * Get the collection JSON blob.
+     */
     public JsonNode getCollection () {
         return this.collection;
     };
 
+    
+    /**
+     * Set the maximum results to be fetched.
+     *
+     * This needs to be set prior to the first
+     * &quot;addMatch&quot; so it can be taken into account.
+     */
+    public void setMaxResults (int maxResults) {
+        this.maxResults = maxResults;
+    };
+
+    
+    /**
+     * Get the maximum results to be fetched.
+     */
+    public int getMaxResults () {
+        return this.maxResults;
+    };
+
+    
+    /**
+     * Get the export ID which is the pointer
+     * to where the system can find the temporary
+     * generated file.
+     */
     public String getExportID () {
         if (this.file == null)
             return "";
         return this.file.getName();
     };
 
+    
     /**
      * Set the file based on the export ID
      */
@@ -161,64 +262,43 @@ public class MatchAggregator {
             exportID
             );
     }
+
     
+    /**
+     * Write header for exportation.
+     *
+     * Should be overwritten.
+     */
     public void writeHeader (Writer w) throws IOException { };
+
+    
+    /**
+     * Write footer for exportation.
+     *
+     * Should be overwritten.
+     */
     public void writeFooter (Writer w) throws IOException { };
+
+    
+    /**
+     * Write a single match.
+     *
+     * Should be overwritten.
+     */
     public void addMatch (JsonNode n, Writer w) throws IOException { };
 
+    
+    /**
+     * Set the event stream for progress feedback.
+     */
     public void setSse (EventOutput eventOutput) {
         this.evOut = eventOutput;
     };
 
-
-    private File getFileDirectory () {
-
-        String fileDir = prop.getProperty(
-            "conf.file_dir",
-            System.getProperty("java.io.tmpdir")
-            );
-
-        File dir = new File(fileDir);
-
-        // Create directory if not yet existing
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
-
-        else if (!dir.canWrite()) {
-            fileDir = System.getProperty("java.io.tmpdir");
-            System.err.println("Unable to write to directory");
-            System.err.println("Fallback to " + fileDir);
-            dir = new File(fileDir);
-        };
-        return dir;
-    };
     
-    // Send the progress
-    private void sendProgress () {
-
-        if (this.evOut == null || this.maxResults == 0)
-            return;
-
-        if (this.evOut.isClosed())
-            return;
-         
-        int calc = (int) Math.ceil(((double) this.fetchedResults / this.maxResults) * 100);
-
-        final OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
-        eventBuilder.name("Progress");
-        eventBuilder.data(String.valueOf(calc));
-
-        try {
-            this.evOut.write(eventBuilder.build());
-        } catch (IOException e) {
-            return;
-        };
-    };
-
     /**
-     * Force creation of a file, even when only a few
-     * matches are requested.
+     * Force the creation of a file, even when only
+     * a few matches are requested.
      */
     public void forceFile () {
 
@@ -235,34 +315,34 @@ public class MatchAggregator {
                     dir
                     );
 
-                // better delete after it is not needed anymore
-                // this.file.deleteOnExit();
-
                 String s = null;
 
+                // Take temporary data from the in-memory writer
                 if (writer != null)
                     s = writer.toString();
 
-                // Establish writer
+                // Establish persistant writer
                 writer = new BufferedWriter(new FileWriter(this.file, true));
 
-                // Add in memory string
+                // Add in-memory string
                 if (s != null)
                     writer.write(s);
 
             }
-            catch (IOException e) {
 
-                // Will rely on in-memory data
+            // If data can't be stored on disk, the writer will
+            // rely on in-memory data, which may or may not work in
+            // different contexts.
+            catch (IOException e) {
                 return;
             };
         };
-    };
-    
+    };   
 
+    
     /**
-     * Create new match aggregator and parse initial Json
-     * file to get header information and initial matches.
+     * Parse initial JSON file to get header information
+     * and initial matches.
      */
     public boolean init (String resp) throws IOException, JsonParseException {
 
@@ -270,15 +350,15 @@ public class MatchAggregator {
             return false;
 
         JsonParser parser = mapper.getFactory().createParser(resp);
-        JsonNode actualObj = mapper.readTree(parser);
+        JsonNode root = mapper.readTree(parser);
 
-        if (actualObj == null)
+        if (root == null)
             return false;
 
-        JsonNode meta = actualObj.get("meta");
+        JsonNode meta = root.get("meta");
         this.setMeta(meta);
-        this.setQuery(actualObj.get("query"));
-        this.setCollection(actualObj.get("collection"));
+        this.setQuery(root.get("query"));
+        this.setCollection(root.get("collection"));
 
         if (meta != null) {
             if (meta.has("totalResults")) {
@@ -296,14 +376,24 @@ public class MatchAggregator {
             writer = new StringWriter();
         };
 
+        // Write header to exporter
         this.writeHeader(writer);
 
-        return this.iterateThroughMatches(
-            actualObj.get("matches")
-            );
+        // Go on by iterating through matches
+        return this.iterateThroughMatches(root.get("matches"));
     };
 
+    
+    /**
+     * Finalize the export stream.
+     */
+    public Exporter finish() throws IOException {
+        this.writeFooter(this.writer);
+        this.writer.close();
+        return (Exporter) this;
+    };
 
+    
     /**
      * Append more matches to the result set.
      */
@@ -313,26 +403,15 @@ public class MatchAggregator {
         this.forceFile();
 
         JsonParser parser = mapper.getFactory().createParser(resp);
-        JsonNode actualObj = mapper.readTree(parser);
+        JsonNode root = mapper.readTree(parser);
 
-        if (actualObj == null)
+        if (root == null)
             return false;
         
-        return this.iterateThroughMatches(
-            actualObj.get("matches")
-            );
+        return this.iterateThroughMatches(root.get("matches"));
     };
 
-    /**
-     * Finalize the export stream.
-     */
-    public Exporter finish() throws IOException {
-        this.writeFooter(this.writer);
-        this.writer.close();
-        return (Exporter) this;
-    };
     
-
     /**
      * Serve response entity, either as a string or as a file.
      */
@@ -366,10 +445,14 @@ public class MatchAggregator {
                 );
     };
 
+    
+    /*
+     * Iterate through all matches
+     */
+    private boolean iterateThroughMatches (JsonNode mNodes)
+        throws IOException {
 
-    // Iterate through all matches
-    private boolean iterateThroughMatches (JsonNode mNodes) throws IOException {
-
+        // Send progress information
         this.sendProgress();
 
         if (mNodes == null)
@@ -378,6 +461,8 @@ public class MatchAggregator {
         // Iterate over the results of the current file
         Iterator<JsonNode> mNode = mNodes.elements();
         while (mNode.hasNext()) {
+
+            // Stop if all relevant matches are fetched
             if (this.maxResults > 0 &&
                 this.fetchedResults >= this.maxResults) {
                 return false;
@@ -386,5 +471,59 @@ public class MatchAggregator {
             this.fetchedResults++;
         };
         return true;
+    };
+
+    
+    /*
+     * Get the directory where all temporary files are stored.
+     */
+    private File getFileDirectory () {
+
+        String fileDir = prop.getProperty(
+            "conf.file_dir",
+            System.getProperty("java.io.tmpdir")
+            );
+
+        File dir = new File(fileDir);
+
+        // Create directory if not yet existing
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+
+        // Directory is unwritable - fallback
+        else if (!dir.canWrite()) {
+            fileDir = System.getProperty("java.io.tmpdir");
+            System.err.println("Unable to write to directory");
+            System.err.println("Fallback to " + fileDir);
+            dir = new File(fileDir);
+        };
+        return dir;
+    };
+
+    
+    /*
+     * Send a single progress event to the event stream.
+     */
+    private void sendProgress () {
+
+        if (this.evOut == null || this.maxResults == 0)
+            return;
+
+        if (this.evOut.isClosed())
+            return;
+         
+        int calc = (int) Math.ceil(((double) this.fetchedResults / this.maxResults) * 100);
+
+        final OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
+        eventBuilder.name("Progress");
+        eventBuilder.data(String.valueOf(calc));
+
+        try {
+            this.evOut.write(eventBuilder.build());
+        }
+        catch (IOException e) {
+            return;
+        };
     };
 };
