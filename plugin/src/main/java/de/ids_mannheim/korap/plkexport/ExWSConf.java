@@ -11,6 +11,7 @@ package de.ids_mannheim.korap.plkexport;
 import java.io.*;
 import java.lang.String;
 import java.util.Properties;
+import java.nio.charset.StandardCharsets;
 
 public class ExWSConf {
 
@@ -32,9 +33,14 @@ public class ExWSConf {
 
         InputStream iFile;
         try {
-            iFile = new FileInputStream(propFile);
+
+            iFile = new FileInputStream(propFile);            
             prop = new Properties();
-            prop.load(iFile);
+            prop.load(
+                new BufferedReader(
+                    new InputStreamReader(iFile, "UTF-8")
+                    )
+                );
         }
         catch (IOException t) {
             try {

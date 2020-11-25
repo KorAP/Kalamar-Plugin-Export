@@ -22,7 +22,8 @@ public class RtfExporterTest {
         Response resp = rtf.serve().build();
         String x = (String) resp.getEntity();
         resp.close();
-        assertTrue(x.contains("\\footer\\pard\\qr\\fs18\\f0 @ Institut"));
+
+        assertTrue(x.contains("\\footer\\pard\\qr\\fs18\\f0 @ Leibniz-Institut"));
         assertTrue(x.contains("Institut f\\u252\\'fcr Deutsche"));
     };
 

@@ -61,6 +61,9 @@ import org.eclipse.jetty.server.Request;
 
 import static de.ids_mannheim.korap.plkexport.Service.getClientIP;
 
+import de.ids_mannheim.korap.plkexport.Util.*;
+
+
 public class ServiceTest extends JerseyTest {
 
     private static ClientAndServer mockServer;
@@ -1003,17 +1006,6 @@ public class ServiceTest extends JerseyTest {
     };
 
 
-    // Convert string to utf8
-    private static String convertToUTF8(String s) {
-        String out = null;
-        try {
-            out = new String(s.getBytes("UTF-8"), "ISO-8859-1");
-        } catch (java.io.UnsupportedEncodingException e) {
-            return null;
-        }
-        return out;
-    }
-
     // Get fixture from ressources utf8 encoded
     private String getFixture (String file) {
         return getFixture(file, false);
@@ -1029,7 +1021,7 @@ public class ServiceTest extends JerseyTest {
         if (raw) {
             return getFileString(filepath);
         };
-        return convertToUTF8(getFileString(filepath));
+        return Util.convertToUTF8(getFileString(filepath));
     };
         
 

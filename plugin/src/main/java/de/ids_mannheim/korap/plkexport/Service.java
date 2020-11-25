@@ -64,7 +64,6 @@ import freemarker.template.Template;
  *   of serving.
  * - Add date info.
  * - Add opaque source, in case source is an internal IP.
- * - Change to "Leibniz-Institut" in Copyright notice.
  * - Improve Readme.
  * - 100 matches as default for export form.
  * - Test ExWsConf.

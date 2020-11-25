@@ -43,4 +43,34 @@ public class Util {
 
 		return sb.toString();
 	};
+
+    /**
+     * Convert string to utf8
+     */
+    public static String convertToUTF8(String s) {
+        if (s == null)
+            return null;
+        String out = null;
+        try {
+            out = new String(s.getBytes("UTF-8"), "ISO-8859-1");
+        } catch (java.io.UnsupportedEncodingException e) {
+            return null;
+        }
+        return out;
+    };
+
+    /**
+     * Convert string from utf8
+     */
+    public static String convertFromUTF8(String s) {
+        if (s == null)
+            return null;
+        String out = null;
+        try {
+            out = new String(s.getBytes("Windows-1252"), "UTF-8");
+        } catch (java.io.UnsupportedEncodingException e) {
+            return null;
+        }
+        return out;
+    };
 };

@@ -1,8 +1,10 @@
 package de.ids_mannheim.korap.plkexport;
 
-import java.lang.StringBuffer;
-import java.nio.charset.*;
+import java.util.Properties;
 
+import java.lang.StringBuffer;
+
+import java.nio.charset.*;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import static java.nio.charset.CodingErrorAction.REPORT;
@@ -15,11 +17,15 @@ import com.fasterxml.jackson.core.Version;
 import java.io.IOException;
 import java.io.Writer;
 
+import de.ids_mannheim.korap.plkexport.Util.*;
+
 /**
  * Streaming RTF exporter.
  */
 public class RtfExporter extends MatchAggregator implements Exporter {
 
+    private Properties prop = ExWSConf.properties(null);
+    
     // Horizontal line
     private static final String HLINE =
         "{\\pard\\brdrb\\brdrs\\brdrw2\\brsp20\\par}\n";
@@ -48,6 +54,9 @@ public class RtfExporter extends MatchAggregator implements Exporter {
     
     @Override
     public void writeHeader (Writer w) throws IOException {
+
+        String footnote = Util.convertFromUTF8(prop.getProperty("rtf.footnote"));
+        
         w.append("{")
             .append("\\rtf1\\ansi\\deff0\n")
 
@@ -59,8 +68,13 @@ public class RtfExporter extends MatchAggregator implements Exporter {
 
         // Footer on every page, containing the page number
         w.append("{\\footer\\pard\\qr\\fs18\\f0 ");
-        rtfText(w, "@ Institut für Deutsche Sprache, Mannheim");
-        w.append(" \\endash  \\chpgn /{\\field{\\*\\fldinst{\\fs18\\f0 NUMPAGES}}}");
+
+        if (footnote != null && footnote.length() > 0) {
+            rtfText(w, footnote);
+            w.append(" \\endash  ");
+        };
+
+        w.append("\\chpgn /{\\field{\\*\\fldinst{\\fs18\\f0 NUMPAGES}}}");
         w.append("\\par}\n");
 
         // Title
