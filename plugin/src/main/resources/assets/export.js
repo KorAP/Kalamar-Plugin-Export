@@ -118,8 +118,6 @@ function reqStream (target) {
   sse.addEventListener('Process', function (e) {
     prog.style.display = "block";
     if (e.data == "init") {
-      prog.value = 1;
-      prog.textualData = "1%";
       window.Plugin.resize();
     }
     else if (e.data == 'done') {
@@ -127,6 +125,7 @@ function reqStream (target) {
       prog.value = 100;
       prog.textualData = "100%";
 
+      // Relocate to new target
       if (relocationURL != null)
         location.href = relocationURL.href;
     }

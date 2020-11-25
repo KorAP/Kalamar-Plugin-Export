@@ -7,12 +7,49 @@
     <script src="${assetPath}/js/korap-plugin-latest.js"></script>
     <link href="${assetPath}/css/kalamar-plugin-latest.css" type="text/css" rel="stylesheet" />
     <style>
+
       progress {
-      min-width: 20em;
-      width: 20%;
-      padding:8px;
-      margin-top: 2em;
-      };
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        min-width: 20em;
+        width: 20%;
+        height: 2em;
+        margin-top: 2em;
+        border-radius: 6px;
+        background-color: #d9dadb;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+        background-image: none;
+      }
+
+      progress::-webkit-progress-bar {
+        border-radius: 6px;
+        border: 1px solid #636f07;
+        background-color: #d9dadb;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+        background-image: none;
+      }
+      
+      progress::-moz-progress-bar {
+        border: 0;
+        background-color: #8a9a0a;
+        transition: all .3s ease-in-out 0s;
+      }
+
+      progress::-webkit-progress-value {
+        border: 0;
+        background-color: #8a9a0a;
+        transition: all .3s ease-in-out 0s;
+      }
+
+      progress:indeterminate::-webkit-progress-bar {
+        background-color: #f6a800;
+      }
+
+      progress:indeterminate::-moz-progress-bar {
+        background-color: #f6a800;
+      }
+
     </style>   
   </head>
   <body>
