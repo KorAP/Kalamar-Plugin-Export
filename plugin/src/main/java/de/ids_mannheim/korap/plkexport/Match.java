@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * Representation of a match.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MatchExport {
+public class Match {
 
     private String textSigle,
         author,

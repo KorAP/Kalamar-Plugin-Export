@@ -46,7 +46,7 @@ public class CsvExporter extends MatchAggregator implements Exporter {
 
     @Override
     public void addMatch (JsonNode n, Writer w) throws IOException {
-        MatchExport m = mapper.treeToValue(n, MatchExport.class);
+        Match m = mapper.treeToValue(n, Match.class);
         Snippet s = m.getSnippet();
 
         String left = s.getLeft(),

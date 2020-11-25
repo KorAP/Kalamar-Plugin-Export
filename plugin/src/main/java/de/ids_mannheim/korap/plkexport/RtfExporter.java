@@ -89,7 +89,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
 
         try {
 
-            MatchExport match = mapper.treeToValue(n, MatchExport.class);
+            Match match = mapper.treeToValue(n, Match.class);
 
             Snippet s = match.getSnippet();
 

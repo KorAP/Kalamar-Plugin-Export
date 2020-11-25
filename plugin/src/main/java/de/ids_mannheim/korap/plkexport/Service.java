@@ -67,7 +67,6 @@ import freemarker.template.Template;
  * - Change to "Leibniz-Institut" in Copyright notice.
  * - Improve Readme.
  * - 100 matches as default for export form.
- * - Rename MatchExport to Match.
  * - Test ExWsConf.
  *
  * TODO:
