@@ -461,12 +461,12 @@ public class MatchAggregator {
 
             catch (Exception e) {
                 // File problematic
-                return Response.status(Status.NOT_FOUND);            
+                return Response.status(Status.NOT_FOUND);
             };
         }
         else {
             // File doesn't exist
-            return Response.status(Status.NOT_FOUND);            
+            return Response.status(Status.NOT_FOUND);
         };
         
         return rb

@@ -55,7 +55,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
     @Override
     public void writeHeader (Writer w) throws IOException {
 
-        String footnote = Util.convertFromUTF8(prop.getProperty("rtf.footnote"));
+        String footnote = prop.getProperty("rtf.footnote");
         
         w.append("{")
             .append("\\rtf1\\ansi\\deff0\n")
