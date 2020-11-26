@@ -57,12 +57,8 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 
 /**
- * TODO for release:
- * - Rename to "Kalamar-Plugin-Export".
- * - Improve Readme.
- * - Add screenshot.
- *
  * TODO:
+ * - Rename "is cutted" to "truncated".
  * - Localize RTF export.
  *   - Change "count" to "number of results" in RTF.
  * - Add date info.
@@ -75,6 +71,7 @@ import freemarker.template.Template;
  * - Add loading marker.
  * - Use a central logging mechanism.
  * - Add infos to JsonExporter.
+ *   - e.g. q &amp; cq string representation.
  * - Check pageSize after init (so pageSize is not
  *   greater than what the server supports).
  * - Restrict CORS to meaningful sources.
@@ -94,7 +91,9 @@ import freemarker.template.Template;
  * - Check for q/ql definition in JS.
  *
  * IDEAS:
- * - Create a template mechanism for RTF export.
+ * - Support more granular exporter-specific options
+ *   - Create a template mechanism for RTF export.
+ *   - Support CSV separator and quote symbol change.
  * - Prettify VC in RTF export (maybe similar to
  *   the visualisation in Kalamar)
  */
