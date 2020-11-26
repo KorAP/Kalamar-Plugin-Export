@@ -12,6 +12,7 @@ import org.mockserver.client.server.MockServerClient;
 import org.mockserver.junit.MockServerRule;
 import static org.mockserver.model.HttpRequest.*;
 import static org.mockserver.model.HttpResponse.*;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.AfterClass;
 import org.slf4j.Logger;
@@ -87,11 +88,15 @@ public class ServiceTest extends JerseyTest {
         // Unfortunately this means the tests can't run in parallel
         mockServer = ClientAndServer.startClientAndServer(34765);
         mockClient = new MockServerClient("localhost", mockServer.getPort());
+    }
 
+    @Before
+    public void resetProps () {
         Properties properties = ExWSConf.properties(null);
         properties.setProperty("api.host", "localhost");
         properties.setProperty("api.port", String.valueOf(mockServer.getPort()));
         properties.setProperty("api.scheme", "http");
+        properties.remove("api.source");
     }
    
     @AfterClass
@@ -277,6 +282,10 @@ public class ServiceTest extends JerseyTest {
 
     @Test
     public void testExportWsRTFcorpusQuery () {
+
+        Properties properties = ExWSConf.properties(null);
+        properties.setProperty("api.source", "my-server");
+
         mockClient.reset().when(
             request()
             .withMethod("GET")
@@ -305,10 +314,11 @@ public class ServiceTest extends JerseyTest {
         assertEquals("Request RTF: Http Response should be 200: ",
                 Status.OK.getStatusCode(), responsertf.getStatus());
         String str = responsertf.readEntity(String.class);
-
         assertTrue("Corpus info", str.contains("Corpus:"));
         assertTrue("Corpus def", str.contains("corpusSigle = \"WPD17\""));
         assertFalse("Errors", str.contains("dynCall("));
+        assertTrue("Source info", str.contains("Source:" + CELLSPLIT + "my-server"));
+        
     }
 
     @Test

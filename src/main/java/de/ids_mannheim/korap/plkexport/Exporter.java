@@ -31,6 +31,7 @@ interface Exporter {
     public void setCorpusQueryString (String s);
     public String getSource ();
     public void setSource (String h, String p);
+    public void setSource (String v);
     public int getTotalResults ();
     public boolean hasTimeExceeded ();
     public void setMaxResults (int m);

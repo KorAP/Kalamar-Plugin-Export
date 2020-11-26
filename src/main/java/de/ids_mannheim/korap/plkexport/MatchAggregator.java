@@ -169,6 +169,14 @@ public class MatchAggregator {
         this.src = s.toString();
     };
 
+
+    /**
+     * Set the source information verbose.
+     */
+    public void setSource (String src) {
+        this.src = src;
+    };
+    
     
     /**
      * Get the source information.

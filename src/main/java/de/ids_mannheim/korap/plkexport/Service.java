@@ -60,7 +60,6 @@ import freemarker.template.Template;
  * TODO for release:
  * - Rename to "Kalamar-Plugin-Export".
  * - Improve Readme.
- * - Add opaque source, in case source is an internal IP.
  * - Add screenshot.
  *
  * TODO:
@@ -178,6 +177,7 @@ public class Service {
         String port    = prop.getProperty("api.port", "8089");
         String host    = prop.getProperty("api.host", "localhost");
         String path    = prop.getProperty("api.path", "");
+        String source  = prop.getProperty("api.source");
         int pageSize   = Integer.parseInt(prop.getProperty("conf.page_size", "5"));
         int maxResults = Integer.parseInt(prop.getProperty("conf.max_exp_limit", "10000"));
 
@@ -244,7 +244,10 @@ public class Service {
         exp.setMaxResults(maxResults);
         exp.setQueryString(q);
         exp.setCorpusQueryString(cq);
-        exp.setSource(host, path);
+        if (source != null)
+            exp.setSource(source);
+        else
+            exp.setSource(host, path);
        
         // Set filename
         if (fname != null)
