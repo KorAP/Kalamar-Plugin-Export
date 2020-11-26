@@ -12,16 +12,18 @@ function pluginit(P) {
       let v = d.value;
       if (v !== undefined && v["q"]) {
         let e = v["q"];
+        const eq = document.getElementById("export-query");
+        
         document.getElementById("q").value=v["q"];
         if (v["ql"]) {
-          e += " with " + v["ql"];
+          e += " " + (eq.dataset.withql || "with")  + " " + v["ql"];
           document.getElementById("ql").value=v["ql"];
         };
         if (v["cq"]) {
-          e += " in " + v["cq"];
+          e += " " + (eq.dataset.incq || "in") + " " + v["cq"];
           document.getElementById("cq").value=v["cq"];
         };
-        document.getElementById("export-query").innerText = e;
+        eq.innerText = e;
       }
 
       else {

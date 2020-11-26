@@ -61,8 +61,7 @@ import freemarker.template.Template;
  * - Rename to "Kalamar-Plugin-Export".
  * - Improve Readme.
  * - Add opaque source, in case source is an internal IP.
- * - Include limitation to form.
- * - Localize javascript induced "with" in the title.
+ * - Add screenshot.
  *
  * TODO:
  * - Localize RTF export.

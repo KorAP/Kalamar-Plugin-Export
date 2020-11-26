@@ -62,7 +62,7 @@
   </head>
   <body>
     <!-- <div class="banner" data-note="${dict.banner}"></div> -->
-    <h1>${dict.export}: <code id="export-query"></code></h1>
+    <h1>${dict.export}: <code id="export-query" data-withql="${dict.with_ql}" data-incq="${dict.in_cq}"></code></h1>
     <section>
       <form id="export" class="form-table" action="export" method="POST">
         <fieldset>
