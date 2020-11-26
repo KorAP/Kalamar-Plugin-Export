@@ -22,6 +22,10 @@ function pluginit(P) {
           document.getElementById("cq").value=v["cq"];
         };
         document.getElementById("export-query").innerText = e;
+      }
+
+      else {
+        P.log(0, "Query undefined");
       };
 
       P.resize();
@@ -80,11 +84,16 @@ function reqStream (target) {
     prog.textualData = e.data + "%";
   });
 
-  sse.addEventListener('Error', function (e) {
+  const err = function (e) {
     prog.style.display = "none";
     sse.close();
+    window.Plugin.resize();
+    console.log(e.data);
     window.Plugin.log(0, e.data);
-  });
+  };
+
+  sse.addEventListener('Error', err);
+  sse.onerror = err;
 
   sse.addEventListener('Relocate', function (e) {
     if (e.data == undefined || e.data.length == 0) {

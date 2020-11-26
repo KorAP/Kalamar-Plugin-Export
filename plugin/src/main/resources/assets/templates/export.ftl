@@ -61,7 +61,7 @@
     </style>   
   </head>
   <body>
-    <div class="banner" data-note="${dict.banner}"></div>
+    <!-- <div class="banner" data-note="${dict.banner}"></div> -->
     <h1>${dict.export}: <code id="export-query"></code></h1>
     <section>
       <form id="export" class="form-table" action="export" method="POST">

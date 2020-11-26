@@ -60,7 +60,8 @@ import freemarker.template.Template;
  * TODO for release:
  * - Rename to "Kalamar-Plugin-Export".
  * - Remove 'plugin' root folder.
- * - Localize.
+ * - Localize RTF export.
+ *   - Change "count" to "number of results" in RTF.
  * - Delete the temp file of the export at the end
  *   of serving.
  * - Add date info.
@@ -68,7 +69,6 @@ import freemarker.template.Template;
  * - Improve Readme.
  * - 100 matches as default for export form.
  * - Test ExWsConf.
- * - Change "count" to "number of results" in RTF.
  *
  * TODO:
  * - Abort processing when eventsource is closed.
