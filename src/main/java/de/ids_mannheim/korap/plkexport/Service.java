@@ -59,8 +59,6 @@ import freemarker.template.Template;
 /**
  * TODO for release:
  * - Rename to "Kalamar-Plugin-Export".
- * - Improve Readme.
- * - Add screenshot.
  *
  * TODO:
  * - Localize RTF export.
