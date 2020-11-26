@@ -932,6 +932,11 @@ public class ServiceTest extends JerseyTest {
         assertTrue("Intro", str.contains("{\\rtf1\\ansi\\deff0"));
         assertTrue("Outro", str.contains("{\\pard\\brdrb\\brdrs\\brdrw2\\brsp20\\par}"));
         assertTrue("Content", str.contains("Benutzer Diskussion:Kriddl"));
+
+
+        // Check, that the file was succesfully removed after downloading
+        response = target("/export/" + fileLoc).queryParam("fname", filename).request().get();
+        assertEquals("HTTP Code", Status.NOT_FOUND.getStatusCode(), response.getStatus());
     };
 
 

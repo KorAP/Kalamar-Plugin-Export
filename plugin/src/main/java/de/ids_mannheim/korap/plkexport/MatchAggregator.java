@@ -6,6 +6,9 @@ import java.io.Writer;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.FileInputStream;
 
 import java.util.Collection;
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.StreamingOutput;
 
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
@@ -426,8 +430,39 @@ public class MatchAggregator {
         }
         else if (this.file.exists()) {
 
-            // Serve file
-            rb = Response.ok(this.file);
+            // Serve the file and delete after serving
+            final File expFile = this.file;
+            try {
+                final InputStream in = new FileInputStream(this.file);
+
+                // Remove file after output is streamed
+                StreamingOutput output = new StreamingOutput() {
+                        @Override
+                        public void write(OutputStream out)
+                            throws IOException {
+
+                            // Write file data in output stream
+                            int length;
+                            byte[] buffer = new byte[1024];
+                            while ((length = in.read(buffer)) != -1) {
+                                out.write(buffer, 0, length);
+                            }
+                            out.flush(); // Important!
+                            in.close();
+
+                            // When done, delete the file
+                            expFile.delete();
+                        }
+                    };
+            
+                // Serve file
+                rb = Response.ok(output);
+            }
+
+            catch (Exception e) {
+                // File problematic
+                return Response.status(Status.NOT_FOUND);            
+            };
         }
         else {
             // File doesn't exist

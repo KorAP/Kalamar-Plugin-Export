@@ -60,17 +60,18 @@ import freemarker.template.Template;
  * TODO for release:
  * - Rename to "Kalamar-Plugin-Export".
  * - Remove 'plugin' root folder.
- * - Localize RTF export.
- *   - Change "count" to "number of results" in RTF.
- * - Delete the temp file of the export at the end
- *   of serving.
- * - Add date info.
- * - Add opaque source, in case source is an internal IP.
- * - Improve Readme.
  * - 100 matches as default for export form.
- * - Test ExWsConf.
+ * - Improve Readme.
+ * - Add opaque source, in case source is an internal IP.
+ * - Include limitation to form.
  *
  * TODO:
+ * - Localize RTF export.
+ *   - Change "count" to "number of results" in RTF.
+ * - Add date info.
+ * - Switch Cookie mechanism to container req for
+ *   better testing capabilities.
+ * - Test ExWsConf.
  * - Abort processing when eventsource is closed.
  * - Do not expect all meta data per match.
  * - Upgrade default pageSize to 50.
