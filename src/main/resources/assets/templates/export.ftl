@@ -107,7 +107,8 @@
 
           <fieldset class="form-line">
             <legend>${dict.hitc}</legend>
-            <input name="hitc" id="hitc" type="number" min="1" max="10000" value="20" />
+            <input name="hitc" id="hitc" type="number" min="1" max="10000" value="${defaultHitc}" />
+            <p style="font-size: 80%">${dict.max_hitc} <tt>${maxHitc}</tt></p>
           </fieldset>
 
           <progress id="progress" value="0" max="100" style="display: none;">0%</progress>

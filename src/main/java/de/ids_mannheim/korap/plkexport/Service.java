@@ -59,11 +59,10 @@ import freemarker.template.Template;
 /**
  * TODO for release:
  * - Rename to "Kalamar-Plugin-Export".
- * - Remove 'plugin' root folder.
- * - 100 matches as default for export form.
  * - Improve Readme.
  * - Add opaque source, in case source is an internal IP.
  * - Include limitation to form.
+ * - Localize javascript induced "with" in the title.
  *
  * TODO:
  * - Localize RTF export.
@@ -667,6 +666,8 @@ public class Service {
         String port = prop.getProperty("asset.port", "");
         String host = prop.getProperty("asset.host", "korap.ids-mannheim.de");
         String path = prop.getProperty("asset.path", "");
+        String defaultHitc = prop.getProperty("conf.default_hitc", "100");
+        int maxHitc = Integer.parseInt(prop.getProperty("conf.max_exp_limit", "10000"));
 
         UriBuilder uri = UriBuilder.fromPath("")
             .host(host)
@@ -679,6 +680,8 @@ public class Service {
             uri = uri.port(Integer.parseInt(port));
 
         templateData.put("assetPath", uri.build());
+        templateData.put("defaultHitc", defaultHitc);
+        templateData.put("maxHitc", maxHitc);
 
         // There is an error code to pass
         if (code != null) {
