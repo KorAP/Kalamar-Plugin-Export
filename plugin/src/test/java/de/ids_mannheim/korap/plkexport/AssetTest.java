@@ -40,6 +40,35 @@ public class AssetTest extends JerseyTest {
     }
 
     @Test
+    public void testFormHtmlLocalization () {
+
+        // Check german
+        Response responsehtml = target("/export").request()
+            .header("Accept-Language","fr-CH, fr;q=0.9, de;q=0.8, en;q=0.7, *;q=0.5").get();
+        assertEquals("HTTP Code",
+                     Status.OK.getStatusCode(), responsehtml.getStatus());
+        String str = responsehtml.readEntity(String.class);
+        assertTrue("HTTP Body (de)", str.contains("Dateiformat"));
+
+        // Check English
+        responsehtml = target("/export").request()
+            .header("Accept-Language","fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5").get();
+        assertEquals("HTTP Code",
+                     Status.OK.getStatusCode(), responsehtml.getStatus());
+        str = responsehtml.readEntity(String.class);
+        assertTrue("HTTP Body (en)", str.contains("File format"));
+
+        // Check German (2)
+        responsehtml = target("/export").request()
+            .header("Accept-Language","de-DE, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5").get();
+        assertEquals("HTTP Code",
+                     Status.OK.getStatusCode(), responsehtml.getStatus());
+        str = responsehtml.readEntity(String.class);
+        assertTrue("HTTP Body (de)", str.contains("Dateiformat"));
+    };
+
+    
+    @Test
     public void testFormHtmlAssets () {
         Properties properties = ExWSConf.properties(null);
         String hostTemp = properties.getProperty("asset.host");

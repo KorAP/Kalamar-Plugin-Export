@@ -10,12 +10,12 @@ import java.lang.Thread;
 import java.net.URLEncoder;
 import java.net.ConnectException;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Base64;
+import java.util.ResourceBundle;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,6 +48,7 @@ import org.glassfish.jersey.media.sse.SseFeature;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import org.glassfish.jersey.server.ContainerRequest;
 
 import static de.ids_mannheim.korap.plkexport.Util.*;
 
@@ -67,6 +68,7 @@ import freemarker.template.Template;
  * - Improve Readme.
  * - 100 matches as default for export form.
  * - Test ExWsConf.
+ * - Change "count" to "number of results" in RTF.
  *
  * TODO:
  * - Abort processing when eventsource is closed.
@@ -89,6 +91,9 @@ import freemarker.template.Template;
  *   matches per export, while external users
  *   should be limited to 10.000.
  * - Add 1000-separator to numbers.
+ * - Get the list of availables locales based
+ *   on the given ResourceBundle.
+ * - Check for q/ql definition in JS.
  *
  * IDEAS:
  * - Create a template mechanism for RTF export.
@@ -123,7 +128,10 @@ public class Service {
     private final static Base64.Decoder b64Dec = Base64.getDecoder();
 
     @Context
-    private HttpServletRequest req;     
+    private HttpServletRequest servletReq;
+
+    @Context
+    private ContainerRequest req;
 
 
     /*
@@ -208,12 +216,12 @@ public class Service {
         // Get client IP, in case service is behind a proxy
         // Get auth (temporarily) via Session riding
         String xff = "", auth = "";
-        if (req != null) {
-            xff = getClientIP(req.getHeader("X-Forwarded-For"));
+        if (servletReq != null) {
+            xff = getClientIP(servletReq.getHeader("X-Forwarded-For"));
             if (xff == "")
-                xff = req.getRemoteAddr();
+                xff = servletReq.getRemoteAddr();
 
-            auth = authFromCookie(req);
+            auth = authFromCookie(servletReq);
         };
     
         String resp;
@@ -632,7 +640,6 @@ public class Service {
                 };
             };
         };
-
         return "";
     };
 
@@ -678,6 +685,16 @@ public class Service {
             templateData.put("msg", msg);            
         };
 
+        try {
+            templateData.put("dict", this.getDictionary());
+
+        } catch (Exception e) {
+            return Response
+                .ok(new String("Dictionary not found"))
+                .status(Status.INTERNAL_SERVER_ERROR)
+                .build();
+        };
+
         // Generate template
         try {
             Template template = cfg.getTemplate("export.ftl");
@@ -720,5 +737,34 @@ public class Service {
         };
 
         return "";
+    };
+
+
+    /*
+     * Load dictionary for a chosen locale as a resource bundle
+     */
+    private ResourceBundle getDictionary () throws IOException {
+
+        // Load prefered dictionary
+        Locale prefered = new Locale("en");
+
+        if (req != null) {
+
+        CHOOSE:
+            for (Locale l : req.getAcceptableLanguages()) {
+                switch (l.getLanguage()) {
+                case "de":
+                    prefered = l;
+                    break CHOOSE;
+                case "en":
+                    prefered = l;
+                    break CHOOSE;
+                };
+            };
+        };
+
+        return ResourceBundle.getBundle(
+            "locales/export", prefered
+            );
     };
 };
