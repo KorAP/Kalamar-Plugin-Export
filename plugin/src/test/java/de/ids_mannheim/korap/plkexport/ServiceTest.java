@@ -47,6 +47,7 @@ import org.glassfish.jersey.media.sse.SseFeature;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.client.WebTarget;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -789,9 +790,7 @@ public class ServiceTest extends JerseyTest {
     @Test
     public void testExportWsProgressError () throws InterruptedException {
 
-        // TODO:
-        //   Make this threadsafe
-        final LinkedList<String> events = new LinkedList<>();
+        final ConcurrentLinkedQueue<String> events = new ConcurrentLinkedQueue<>();
         // final int eventCount = 3;
 
         // Expect messages:
@@ -820,10 +819,10 @@ public class ServiceTest extends JerseyTest {
         Thread.sleep(2000);
 
         // Check error
-        assertEquals(events.getFirst(), "Process:init");
-        assertEquals(events.get(1), "Error:HTTP 400 Bad Request");
-        assertEquals(events.getLast(), "Process:done");
-        assertEquals(events.size(), 3);
+        assertEquals(events.poll(), "Process:init");
+        assertEquals(events.poll(), "Error:HTTP 400 Bad Request");
+        assertEquals(events.poll(), "Process:done");
+        assertTrue(events.isEmpty());
         eventSource.close();
     };
 
@@ -864,8 +863,8 @@ public class ServiceTest extends JerseyTest {
         // https://github.com/jersey/jersey/blob/master/examples/
         //   server-sent-events-jersey/src/test/java/org/glassfish/
         //   jersey/examples/sse/jersey/ServerSentEventsTest.java
+        final ConcurrentLinkedQueue<String> events = new ConcurrentLinkedQueue<>();
 
-        final LinkedList<String> events = new LinkedList<>();
 
         // Create SSE client
         Client client = ClientBuilder
@@ -891,17 +890,22 @@ public class ServiceTest extends JerseyTest {
         Thread.sleep(3000);
 
         // Check error
-        assertEquals(events.getFirst(), "Process:init");
-        assertEquals(events.get(1), "Progress:0");
-        assertEquals(events.get(2), "Progress:56");
-        assertTrue(events.get(3).startsWith("Relocate:"));
-        assertTrue(events.get(3).contains(";"));
-        assertEquals(events.getLast(), "Process:done");
-        assertEquals(events.size(), 5);
+        assertEquals(events.poll(), "Process:init");
+        assertTrue(events.contains("Progress:0"));
+        assertTrue(events.contains("Progress:56"));
+        events.poll();
+        events.poll();
+        assertTrue(events.peek().startsWith("Relocate:"));
+        assertTrue(events.peek().contains(";"));
+
+        String rel = events.poll();
+
+        assertEquals(events.poll(), "Process:done");
+        assertTrue(events.isEmpty());
         eventSource.close();
 
         // Now fetch the file!
-        String[] splits = events.get(3).substring(9).split(";");
+        String[] splits = rel.substring(9).split(";");
         String fileLoc = splits[0];        
         String filename = splits[1];
         Response response = target("/export/" + fileLoc).queryParam("fname", filename).request().get();
