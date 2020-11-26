@@ -108,11 +108,11 @@
           <fieldset class="form-line">
             <legend>${dict.hitc}</legend>
             <input name="hitc" id="hitc" type="number" min="1" max="10000" value="${defaultHitc}" />
-            <p style="font-size: 80%">${dict.max_hitc} <tt>${maxHitc}</tt></p>
+            <p style="font-size: 80%; margin-top: .2em; margin-bottom: 0;">${dict.max_hitc} <tt>${maxHitc}</tt></p>
           </fieldset>
 
           <progress id="progress" value="0" max="100" style="display: none;">0%</progress>
-          
+
           <input type="submit" value="${dict.export_button}">
         </fieldset>
       </form>
