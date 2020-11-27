@@ -1,13 +1,12 @@
 # Kalamar-Plugin-Export
 
-![Kalamar-Plugin-Export Screenshot](https://raw.githubusercontent.com/KorAP/Kalamar-Plugin-Export/misc/kalamar-export-screenshot.png)
+![Kalamar-Plugin-Export Screenshot](https://raw.githubusercontent.com/KorAP/Kalamar-Plugin-Export/master/misc/kalamar-export-screenshot.png)
 
 ## Description
 
 Kalamar-Plugin-Export is a web service that integrates in the plugin framework of
 [Kalamar](https://github.com/KorAP/Kalamar), to export matches for the
 [KorAP Corpus Analysis Platform](http://korap.ids-mannheim.de/) in various formats.
-
 Currently supported are **RTF**, **CSV**, and **JSON**.
 
 Kalamar-Plugin-Export is meant to be a basic export plugin and should
