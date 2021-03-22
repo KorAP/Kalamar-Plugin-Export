@@ -122,7 +122,7 @@
     <#if code??>
     <script>//<![CDATA[
       function dynCall (P) {
-        P.log(${code}, '${msg}');
+        P.log(${code}, '${msg!"Error!"}');
       };
     //]]></script>
     </#if>
