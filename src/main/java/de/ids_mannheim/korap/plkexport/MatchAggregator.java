@@ -171,7 +171,7 @@ public class MatchAggregator {
 
 
     /**
-     * Set the source information verbose.
+     * Set the source information verbatim.
      */
     public void setSource (String src) {
         this.src = src;

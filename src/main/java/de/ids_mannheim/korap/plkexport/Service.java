@@ -59,6 +59,10 @@ import freemarker.template.Template;
 /**
  * TODO:
  * - Rename "is cutted" to "truncated".
+ * - Restructure:
+ *   - Load the exporter objects as part of
+ *     the MatchAggregator instead of full
+ *     inheritance.
  * - Localize RTF export.
  *   - Change "count" to "number of results" in RTF.
  * - Add date info.
@@ -415,7 +419,7 @@ public class Service {
      *            Number of matches to fetch
      */
     @GET
-	@Path("export")
+    @Path("export")
     @Produces(SseFeature.SERVER_SENT_EVENTS)
     @Consumes(SseFeature.SERVER_SENT_EVENTS)
 	public Response progressExport(

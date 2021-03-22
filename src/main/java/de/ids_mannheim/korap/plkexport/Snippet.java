@@ -32,7 +32,6 @@ public class Snippet {
     public Snippet (String snippetstr) {
 
         // Match with precise algorithm
-        String left, right;
         Matcher m = snippetP.matcher(snippetstr);
         if (m.find()) {
             left = m.group(1);

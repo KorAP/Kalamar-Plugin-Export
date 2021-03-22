@@ -146,7 +146,9 @@ public class RtfExporter extends MatchAggregator implements Exporter {
 
             w.append("\n");
 
-        } catch (JsonProcessingException jpe) {
+        }
+
+        catch (JsonProcessingException jpe) {
             System.err.println(jpe);
             w.append("{\\pard {\\b Unable to process match} \\par}");
         };
@@ -214,7 +216,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
     
 
     /*
-     * Add information tablerow
+     * Add information table row
      */
     private void addInfoRow (Writer w, String title, String value) throws IOException {
 
