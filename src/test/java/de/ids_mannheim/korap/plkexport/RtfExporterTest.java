@@ -7,6 +7,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+
+import java.util.Properties;
+
 import org.junit.Test;
 
 import javax.ws.rs.core.Response;
@@ -90,5 +93,26 @@ public class RtfExporterTest {
         assertEquals(rtf.getFileName(),"Beispiel");
         assertEquals(rtf.getMimeType(),"application/rtf");
         assertEquals(rtf.getSuffix(),"rtf");
+    };
+
+    @Test
+    public void testTrail () throws IOException {
+
+        Properties properties = ExWSConf.properties(null);
+        properties.setProperty(
+            "rtf.trail",
+            "Please cite us under http://korap.ids-mannheim.de!"
+            );
+
+        RtfExporter rtf = new RtfExporter();
+        rtf.init("{\"query\":\"cool\"}");
+        rtf.finish();
+
+        Response resp = rtf.serve().build();
+        String x = (String) resp.getEntity();
+        resp.close();
+
+        assertTrue(x.contains("{\\pard\\fs18\\f0 Please cite us"));
+        assertTrue(x.contains("under http://korap.ids-mannheim.de!\\par}"));
     };
 };
