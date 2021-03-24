@@ -93,6 +93,14 @@ public class RtfExporter extends MatchAggregator implements Exporter {
 
     @Override
     public void writeFooter (Writer w) throws IOException {
+        String trail = prop.getProperty("rtf.trail");
+
+        if (trail != null && trail.length() > 0) {
+            w.append(HLINE).append("{\\pard\\fs18\\f0 ");
+            rtfText(w, trail);
+            w.append("\\par}\n");
+        }
+
         // Add line
         w.append(HLINE).append("}");
     };
