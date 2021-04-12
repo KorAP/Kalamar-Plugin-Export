@@ -63,13 +63,9 @@ import freemarker.template.Template;
  *   - Load the exporter objects as part of
  *     the MatchAggregator instead of full
  *     inheritance.
- * - Localize RTF export.
- *   - Change "count" to "number of results" in RTF.
- * - Add date info.
  * - Switch Cookie mechanism to container req for
  *   better testing capabilities.
  * - Test ExWsConf.
- * - Abort processing when eventsource is closed.
  * - Do not expect all meta data per match.
  * - Upgrade default pageSize to 50.
  * - Add loading marker.
@@ -80,7 +76,6 @@ import freemarker.template.Template;
  *   greater than what the server supports).
  * - Restrict CORS to meaningful sources.
  * - Add arbitrary information for RTF header
- *   - Add Citation information.
  * - Add information regarding max_exp_limit
  *   to export form.
  * - Maybe set matches from parent window
