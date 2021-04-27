@@ -14,6 +14,8 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 import org.glassfish.jersey.servlet.ServletContainer;
 
+import org.tinylog.Logger;
+
 /**
  * Server to provide the export web service
  */
@@ -57,8 +59,8 @@ public class PluginServer {
 
         try {
             jettyServer.start();
-            System.out.println("PluginServer available under: http://" + host+ ":" + portStr);
-            System.out.println(
+            Logger.info("PluginServer available under: http://" + host+ ":" + portStr);
+            Logger.info(
                 "ApiServer expected under: " +
                 properties.getProperty("api.scheme") +
                 "://" +

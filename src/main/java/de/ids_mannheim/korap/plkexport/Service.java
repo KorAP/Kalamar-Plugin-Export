@@ -42,6 +42,8 @@ import javax.ws.rs.core.Response.Status;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
+import org.tinylog.Logger;
+
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseFeature;
@@ -69,7 +71,6 @@ import freemarker.template.Template;
  * - Do not expect all meta data per match.
  * - Upgrade default pageSize to 50.
  * - Add loading marker.
- * - Use a central logging mechanism.
  * - Add infos to JsonExporter.
  *   - e.g. q &amp; cq string representation.
  * - Check pageSize after init (so pageSize is not
@@ -123,12 +124,12 @@ public class Service {
     
     private final static Base64.Decoder b64Dec = Base64.getDecoder();
 
+    
     @Context
     private HttpServletRequest servletReq;
 
     @Context
     private ContainerRequest req;
-
 
     /*
      * Private method to run the export,
@@ -270,6 +271,7 @@ public class Service {
         }
 
         catch (Exception e) {
+            Logger.error(e.getMessage());
             throw new WebApplicationException(
                 responseForm(
                     Status.INTERNAL_SERVER_ERROR,
@@ -300,6 +302,7 @@ public class Service {
             }
 
             catch (Exception e) {
+                Logger.error(e.getMessage());
                 throw new WebApplicationException(
                     responseForm(
                         Status.INTERNAL_SERVER_ERROR,
@@ -340,6 +343,7 @@ public class Service {
         }
 
         catch (Exception e) {
+            Logger.error(e.getMessage());
             throw new WebApplicationException(
                 responseForm(
                     Status.INTERNAL_SERVER_ERROR,
@@ -473,6 +477,7 @@ public class Service {
                         }
 
                         catch (IOException ioe) {
+                            Logger.error(ioe.getMessage());
                             throw new RuntimeException(
                                 "Error when writing event output.", ioe
                                 );
@@ -491,6 +496,7 @@ public class Service {
                         }
 
                         catch (IOException ioClose) {
+                            Logger.error(ioClose.getMessage());
                             throw new RuntimeException(
                                 "Error when closing the event output.", ioClose
                                 );
@@ -693,6 +699,7 @@ public class Service {
             templateData.put("dict", this.getDictionary());
 
         } catch (Exception e) {
+            Logger.error(e.getMessage());
             return Response
                 .ok(new String("Dictionary not found"))
                 .status(Status.INTERNAL_SERVER_ERROR)
@@ -707,6 +714,7 @@ public class Service {
 
         // Unable to find template
         catch (Exception e) {
+            Logger.error(e.getMessage());
             return Response
                 .ok(new String("Template not found"))
                 .status(Status.INTERNAL_SERVER_ERROR)
