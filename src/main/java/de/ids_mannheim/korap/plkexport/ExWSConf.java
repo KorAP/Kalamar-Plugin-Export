@@ -13,6 +13,8 @@ import java.lang.String;
 import java.util.Properties;
 import java.nio.charset.StandardCharsets;
 
+import org.tinylog.Logger;
+
 public class ExWSConf {
 
     // Version of Export Plugin
@@ -48,7 +50,7 @@ public class ExWSConf {
                     .getResourceAsStream(propFile);
 
                 if (iFile == null) {
-                    System.err.println("Unable to load properties.");
+                    Logger.error("Unable to load properties.");
                     return null;
                 };
 
@@ -57,7 +59,7 @@ public class ExWSConf {
                 iFile.close();
             }
             catch (IOException e) {
-                System.err.println(e.getLocalizedMessage());
+                Logger.error(e);
                 return null;
             };
         };
