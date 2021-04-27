@@ -96,6 +96,39 @@ public class RtfExporterTest {
     };
 
     @Test
+    public void testRtfText () throws IOException {
+        RtfExporter rtf = new RtfExporter();
+        rtf.init("{\"matches\":[{\"author\":\"Goethe\"}]}");
+        rtf.finish();
+
+        Response resp = rtf.serve().build();
+        String x = (String) resp.getEntity();
+        resp.close();
+
+        assertTrue(x.contains("{\\pard\\fs18\\f0"));
+
+        rtf = new RtfExporter();
+        rtf.init("{\"matches\":[{\"author\":\"\"}]}");
+        rtf.finish();
+
+        resp = rtf.serve().build();
+        x = (String) resp.getEntity();
+        resp.close();
+
+        assertTrue(x.contains("{\\pard\\fs18\\f0"));
+
+        rtf = new RtfExporter();
+        rtf.init("{\"versuch\":\"try\"}");
+        rtf.finish();
+
+        resp = rtf.serve().build();
+        x = (String) resp.getEntity();
+        resp.close();
+
+        assertTrue(x.contains("{\\pard\\fs18\\f0"));
+};
+
+    @Test
     public void testTrail () throws IOException {
 
         Properties properties = ExWSConf.properties(null);
