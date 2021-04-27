@@ -505,8 +505,16 @@ public class Service {
                 }
             }).start();      
 
+        String origin = prop.getProperty("server.origin","*");
+        if (servletReq != null) {
+            // This is temporary to allow for session riding
+            origin = servletReq.getHeader("Origin");
+        };
+
         return Response.ok(eventOutput, SseFeature.SERVER_SENT_EVENTS_TYPE)
-            .header("Access-Control-Allow-Origin", "*")
+            .header("Access-Control-Allow-Origin", origin)
+            .header("Access-Control-Allow-Credentials", "true")
+            .header("Vary","Origin")
             .build();
     };
 
@@ -622,9 +630,10 @@ public class Service {
 
         // Iterate through all cookies for a Kalamar session
         for (int i = 0; i < cookies.length; i++) {
-                
-            // Check the valid path
-            if (cookiePath != "" && cookies[i].getPath() != cookiePath)
+
+            // Check the valid path (often path is not set when sent)
+            if (cookiePath != "" && cookies[i].getPath() != "" &&
+                cookies[i].getPath() != cookiePath)
                 continue;
 
             // Ignore irrelevant cookies

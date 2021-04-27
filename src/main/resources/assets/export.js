@@ -78,7 +78,8 @@ function reqStream (target) {
 
   let relocationURL;
 
-  const sse = new EventSource(target);
+  const sse = new EventSource(target, { withCredentials : true });
+  console.log("Credentials: " + sse.withCredentials);
   const prog = document.getElementById('progress');
 
   sse.addEventListener('Progress', function (e) {
