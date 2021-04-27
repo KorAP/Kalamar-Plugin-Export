@@ -117,34 +117,42 @@ public class RtfExporter extends MatchAggregator implements Exporter {
 
             w.append("\\line ");
 
-            // Snippet
-            w.append("{\\pard\\fs20\\f0\\qj ");
-            if (s.hasMoreLeft()) {
-                w.append("[...] ");
+            if (s != null) {
+
+                // Snippet
+                w.append("{\\pard\\fs20\\f0\\qj ");
+                if (s.hasMoreLeft()) {
+                    w.append("[...] ");
+                };
+                rtfText(w, s.getLeft());
+                w.append("{\\b ");
+                rtfText(w, s.getMark());
+                if (s.isCutted()) {
+                    w.append(" [!]");
+                };
+                w.append("}");
+                rtfText(w, s.getRight());
+                if (s.hasMoreRight()) {
+                    w.append(" [...]");
+                };
+                w.append("\\par}");
             };
-            rtfText(w, s.getLeft());
-            w.append("{\\b ");
-            rtfText(w, s.getMark());
-            if (s.isCutted()) {
-                w.append(" [!]");
-            };
-            w.append("}");
-            rtfText(w, s.getRight());
-            if (s.hasMoreRight()) {
-                w.append(" [...]");
-            };
-            w.append("\\par}");
 
             // Reference
             w.append("{\\pard");
             w.append("\\qr\\fs18\\cf2\\f0 ");
             w.append("{\\b ");
             rtfText(w, match.getTitle());
-            w.append(" von ");
-            rtfText(w, match.getAuthor());
-            w.append(" (");
-            rtfText(w, match.getPubDate());
-            w.append(")}");
+            if (match.getAuthor() != null) {
+                w.append(" von ");
+                rtfText(w, match.getAuthor());
+            };
+            if (match.getPubDate() != null) {
+                w.append(" (");
+                rtfText(w, match.getPubDate());
+                w.append(")");
+            };
+            w.append("}");
             w.append("\\par}");
 
             // TextSigle
@@ -264,6 +272,9 @@ public class RtfExporter extends MatchAggregator implements Exporter {
      * Based on jrtf by Christian Ullenboom
      */
     private static void rtfText(Writer w, String rawText) throws IOException {
+        if (rawText == null)
+            return;
+
         char c;
         for (int i = 0; i < rawText.length(); i++) {
             c = rawText.charAt( i ); 
