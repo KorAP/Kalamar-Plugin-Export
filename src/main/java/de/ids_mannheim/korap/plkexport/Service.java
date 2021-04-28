@@ -275,7 +275,7 @@ public class Service {
             throw new WebApplicationException(
                 responseForm(
                     Status.INTERNAL_SERVER_ERROR,
-                    e.getMessage()
+                    "Unable to initialize export"
                     )
                 );
         };
@@ -306,7 +306,7 @@ public class Service {
                 throw new WebApplicationException(
                     responseForm(
                         Status.INTERNAL_SERVER_ERROR,
-                        e.getMessage()
+                        "Unable to finish export"
                         )
                     );
             };
@@ -347,7 +347,7 @@ public class Service {
             throw new WebApplicationException(
                 responseForm(
                     Status.INTERNAL_SERVER_ERROR,
-                    e.getMessage()
+                    "Unable to iterate through results"
                     )
                 );
         };
