@@ -272,10 +272,15 @@ public class Service {
 
         catch (Exception e) {
             Logger.error(e);
+            String err = e.getMessage();
+            if (err == null) {
+                err = "Unable to initialize export";
+            };
+
             throw new WebApplicationException(
                 responseForm(
                     Status.INTERNAL_SERVER_ERROR,
-                    e.getMessage()
+                    err
                     )
                 );
         };
@@ -303,10 +308,15 @@ public class Service {
 
             catch (Exception e) {
                 Logger.error(e);
+                String err = e.getMessage();
+                if (err == null) {
+                    err = "Unable to finish export";
+                };
+                
                 throw new WebApplicationException(
                     responseForm(
                         Status.INTERNAL_SERVER_ERROR,
-                        e.getMessage()
+                        err
                         )
                     );
             };
@@ -344,10 +354,14 @@ public class Service {
 
         catch (Exception e) {
             Logger.error(e);
+            String err = e.getMessage();
+            if (err == null) {
+                err = "Unable to iterate through results";
+            };
             throw new WebApplicationException(
                 responseForm(
                     Status.INTERNAL_SERVER_ERROR,
-                    e.getMessage()
+                    err
                     )
                 );
         };
