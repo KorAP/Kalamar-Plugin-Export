@@ -98,6 +98,8 @@ public class CsvExporter extends MatchAggregator implements Exporter {
      * Add a CSV cell to the CSV row
      */
     private void addCell (Writer w, String s) throws IOException {
+        if (s == null)
+            return;
 
         // If meta characters exist, make a quote
         if (s.contains(",")  ||
