@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "df6a590a_938b21ca",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2021-05-05T14:15:59Z",
+      "side": 1,
+      "message": "Nice logging framework!",
+      "revId": "74e7eed65b28957626addbe6e182cbb0207d728a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
