@@ -275,6 +275,8 @@ public class RtfExporter extends MatchAggregator implements Exporter {
         if (rawText == null)
             return;
 
+        charsetEncoder.reset();
+
         char c;
         for (int i = 0; i < rawText.length(); i++) {
             c = rawText.charAt( i ); 
