@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "40a7a253_62ee26a3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2021-05-07T10:43:05Z",
+      "side": 1,
+      "message": "There are some log errors like\n\n2021-05-05 15:23:07.124:ERROR: java.lang.IllegalStateException: Current state \u003d RESET, new state \u003d FLUSHED\n\tat java.nio.charset.CharsetEncoder.throwIllegalStateException(CharsetEncoder.java:992)\n\tat java.nio.charset.CharsetEncoder.flush(CharsetEncoder.java:675)\n\tat java.nio.charset.CharsetEncoder.encode(CharsetEncoder.java:804)\n\tat de.ids_mannheim.korap.plkexport.RtfExporter.rtfText(RtfExporter.java:297)\n\tat de.ids_mannheim.korap.plkexport.RtfExporter.addMatch(RtfExporter.java:132)\n\tat   de.ids_mannheim.korap.plkexport.MatchAggregator.iterateThroughMatches(MatchAggregator.java:513)\n\tat de.ids_mannheim.korap.plkexport.MatchAggregator.init(MatchAggregator.java:395)\n\tat de.ids_mannheim.korap.plkexport.Service.export(Service.java:270)\n\tat de.ids_mannheim.korap.plkexport.Service.access$000(Service.java:102)\n\tat de.ids_mannheim.korap.plkexport.Service$1.run(Service.java:456)\n\tat java.lang.Thread.run(Thread.java:748) at Service.java:274\n2021-05-05 15:23:07.132:ERROR: java.lang.IllegalStateException: Current state \u003d FLUSHED, new state \u003d CODING_END\n\tat java.nio.charset.CharsetEncoder.throwIllegalStateException(CharsetEncoder.java:992)\n\tat java.nio.charset.CharsetEncoder.encode(CharsetEncoder.java:572)\n\tat java.nio.charset.CharsetEncoder.encode(CharsetEncoder.java:802)\n\tat de.ids_mannheim.korap.plkexport.RtfExporter.rtfText(RtfExporter.java:297)\n\tat de.ids_mannheim.korap.plkexport.RtfExporter.addMatch(RtfExporter.java:125)\n\tat de.ids_mannheim.korap.plkexport.MatchAggregator.iterateThroughMatches(MatchAggregator.java:513)\n\tat de.ids_mannheim.korap.plkexport.MatchAggregator.init(MatchAggregator.java:395)\n\tat de.ids_mannheim.korap.plkexport.Service.export(Service.java:270)\n\tat de.ids_mannheim.korap.plkexport.Service.access$000(Service.java:102)\n\tat de.ids_mannheim.korap.plkexport.Service$1.run(Service.java:456)\n\tat java.lang.Thread.run(Thread.java:748) at Service.java:274\n\n\nAlthough we are only using the convenience reallocating call of \"encode\" - this may help. I don\u0027t know.",
+      "revId": "24aac804eb02e710fee3821bf9c644fdd9007115",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
