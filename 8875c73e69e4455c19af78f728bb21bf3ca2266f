@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "db43c9c1_04e2100c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2021-05-27T09:04:22Z",
+      "side": 1,
+      "message": "This changes the exported data slightly, so it\u0027s no longer identical to the JSON export. But I guess we have to do that.",
+      "revId": "8875c73e69e4455c19af78f728bb21bf3ca2266f",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
