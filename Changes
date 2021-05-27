@@ -1,7 +1,8 @@
-0.2.5 2021-05-07
+0.2.5 2021-05-27
     - Silence logging in tests.
+    - Sanitize CSV export for security reasons.
 
-0.2.4 2021-04-27
+0.2.4 2021-05-07
     - Fix temporary session-riding capabilities.
     - Introduced central tinylog.
     - Fix nullpointer in RTF export.
