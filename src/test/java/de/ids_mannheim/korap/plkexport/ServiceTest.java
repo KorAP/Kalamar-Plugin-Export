@@ -679,7 +679,7 @@ public class ServiceTest extends JerseyTest {
 
         assertEquals(lines.length,10);
         assertEquals(lines[0],"HasMoreLeft,leftContext,Match,rightContext,HasMoreRight,isCutted,textSigle,author,pubDate,title");
-        assertEquals(lines[1],"...,\"1 Tag gesperrt. 24h Urlaub.^^ LG;--  17:40, 11. Jan. 2011 (CET) Danke ich habe die nahezu zeitgleichen VMs von Dir und Ironhoof gesehen. Ob es ein Grund zum Jubeln ist, sei dahin gestellt. Immerhin habe ich für 24 Stunden einen \"\"\",Plagegeist,\"\"\" weniger. Sag mal, zum Kölner Stammtisch isses doch nicht so weit ... wie wär's ? Besten  17:49, 11. Jan. 2011 (CET) Er wurde gesperrt. Nach dem Theater hier zurecht. ABER: auch deine Beiträge hier, die er versuchte zu löschen, sorgen nicht für\",...,,WUD17/G59/34284,\"Umherirrender, u.a.\",2017-07-01,\"Benutzer Diskussion:Gruß Tom/Archiv/2011\"");
+        assertEquals(lines[1],"...,\"1 Tag gesperrt. 24h Urlaub.^^ LG;--  17:40, 11. Jan. 2011 (CET) Danke ich habe die nahezu zeitgleichen VMs von Dir und Ironhoof gesehen. Ob es ein Grund zum Jubeln ist, sei dahin gestellt. Immerhin habe ich für 24 Stunden einen \"\"\",Plagegeist,\" \"\" weniger. Sag mal, zum Kölner Stammtisch isses doch nicht so weit ... wie wär's ? Besten  17:49, 11. Jan. 2011 (CET) Er wurde gesperrt. Nach dem Theater hier zurecht. ABER: auch deine Beiträge hier, die er versuchte zu löschen, sorgen nicht für\",...,,WUD17/G59/34284,\"Umherirrender, u.a.\",2017-07-01,\"Benutzer Diskussion:Gruß Tom/Archiv/2011\"");
 
         frmap.putSingle("hitc", "7");
 

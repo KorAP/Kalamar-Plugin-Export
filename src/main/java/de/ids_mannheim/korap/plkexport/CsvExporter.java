@@ -102,20 +102,42 @@ public class CsvExporter extends MatchAggregator implements Exporter {
             return;
 
         // If meta characters exist, make a quote
-        if (s.contains(",")  ||
+        if (s.startsWith("=") ||
+            s.startsWith("-") ||
+            s.startsWith("\"") ||
+            s.startsWith("+") ||
+            s.startsWith("@") ||
+            s.contains(",")  ||
             s.contains("\"") ||
             s.contains("\n") ||
             s.contains(" ")  ||
             s.contains("\t") ||
-            s.contains(";")) {
+            s.contains(";")
+          ) {
 
             // Iterate over all characters
             // and turn '"' into '""'.
             w.append('"');
+
+            // Sanitize following recommendations in
+            // https://wiki.mozilla.org/images/6/6f/Phpmyadmin-report.pdf
+            if (s.startsWith("=") ||
+                s.startsWith("-") ||
+                s.startsWith("\"") ||
+                s.startsWith("+") ||
+                s.startsWith("@")) {
+              w.append(" ");
+            };
+
+            
             for (int i = 0; i < s.length(); i++) {
                 final char c = s.charAt(i);
                 if (c == '"') {
                     w.append('"').append('"');
+                }
+                // Sanitize
+                else if (c == '\t') {
+                  w.append(' ');
                 }
                 else {
                     w.append(c);
