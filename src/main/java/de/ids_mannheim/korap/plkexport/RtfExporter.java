@@ -199,7 +199,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
                 str.append(" (Time exceeded)");
             };
 
-            this.addInfoRow(w, "Count", str.toString());
+            this.addInfoRow(w, "Number of results", str.toString()); 
         };
 
         // Fetched match count information
@@ -239,7 +239,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
         // Some border and color informations
         w.append("{\\trowd\\trql\\lttrow")
             .append("\\clbrdrt\\brdrs\\clbrdrl\\brdrs\\clbrdrb\\brdrs")
-            .append("\\clpadl80\\clpadt80\\clpadb80\\clpadr80\\clcbpat2\\cellx2000")
+            .append("\\clpadl80\\clpadt80\\clpadb80\\clpadr80\\clcbpat2\\cellx2240") 
             .append("\\clbrdrt\\brdrs\\clbrdrl\\brdrs\\clbrdrb\\brdrs\\clbrdrr\\brdrs")
             .append("\\clpadl80\\clpadt80\\clpadb80\\clpadr80\\cellx9300")
             .append("\\intbl\\cf3\\fs18\\b1\\f1 ");
