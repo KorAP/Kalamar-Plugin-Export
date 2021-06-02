@@ -1,5 +1,6 @@
 0.2.5 2021-05-07
     - Silence logging in tests.
+    - Fake commit
 
 0.2.4 2021-04-27
     - Fix temporary session-riding capabilities.
