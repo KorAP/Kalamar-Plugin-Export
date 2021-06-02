@@ -479,7 +479,7 @@ public class ServiceTest extends JerseyTest {
         assertTrue("Page 1 content", str.contains("Ironhoof"));
         assertTrue("Page 2 content", str.contains("Sinologie"));
         assertTrue("Unicode handling", str.contains("Hintergr\\u252\\'fcnde"));
-        assertTrue("TotalResults", str.contains("Count:"));
+        assertTrue("TotalResults", str.contains("Number of results:"));
         assertFalse("Fetched", str.contains("Fetched:"));
 
         frmap.putSingle("hitc", "7");
@@ -493,7 +493,7 @@ public class ServiceTest extends JerseyTest {
         assertTrue("Page 1 content", str.contains("Ironhoof"));
         assertTrue("Page 2 content", str.contains("Sinologie"));
         assertTrue("Unicode handling", str.contains("\\u252\\'fcbersetzt"));
-        assertTrue("TotalResults", str.contains("Count:" + CELLSPLIT + "9\\cell"));
+        assertTrue("TotalResults", str.contains("Number of results:" + CELLSPLIT + "9\\cell"));
         assertTrue("Fetched", str.contains("Fetched:" + CELLSPLIT + "7\\cell"));
         assertTrue("Source", str.contains("Source:" + CELLSPLIT + "localhost\\cell"));
         assertTrue("Backend-Version", str.contains("Backend-Version:" + CELLSPLIT + "0.59.2"));
