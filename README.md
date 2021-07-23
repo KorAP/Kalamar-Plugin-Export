@@ -6,7 +6,7 @@
 
 Kalamar-Plugin-Export is a web service that integrates in the plugin framework of
 [Kalamar](https://github.com/KorAP/Kalamar), to export matches for the
-[KorAP Corpus Analysis Platform](http://korap.ids-mannheim.de/) in various formats.
+[KorAP Corpus Analysis Platform](https://korap.ids-mannheim.de/) in various formats.
 Currently supported are **RTF**, **CSV**, and **JSON**.
 
 Kalamar-Plugin-Export is meant to be a basic export plugin and should
@@ -82,11 +82,11 @@ same directory as the jar file.
 
 ## License
 
-Copyright (c) 2020, [IDS Mannheim](http://ids-mannheim.de/), Germany
+Copyright (c) 2020-2021, [IDS Mannheim](https://www.ids-mannheim.de/), Germany
 
-Kalamar-Plugin-Export is developed as part of the [KorAP](http://korap.ids-mannheim.de/)
+Kalamar-Plugin-Export is developed as part of the [KorAP](https://korap.ids-mannheim.de/)
 Corpus Analysis Platform at the Leibniz Institute for the German Language
-([IDS](http://ids-mannheim.de/)).
+([IDS](https://www.ids-mannheim.de/)).
 
 Kalamar-Plugin-Export is published under the
 [BSD-2 License](https://raw.githubusercontent.com/KorAP/Kalamar-Plugin-Export/master/LICENSE).
