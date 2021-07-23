@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2c7e920e_2c3b69ce",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2021-07-23T10:09:51Z",
+      "side": 1,
+      "message": "This fixes for me a problem with newer Java versions, as documented in https://stackoverflow.com/a/47412779 . This may also be the reason the exporter no longer works on instance/test. I built it locally, so the jar is probably broken. The test suite ran fine btw. I don\u0027t know how to properly add this as a test.",
+      "revId": "685c3359efd7c61f90fa5e84b0d5f72fecf2d5f4",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
