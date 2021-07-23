@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6db1fbf4_c843acd1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2021-07-23T10:35:26Z",
+      "side": 1,
+      "message": "I can\u0027t see the change yet, but I guess the reason is, the client css is not yet updated.",
+      "revId": "9e973e1d5382584b7d9c918b5610635257d36531",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
