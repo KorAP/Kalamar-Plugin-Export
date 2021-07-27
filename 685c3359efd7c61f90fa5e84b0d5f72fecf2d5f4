@@ -16,6 +16,23 @@
       "message": "This fixes for me a problem with newer Java versions, as documented in https://stackoverflow.com/a/47412779 . This may also be the reason the exporter no longer works on instance/test. I built it locally, so the jar is probably broken. The test suite ran fine btw. I don\u0027t know how to properly add this as a test.",
       "revId": "685c3359efd7c61f90fa5e84b0d5f72fecf2d5f4",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "caaf2025_a2f022db",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2021-07-27T12:08:44Z",
+      "side": 1,
+      "message": "Maybe using jakarta instead is a more future-proof fix ... I don\u0027t know.",
+      "revId": "685c3359efd7c61f90fa5e84b0d5f72fecf2d5f4",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
