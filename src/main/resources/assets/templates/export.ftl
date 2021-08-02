@@ -31,13 +31,13 @@
       
       progress::-moz-progress-bar {
         border: 0;
-        background-color: #8a9a0a;
+        background-color: #b3b4b5;
         transition: all .3s ease-in-out 0s;
       }
 
       progress::-webkit-progress-value {
         border: 0;
-        background-color: #8a9a0a;
+        background-color: #b3b4b5;
         transition: all .3s ease-in-out 0s;
       }
 
@@ -57,7 +57,12 @@
       #export input[type=radio] {
         vertical-align: top;
       }
-
+      
+      .button-group.button-panel input[type="submit"]{
+        min-width: 20em;
+        width: 20%;
+        }
+        
     </style>   
   </head>
   <body>
@@ -112,8 +117,13 @@
           </fieldset>
 
           <progress id="progress" value="0" max="100" style="display: none;">0%</progress>
-
-          <input type="submit" value="${dict.export_button}">
+              
+          <div style="margin-top: 1em"  >          
+            <span class="button-group button-panel">
+                <input type="submit" value="${dict.export_button}">
+            </span>
+          </div>
+                    
         </fieldset>
       </form>
     </section>
