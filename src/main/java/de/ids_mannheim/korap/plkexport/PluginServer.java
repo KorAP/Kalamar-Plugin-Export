@@ -26,8 +26,12 @@ public class PluginServer {
             ServletContextHandler.NO_SESSIONS
             );
         contextHandler.setContextPath("/");
-
-        Properties properties = ExWSConf.properties(null);
+        
+        String propfile = null;
+        if(args.length >= 1) {
+            propfile = args[0];
+        }
+        Properties properties = ExWSConf.properties(propfile);
         
         // Default: Server is available under http://localhost:7070/
         String portStr = properties.getProperty("server.port", "7070");

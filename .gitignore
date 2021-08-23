@@ -6,3 +6,5 @@ dependency-reduced-pom.xml
 /Sandbox
 /target
 /plugin
+/src/main/resources/*_exportPlugin.conf
+/bin/
