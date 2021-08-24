@@ -75,11 +75,13 @@ showcases the embedded plugin.
 
 ## Customization
 
-The default configuration file is stored in `src/main/resources/exportPlugin.conf`.
-This file can be overwritten, when a file of that name is stored in the
-same directory as the jar file.
-
-
+The basic configuration file is stored in `src/main/resources/exportPlugin.conf`.
+To change the configuration create a config file with the pattern 'myconf_exportPlugin.conf'
+and run the jar with the according filename as argument:
+ 
+```shell
+$ java -jar KalamarExportPlugin-[VERSION].jar myconf_exportPlugin.conf
+```
 ## License
 
 Copyright (c) 2020-2021, [IDS Mannheim](https://www.ids-mannheim.de/), Germany
