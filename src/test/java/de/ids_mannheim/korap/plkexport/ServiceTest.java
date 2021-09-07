@@ -351,7 +351,7 @@ public class ServiceTest extends JerseyTest {
         String str = responsertf.readEntity(String.class);
 
         assertTrue("Title", str.contains("<title>Export</title>"));
-        assertTrue("Error", str.contains("line: 1, column: 539"));
+        assertTrue("Error", str.contains("line: 1, column: "));
 
         // Check paging with broken second page
         mockClient.reset().when(
@@ -394,7 +394,7 @@ public class ServiceTest extends JerseyTest {
 
         str = responsertf.readEntity(String.class);
         assertTrue("Title", str.contains("<title>Export</title>"));
-        assertTrue("Error", str.contains("line: 1, column: 539"));
+        assertTrue("Error", str.contains("line: 1, column: "));
     }
     
 
