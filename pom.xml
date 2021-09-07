@@ -4,7 +4,7 @@
   <groupId>de.ids_mannheim.korap</groupId>
   <artifactId>KalamarExportPlugin</artifactId>
   <packaging>jar</packaging>
-  <version>0.2.6</version>
+  <version>0.2.7</version>
   <name>KalamarExportPlugin</name>
   <url>https://korap.ids-mannheim.de/</url>
   
@@ -18,7 +18,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.13</version>
+      <version>4.13.2</version>
     </dependency>
     
     <dependency>
