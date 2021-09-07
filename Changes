@@ -1,3 +1,6 @@
+0.2.7 2021-09-07
+    - Upgrade dependency on Junit following dependabot.
+
 0.2.6 2021-07-23
     - Fix xml binding for newer java versions.
 
