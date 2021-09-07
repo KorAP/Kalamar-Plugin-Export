@@ -16,6 +16,24 @@
       "message": "I guess the benefit of this commit is to have multiple configurations easily switchable (like in Kalamar), but the drawback is the need to remember which one to choose for deployment. I think, that\u0027s why Kustvakt doesn\u0027t support it. I have no general objections, but it means the currently deployed version needs to be deployed differently and this has to be recognized in the systemd.",
       "revId": "f18bce19dcde75ca5c2de231a59ed354cf903c36",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ac744ef1_221dda1d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2021-09-07T09:18:00Z",
+      "side": 1,
+      "message": "Oh - I was wrong - sorry - the old deployment still works of course. So I have no objections.",
+      "parentUuid": "56960f0d_690c997b",
+      "revId": "f18bce19dcde75ca5c2de231a59ed354cf903c36",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
