@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7bc5580b_d1fb77a4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2021-09-07T09:29:23Z",
+      "side": 1,
+      "message": "This is just a minor fix to make the build more platform independent. It removes the build warning:\n\n  [WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!\n",
+      "revId": "ce924b0907fd64904e5acc5d1484ca28bf86b0f2",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
