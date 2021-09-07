@@ -1,5 +1,7 @@
 0.2.7 2021-09-07
     - Upgrade dependency on Junit following dependabot.
+    - Setup encoding in pom to make build platform
+      independent.
 
 0.2.6 2021-09-07
     - Fix xml binding for newer java versions.
