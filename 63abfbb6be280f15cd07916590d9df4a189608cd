@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "129cd229_2dda5bff",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2021-09-08T10:04:58Z",
+      "side": 1,
+      "message": "Actually, you are right, there is no need for the pattern. I patched it accordingly and did a rebase.",
+      "revId": "63abfbb6be280f15cd07916590d9df4a189608cd",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
