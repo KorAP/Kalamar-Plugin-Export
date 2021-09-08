@@ -34,6 +34,23 @@
       "parentUuid": "56960f0d_690c997b",
       "revId": "f18bce19dcde75ca5c2de231a59ed354cf903c36",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4072d49e_3524a2d2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2021-09-08T08:58:52Z",
+      "side": 1,
+      "message": "Yes, the benefit is to be able to easily switch between multiple configurations. I use that for development, for example.",
+      "revId": "f18bce19dcde75ca5c2de231a59ed354cf903c36",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
