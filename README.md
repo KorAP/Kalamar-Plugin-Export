@@ -63,7 +63,8 @@ to the plugin registration handler.
     "classes" : ["button-icon", "plugin" ],
     "onClick" : {
       "action" : "addWidget",
-      "template" : "http://localhost:7777/export"
+      "template" : "http://localhost:7777/export",
+      "permissions":["forms","scripts","downloads"]
     }
   }]
 }
