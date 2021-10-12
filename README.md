@@ -69,6 +69,25 @@ to the plugin registration handler.
 }
 ```
 
+The simplest way to do this at the moment is by storing the json
+blob in a file (the blob needs to be in a list, i.e. surrounded by `[...]`).
+The file then can be loaded using the `Plugins` addon in Kalamar using the
+Kalamar configuration file.
+
+```perl
+{
+  Kalamar => {
+    plugins => ['Plugins'],
+  },
+  'Kalamar-Plugins' => {
+    default_plugins => 'plugins.json'
+  }
+}
+```
+
+For example, with this configuration addition, the content
+of `plugins.json` will be registered on every Kalamar page load.
+
 An [example demo](https://github.com/KorAP/Kalamar/blob/master/dev/demo/export.html)
 showcases the embedded plugin.
 
@@ -82,6 +101,10 @@ according filename as argument:
 ```shell
 $ java -jar KalamarExportPlugin-[VERSION].jar myconf_exportPlugin.conf
 ```
+
+Alternatively a file named `exportPlugin.conf` can be stored in the
+same directory as the java jar.
+
 ## License
 
 Copyright (c) 2020-2021, [IDS Mannheim](https://www.ids-mannheim.de/), Germany
