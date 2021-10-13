@@ -10,7 +10,7 @@ function pluginit(P) {
     },
     function (d) {
       let v = d.value;
-      if (v !== undefined && v["q"]) {
+      if (v !== undefined && v["q"] && v["q"] !== "") {
         let e = v["q"];
         const eq = document.getElementById("export-query");
         
@@ -52,13 +52,23 @@ function pluginit(P) {
     
     let field;
     let inputs = form.querySelectorAll("input:not([type=radio]):not([type=checkbox])");
+
+    let queryDefined = false;
+    
     for (let i = 0; i < inputs.length; i++) {
       field = inputs[i];
       if (field.name.length != "" && field.value != "") {
         query.append(field.name, field.value);
+        if (field.name === "q")
+          queryDefined = true;
       }
     };
 
+    if (!queryDefined) {
+      P.log(0, "Query undefined");
+      return false;
+    }
+    
     // Check radio buttons and checkboxes
     inputs = form.querySelectorAll("input[type=radio],input[type=checkbox]");
     for (var i = 0; i < inputs.length; i++) {
@@ -79,7 +89,6 @@ function reqStream (target) {
   let relocationURL;
 
   const sse = new EventSource(target, { withCredentials : true });
-  console.log("Credentials: " + sse.withCredentials);
   const prog = document.getElementById('progress');
 
   sse.addEventListener('Progress', function (e) {
