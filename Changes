@@ -1,9 +1,10 @@
-0.2.7 2021-09-07
+0.2.7 2021-10-13
     - Upgrade dependency on Junit following dependabot.
     - Upgrade dependency on Jackson following dependabot.
     - Upgrade dependency on Jetty following dependabot.
     - Setup encoding in pom to make build platform
       independent.
+    - Improve check for defined query.
 
 0.2.6 2021-09-07
     - Fix xml binding for newer java versions.
