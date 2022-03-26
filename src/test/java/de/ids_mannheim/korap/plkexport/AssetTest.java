@@ -111,7 +111,7 @@ public class AssetTest extends JerseyTest {
         assertEquals("HTTP Code",
                      Status.OK.getStatusCode(), responsehtml.getStatus());
         str = responsehtml.readEntity(String.class);
-        assertTrue("HTTP Body (en)", str.contains("Maximum number of exportable matches: <tt>10.000</tt>"));
+        assertTrue("HTTP Body (en)", str.contains("Maximum number of exportable matches: <tt>10,000</tt>"));
 
     };
 

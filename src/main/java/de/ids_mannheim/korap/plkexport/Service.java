@@ -732,6 +732,7 @@ public class Service {
         // Generate template
         try {
             Template template = cfg.getTemplate("export.ftl");
+            template.setLocale(getPreferredSupportedLocale());
             template.process(templateData, out);
         }
 
@@ -778,28 +779,27 @@ public class Service {
     /*
      * Load dictionary for a chosen locale as a resource bundle
      */
-    private ResourceBundle getDictionary () throws IOException {
+    private ResourceBundle getDictionary() throws IOException {
+        return ResourceBundle.getBundle(
+                "locales/export", getPreferredSupportedLocale()
+        );
+    }
 
-        // Load prefered dictionary
-        Locale prefered = new Locale("en");
+    private Locale getPreferredSupportedLocale() throws IOException {
+        Locale fallback = new Locale("en");
 
         if (req != null) {
-
-        CHOOSE:
             for (Locale l : req.getAcceptableLanguages()) {
                 switch (l.getLanguage()) {
-                case "de":
-                    prefered = l;
-                    break CHOOSE;
-                case "en":
-                    prefered = l;
-                    break CHOOSE;
-                };
-            };
-        };
+                    case "de":
+                        return (l);
+                    case "en":
+                        return (l);
+                }
+            }
+        }
 
-        return ResourceBundle.getBundle(
-            "locales/export", prefered
-            );
-    };
-};
+        return fallback;
+    }
+
+}
