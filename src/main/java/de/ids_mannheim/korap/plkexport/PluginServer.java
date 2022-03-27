@@ -14,6 +14,8 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 import org.tinylog.Logger;
 
+import jakarta.servlet.Servlet;
+
 /**
  * Server to provide the export web service
  */
@@ -49,7 +51,7 @@ public class PluginServer {
 
 
         ServletContainer servletContainer = new ServletContainer();        
-        ServletHolder servletHolder = new ServletHolder(servletContainer);
+        ServletHolder servletHolder = new ServletHolder((Servlet) servletContainer);
         contextHandler.addServlet(servletHolder, "/*");
         
         servletHolder.setInitOrder(0);

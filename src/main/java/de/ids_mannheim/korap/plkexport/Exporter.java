@@ -1,7 +1,7 @@
 package de.ids_mannheim.korap.plkexport;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import javax.ws.rs.core.Response.ResponseBuilder;
+import jakarta.ws.rs.core.Response.ResponseBuilder;
 import java.io.IOException;
 import java.io.Writer;
 import org.glassfish.jersey.media.sse.EventOutput;
