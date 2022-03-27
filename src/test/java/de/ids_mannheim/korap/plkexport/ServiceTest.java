@@ -8,8 +8,7 @@ import static org.junit.Assert.fail;
 
 // Mockserver tests
 import org.mockserver.integration.ClientAndServer;
-import org.mockserver.client.server.MockServerClient;
-import org.mockserver.junit.MockServerRule;
+import org.mockserver.client.MockServerClient;
 import static org.mockserver.model.HttpRequest.*;
 import static org.mockserver.model.HttpResponse.*;
 import org.junit.Before;
