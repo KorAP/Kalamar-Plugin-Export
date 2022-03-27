@@ -14,7 +14,7 @@ import static org.mockserver.model.HttpResponse.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.AfterClass;
-import org.slf4j.Logger;
+import org.mockserver.model.Header;
 
 // Fixture loading
 import java.io.BufferedReader;
@@ -122,7 +122,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_water.json"))
                 .withStatusCode(200)
                 );
@@ -180,9 +180,9 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
-                .withBody(getFixture("response_none.json"))
                 .withStatusCode(200)
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
+                .withBody(getFixture("response_none.json"))
                 );
 
         String filenamej = "dateiJson";
@@ -198,8 +198,8 @@ public class ServiceTest extends JerseyTest {
         Response responsejson = target("/export").request()
                 .post(Entity.form(frmap));
 
-        assertEquals("Request JSON: Http Response should be 200: ",
-                Status.OK.getStatusCode(), responsejson.getStatus());
+        assertEquals("Request JSON: Http Response should be 502: ",
+                Status.BAD_GATEWAY.getStatusCode(), responsejson.getStatus());
     };
     
     
@@ -213,7 +213,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_water.json"))
                 .withStatusCode(200)
                 );
@@ -294,7 +294,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_fragerunde_1.json"))
                 .withStatusCode(200)
                 );
@@ -329,9 +329,9 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
-                .withBody(getFixture("response_broken.json"))
                 .withStatusCode(200)
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
+                .withBody(getFixture("response_broken.json"))
                 );
 
         MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<String, String>();
@@ -363,7 +363,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_broken.json"))
                 .withStatusCode(200)
                 );
@@ -376,7 +376,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_plagegeist_1.json"))
                 .withStatusCode(200)
                 );
@@ -407,9 +407,9 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
-                .withBody(getFixture("response_none.json"))
                 .withStatusCode(200)
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
+                .withBody(getFixture("response_none.json"))
                 );
 
         MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<String, String>();
@@ -425,8 +425,8 @@ public class ServiceTest extends JerseyTest {
         Response responsertf = target("/export").request()
             .post(Entity.form(frmap));
 
-        assertEquals("Request RTF: Http Response should be 200: ",
-                Status.OK.getStatusCode(), responsertf.getStatus());
+        assertEquals("Request RTF: Http Response should be 502: ",
+                Status.BAD_GATEWAY.getStatusCode(), responsertf.getStatus());
     }
 
     @Test
@@ -442,7 +442,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_plagegeist_2.json"))
                 .withStatusCode(200)
                 );
@@ -455,7 +455,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_plagegeist_1.json"))
                 .withStatusCode(200)
                 );
@@ -513,7 +513,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_plagegeist_2.json"))
                 .withStatusCode(200)
                 );
@@ -526,7 +526,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json"))
                 .withBody(getFixture("response_timeout.json"))
                 .withStatusCode(200)
                 );
@@ -547,7 +547,7 @@ public class ServiceTest extends JerseyTest {
         String str = responsertf.readEntity(String.class);
         assertTrue("Page 1 content", str.contains("Importwunsch"));
         assertTrue("Page 2 content", str.contains("Sinologie"));
-        assertTrue("Unicode handling", str.contains("Hintergr\\u252\\'fcnde"));
+        assertTrue("Unicode handling "+str, str.contains("Hintergr\\u252\\'fcnde"));
         assertTrue("TotalResults", str.contains("> 22 ("));
     };
     
@@ -565,7 +565,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_plagegeist_2.json"))
                 .withStatusCode(200)
                 );
@@ -578,7 +578,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_plagegeist_1.json"))
                 .withStatusCode(200)
                 );
@@ -642,7 +642,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_plagegeist_2.json"))
                 .withStatusCode(200)
                 );
@@ -655,7 +655,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_plagegeist_1.json"))
                 .withStatusCode(200)
                 );
@@ -677,8 +677,8 @@ public class ServiceTest extends JerseyTest {
         String[] lines = str.split("\n");
 
         assertEquals(lines.length,10);
-        assertEquals(lines[0],"HasMoreLeft,leftContext,Match,rightContext,HasMoreRight,isCutted,textSigle,author,pubDate,title");
-        assertEquals(lines[1],"...,\"1 Tag gesperrt. 24h Urlaub.^^ LG;--  17:40, 11. Jan. 2011 (CET) Danke ich habe die nahezu zeitgleichen VMs von Dir und Ironhoof gesehen. Ob es ein Grund zum Jubeln ist, sei dahin gestellt. Immerhin habe ich für 24 Stunden einen \"\"\",Plagegeist,\" \"\" weniger. Sag mal, zum Kölner Stammtisch isses doch nicht so weit ... wie wär's ? Besten  17:49, 11. Jan. 2011 (CET) Er wurde gesperrt. Nach dem Theater hier zurecht. ABER: auch deine Beiträge hier, die er versuchte zu löschen, sorgen nicht für\",...,,WUD17/G59/34284,\"Umherirrender, u.a.\",2017-07-01,\"Benutzer Diskussion:Gruß Tom/Archiv/2011\"");
+        assertEquals("HasMoreLeft,leftContext,Match,rightContext,HasMoreRight,isCutted,textSigle,author,pubDate,title", lines[0]);
+        assertEquals("...,\"1 Tag gesperrt. 24h Urlaub.^^ LG;--  17:40, 11. Jan. 2011 (CET) Danke ich habe die nahezu zeitgleichen VMs von Dir und Ironhoof gesehen. Ob es ein Grund zum Jubeln ist, sei dahin gestellt. Immerhin habe ich für 24 Stunden einen \"\"\",Plagegeist,\" \"\" weniger. Sag mal, zum Kölner Stammtisch isses doch nicht so weit ... wie wär's ? Besten  17:49, 11. Jan. 2011 (CET) Er wurde gesperrt. Nach dem Theater hier zurecht. ABER: auch deine Beiträge hier, die er versuchte zu löschen, sorgen nicht für\",...,,WUD17/G59/34284,\"Umherirrender, u.a.\",2017-07-01,\"Benutzer Diskussion:Gruß Tom/Archiv/2011\"", lines[1]);
 
         frmap.putSingle("hitc", "7");
 
@@ -723,7 +723,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_broken.json"))
                 .withStatusCode(200)
                 );
@@ -736,7 +736,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_plagegeist_1.json"))
                 .withStatusCode(200)
                 );
@@ -848,7 +848,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_plagegeist_2.json"))
                 .withStatusCode(200)
                 );
@@ -861,7 +861,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_plagegeist_1.json"))
                 .withStatusCode(200)
                 );
@@ -958,7 +958,7 @@ public class ServiceTest extends JerseyTest {
             )
             .respond(
                 response()
-                .withHeader("Content-Type: application/json; charset=utf-8")
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
                 .withBody(getFixture("response_water.json"))
                 .withStatusCode(200)
                 );
@@ -1026,8 +1026,8 @@ public class ServiceTest extends JerseyTest {
 
     // Get fixture from ressources utf8 encoded
     private String getFixture (String file) {
-        return getFixture(file, false);
-    };
+        return getFixture(file, true);
+    }
 
     
     // Get fixture from ressources as byte stream
