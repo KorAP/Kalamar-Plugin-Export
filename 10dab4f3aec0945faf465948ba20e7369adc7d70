@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f2a2f2fe_5e902226",
+        "filename": "src/test/java/de/ids_mannheim/korap/plkexport/ServiceTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2022-03-27T18:57:33Z",
+      "side": 1,
+      "message": "Is 502 OK here? (How does mockserver know?)",
+      "revId": "10dab4f3aec0945faf465948ba20e7369adc7d70",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
