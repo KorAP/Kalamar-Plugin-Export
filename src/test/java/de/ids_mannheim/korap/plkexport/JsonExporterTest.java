@@ -4,14 +4,18 @@ import java.io.IOException;
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import javax.ws.rs.core.StreamingOutput;
+import java.io.InputStream;
+
+
+
+import jakarta.ws.rs.core.StreamingOutput;
 
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 public class JsonExporterTest {
 
