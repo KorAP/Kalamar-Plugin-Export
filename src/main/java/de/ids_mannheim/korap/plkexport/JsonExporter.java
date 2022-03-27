@@ -1,6 +1,6 @@
 package de.ids_mannheim.korap.plkexport;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.io.Writer;
