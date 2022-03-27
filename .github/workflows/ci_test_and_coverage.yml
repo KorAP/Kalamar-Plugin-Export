@@ -1,4 +1,4 @@
-name: CI Test
+name: CI + Coverage Test
 
 on: [push, pull_request]
 
@@ -16,3 +16,12 @@ jobs:
 
       - name: Build and install
         run: mvn install
+
+      - name: Generate code coverage report
+        run: mvn cobertura:cobertura
+
+      - name: Upload coverage report to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
