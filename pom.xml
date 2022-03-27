@@ -10,8 +10,8 @@
   
   <properties>
     <java.version>1.8</java.version>
-    <jetty.version>9.4.43.v20210629</jetty.version>
     <jersey.version>2.27</jersey.version>
+    <jetty.version>9.4.45.v20220203</jetty.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
