@@ -19,26 +19,26 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.ResponseBuilder;
+import jakarta.ws.rs.core.Response.Status;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
@@ -48,8 +48,8 @@ import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseFeature;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.glassfish.jersey.server.ContainerRequest;
 
 import static de.ids_mannheim.korap.plkexport.Util.*;
@@ -526,7 +526,7 @@ public class Service {
             origin = servletReq.getHeader("Origin");
         };
 
-        return Response.ok(eventOutput, SseFeature.SERVER_SENT_EVENTS_TYPE)
+        return Response.ok(eventOutput, String.valueOf(SseFeature.SERVER_SENT_EVENTS_TYPE))
             .header("Access-Control-Allow-Origin", origin)
             .header("Access-Control-Allow-Credentials", "true")
             .header("Vary","Origin")
