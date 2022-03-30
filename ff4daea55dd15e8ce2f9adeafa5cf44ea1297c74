@@ -52,6 +52,23 @@
       "parentUuid": "f17154eb_7dc9bcba",
       "revId": "ff4daea55dd15e8ce2f9adeafa5cf44ea1297c74",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "679a9014_fab86779",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2022-03-30T17:58:59Z",
+      "side": 1,
+      "message": "* needs Java 11\n* some dependencies not mentioned in pom.xml (see mvn dependency:analyze)\n",
+      "revId": "ff4daea55dd15e8ce2f9adeafa5cf44ea1297c74",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
