@@ -34,6 +34,24 @@
       "parentUuid": "04a0198d_70de18d4",
       "revId": "ff4daea55dd15e8ce2f9adeafa5cf44ea1297c74",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "024b34a7_8de42bf7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2022-03-30T17:39:38Z",
+      "side": 1,
+      "message": "In \"real life\".",
+      "parentUuid": "f17154eb_7dc9bcba",
+      "revId": "ff4daea55dd15e8ce2f9adeafa5cf44ea1297c74",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
