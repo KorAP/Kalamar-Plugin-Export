@@ -16,6 +16,24 @@
       "message": "Breaks with:  java.lang.ClassCastException: org.glassfish.jersey.servlet.ServletContainer cannot be cast to javax.servlet.Servlet at de.ids_mannheim.korap.plkexport.PluginServer.main(PluginServer.java:56)\n\nI gather the problem is, that ServletContainer implements jakarta.servlet.Servlet in jersey 3.0.4 instead of javax.servlet.Servlet in jersey 2.35, this collides with org.eclipse.jetty.servlet.ServletHolder.\n",
       "revId": "ff4daea55dd15e8ce2f9adeafa5cf44ea1297c74",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f17154eb_7dc9bcba",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2022-03-30T17:29:34Z",
+      "side": 1,
+      "message": "Does the problem occur in real life or already with \"mvn clean install\"?\n\nAt least the latter works for me on different machines. Ultimately, we can\u0027t complete the javax-\u003ejakarta migration with jakata.servlet before upgrading to Java 11. Anyway, not important, for now.",
+      "parentUuid": "04a0198d_70de18d4",
+      "revId": "ff4daea55dd15e8ce2f9adeafa5cf44ea1297c74",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
