@@ -34,6 +34,24 @@
       "parentUuid": "f2a2f2fe_5e902226",
       "revId": "10dab4f3aec0945faf465948ba20e7369adc7d70",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cfc3c376_9eafa5b2",
+        "filename": "src/test/java/de/ids_mannheim/korap/plkexport/ServiceTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2022-03-31T11:25:17Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c521968c_9b6a8849",
+      "revId": "10dab4f3aec0945faf465948ba20e7369adc7d70",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
