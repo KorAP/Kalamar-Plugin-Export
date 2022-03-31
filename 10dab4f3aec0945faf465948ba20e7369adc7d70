@@ -16,6 +16,24 @@
       "message": "Is 502 OK here? (How does mockserver know?)",
       "revId": "10dab4f3aec0945faf465948ba20e7369adc7d70",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c521968c_9b6a8849",
+        "filename": "src/test/java/de/ids_mannheim/korap/plkexport/ServiceTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2022-03-31T11:02:11Z",
+      "side": 1,
+      "message": "No, in my understanding we test here if the status is OK, so we should not changed to 502. I think the problem is q \u003d \"????\". If I understand code right, we test here the behaviour if no match is found. So I replaced \"????\" with another query which should lead to no matches: \"axdjakdftr\". It works with that.",
+      "parentUuid": "f2a2f2fe_5e902226",
+      "revId": "10dab4f3aec0945faf465948ba20e7369adc7d70",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
