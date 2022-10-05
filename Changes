@@ -1,3 +1,7 @@
+0.2.8 2022-10-05
+    - Upgrade dependencies following dependabot.
+      This fixes CVE-2022-42003! Please update!
+
 0.2.7 2021-10-13
     - Upgrade dependency on Junit following dependabot.
     - Upgrade dependency on Jackson following dependabot.
