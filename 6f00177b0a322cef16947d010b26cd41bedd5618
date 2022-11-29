@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "421f9162_e8a7d56b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2022-11-29T10:22:26Z",
+      "side": 1,
+      "message": "https://korap.ids-mannheim.de/gerrit/c/KorAP/Kalamar-Plugin-Export/+/6328 seems to be a requirement on my system.",
+      "revId": "6f00177b0a322cef16947d010b26cd41bedd5618",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
