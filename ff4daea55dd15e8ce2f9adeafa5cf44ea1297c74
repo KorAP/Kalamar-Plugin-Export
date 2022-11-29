@@ -69,6 +69,24 @@
       "message": "* needs Java 11\n* some dependencies not mentioned in pom.xml (see mvn dependency:analyze)\n",
       "revId": "ff4daea55dd15e8ce2f9adeafa5cf44ea1297c74",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "365ce202_15cb8a9b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2022-11-29T14:41:58Z",
+      "side": 1,
+      "message": "This is fixed.",
+      "parentUuid": "024b34a7_8de42bf7",
+      "revId": "ff4daea55dd15e8ce2f9adeafa5cf44ea1297c74",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }

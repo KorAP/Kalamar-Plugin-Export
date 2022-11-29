@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4662afcd_1520e4f0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2022-11-29T14:41:58Z",
+      "side": 1,
+      "message": "There seems to be a remaining issue with closing SSE events though.",
+      "revId": "2bb8c55dd4ff9e98d61140ec100bce1d090542f5",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
