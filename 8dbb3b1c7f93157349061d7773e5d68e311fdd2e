@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d133c25f_ba82aa71",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2022-11-29T14:43:01Z",
+      "side": 1,
+      "message": "This now works with Java 8 and Java 11.",
+      "revId": "8dbb3b1c7f93157349061d7773e5d68e311fdd2e",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
