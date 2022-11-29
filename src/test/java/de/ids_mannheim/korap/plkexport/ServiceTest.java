@@ -37,6 +37,10 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+// Logger loading
+import ch.qos.logback.classic.*;
+import org.slf4j.*;
+
 // SSE testing
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
