@@ -108,7 +108,7 @@ same directory as the java jar.
 
 ## License
 
-Copyright (c) 2020-2022, [IDS Mannheim](https://www.ids-mannheim.de/), Germany
+Copyright (c) 2020-2023, [IDS Mannheim](https://www.ids-mannheim.de/), Germany
 
 Kalamar-Plugin-Export is developed as part of the [KorAP](https://korap.ids-mannheim.de/)
 Corpus Analysis Platform at the Leibniz Institute for the German Language
