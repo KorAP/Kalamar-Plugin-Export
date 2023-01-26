@@ -92,6 +92,20 @@ of `plugins.json` will be registered on every Kalamar page load.
 An [example demo](https://github.com/KorAP/Kalamar/blob/master/dev/demo/export.html)
 showcases the embedded plugin.
 
+At the moment the integration reuses the session of the host service.
+To make this possible, the [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
+of Kalamar needs to be extended to include the whole domain that
+hosts both services (at the moment it's not possible to host the service on a different domain).
+If the domain is, e.g., `ids-mannheim.de`, the configuration in the Kalamar configuration
+file needs to be:
+
+```perl
+{
+  CSP => {
+    'frame-src' => 'self',
+    'frame-ancestors' => ['self','https://*.ids-mannheim.de/']
+  }
+}```
 
 ## Customization
 
