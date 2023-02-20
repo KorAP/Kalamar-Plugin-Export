@@ -1,4 +1,22 @@
 {
-  "comments": [],
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3bbecd88_1439ba6c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2023-02-20T08:33:03Z",
+      "side": 1,
+      "message": "Why do you abandon this change?",
+      "revId": "fda1230efe753448ecc998f0206644ad63c8ad33",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ],
   "submitRequirementResults": []
 }
