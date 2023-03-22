@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "97eb46a1_080c13da",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2023-03-22T18:37:35Z",
+      "side": 1,
+      "message": "Eliminates Warning [WARNING] Discovered module-info.class. Shading will break its strong encapsulation.\n\nSee: https://stackoverflow.com/questions/56063566/how-can-i-remove-module-info-class-warning-for-a-shaded-jar",
+      "range": {
+        "startLine": 159,
+        "startChar": 44,
+        "endLine": 159,
+        "endChar": 51
+      },
+      "revId": "d061cd91c48f7f648e563556b8a4e60a10ac4ca1",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
