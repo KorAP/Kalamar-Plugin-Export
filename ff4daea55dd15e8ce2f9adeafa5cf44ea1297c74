@@ -87,6 +87,24 @@
       "parentUuid": "024b34a7_8de42bf7",
       "revId": "ff4daea55dd15e8ce2f9adeafa5cf44ea1297c74",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1afa72dd_06056338",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2023-03-22T17:30:08Z",
+      "side": 1,
+      "message": "mvn clean install fails, too.",
+      "parentUuid": "024b34a7_8de42bf7",
+      "revId": "ff4daea55dd15e8ce2f9adeafa5cf44ea1297c74",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
