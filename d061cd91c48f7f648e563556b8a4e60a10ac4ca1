@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "973bf11c_cec965d1",
+        "filename": "src/main/java/de/ids_mannheim/korap/plkexport/Service.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2023-03-24T15:13:27Z",
+      "side": 0,
+      "message": "new Configuration() is deprecated.\nSee also:\nhttps://stackoverflow.com/questions/46585110/i-have-written-a-java-program-using-freemarker-template-but-its-showing-depreca\n\nhttps://freemarker.apache.org/docs/pgui_config_incompatible_improvements.html",
+      "revId": "d061cd91c48f7f648e563556b8a4e60a10ac4ca1",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
