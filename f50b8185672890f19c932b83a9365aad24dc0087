@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d5fdaf35_740bdea0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2023-03-24T16:51:32Z",
+      "side": 1,
+      "message": "!! Depends on \nhttps://korap.ids-mannheim.de/gerrit/c/KorAP/Kalamar-Plugin-Export/+/6800\nhas to be rebased first.\n\nEliminates\nSLF4J: No SLF4J providers were found.\nSLF4J: Defaulting to no-operation (NOP) logger implementation\nSLF4J: See https://www.slf4j.org/codes.html#noProviders for further details.\n\nafter starting the export.",
+      "revId": "f50b8185672890f19c932b83a9365aad24dc0087",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
