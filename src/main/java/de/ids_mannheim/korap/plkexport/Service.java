@@ -100,7 +100,8 @@ public class Service {
     InputStream is = cl.getResourceAsStream("assets/export.js");
     private final String exportJsStr = streamToString(is);
 
-    Configuration cfg = new Configuration();
+    Configuration cfg = new Configuration(Configuration.VERSION_2_3_32);
+
     {
         cfg.setClassForTemplateLoading(Service.class, "/assets/templates");
         cfg.setDefaultEncoding("UTF-8");
