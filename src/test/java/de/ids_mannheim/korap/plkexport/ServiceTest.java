@@ -23,10 +23,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLDecoder;
 
-import java.util.List;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.ws.rs.client.Entity;
@@ -37,20 +34,13 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-// Logger loading
-import ch.qos.logback.classic.*;
-import org.slf4j.*;
-
 // SSE testing
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import org.glassfish.jersey.media.sse.EventListener;
 import org.glassfish.jersey.media.sse.EventSource;
-import org.glassfish.jersey.media.sse.InboundEvent;
 import org.glassfish.jersey.media.sse.SseFeature;
 import java.util.concurrent.TimeUnit;
-import javax.ws.rs.client.WebTarget;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.glassfish.jersey.server.ResourceConfig;
@@ -59,14 +49,9 @@ import org.glassfish.jersey.test.JerseyTest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 
-import org.eclipse.jetty.server.Request;
-
 import static de.ids_mannheim.korap.plkexport.Service.getClientIP;
-
-import de.ids_mannheim.korap.plkexport.Util.*;
 
 
 public class ServiceTest extends JerseyTest {

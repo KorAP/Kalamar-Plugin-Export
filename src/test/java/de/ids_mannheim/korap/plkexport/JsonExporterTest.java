@@ -4,19 +4,11 @@ import java.io.IOException;
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.InputStream;
-
-
-
 import javax.ws.rs.core.StreamingOutput;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import javax.ws.rs.core.Response;
