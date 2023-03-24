@@ -11,8 +11,6 @@ package de.ids_mannheim.korap.plkexport;
 import java.io.*;
 import java.lang.String;
 import java.util.Properties;
-import java.nio.charset.StandardCharsets;
-
 import org.tinylog.Logger;
 
 public class ExWSConf {

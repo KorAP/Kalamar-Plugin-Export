@@ -2,8 +2,6 @@ package de.ids_mannheim.korap.plkexport;
 
 import java.util.Properties;
 
-import java.lang.StringBuffer;
-
 import java.nio.charset.*;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -16,8 +14,6 @@ import com.fasterxml.jackson.core.Version;
 
 import java.io.IOException;
 import java.io.Writer;
-
-import de.ids_mannheim.korap.plkexport.Util.*;
 
 /**
  * Streaming RTF exporter.

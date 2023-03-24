@@ -1,17 +1,10 @@
 package de.ids_mannheim.korap.plkexport;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.InputStream;
 import java.lang.Thread;
-import java.net.URLEncoder;
-import java.net.ConnectException;
 import java.util.HashMap;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.Base64;
 import java.util.ResourceBundle;
@@ -19,7 +12,6 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.QueryParam;
