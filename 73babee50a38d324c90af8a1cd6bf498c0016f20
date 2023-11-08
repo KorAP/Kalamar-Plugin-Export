@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1d8b5968_11c05235",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2023-11-08T17:23:02Z",
+      "side": 1,
+      "message": "Right now, the export is running, but I receive HTTP 502 Bad Gateway by executing it.The default APIServer in exportPlugin.conf is pointing to https://korap.ids-mannheim.de:80. This might be the wrong configuration anyway and is problem in the export, not in the Dockerfile.\nBut apart from that, we have to include the possibility to define an export configuration file like in Kalamar (kalamar.production.conf).",
+      "revId": "73babee50a38d324c90af8a1cd6bf498c0016f20",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
