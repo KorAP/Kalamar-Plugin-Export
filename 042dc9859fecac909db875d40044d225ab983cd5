@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8df4e69c_34da7023",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2023-11-09T07:51:18Z",
+      "side": 1,
+      "message": "What we obviously need to do is provide a simple way to export the plugin json blob for Kalamar. One of the simplest ways is to either provide this as a file, on the command line or at an endpoint (while this is a bit more demanding). For Kalamar we may support multiple json files in a folder, that can be joined for all plugins (maybe in alphabetical order).",
+      "revId": "042dc9859fecac909db875d40044d225ab983cd5",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
