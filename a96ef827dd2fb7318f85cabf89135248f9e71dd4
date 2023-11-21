@@ -16,6 +16,23 @@
       "message": "See https://korap.ids-mannheim.de/gerrit/c/KorAP/Kalamar-Plugin-Export/+/7848",
       "revId": "a96ef827dd2fb7318f85cabf89135248f9e71dd4",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ee1fbf2b_714153c4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2023-11-21T16:11:07Z",
+      "side": 1,
+      "message": "Can you explain the change? I don\u0027t see any difference in the test suite. Is there a difference when running the server?",
+      "revId": "a96ef827dd2fb7318f85cabf89135248f9e71dd4",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
