@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "feba4f38_aea6d556",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2023-11-21T15:09:47Z",
+      "side": 1,
+      "message": "Stopped with: \nException in thread \"main\" java.lang.IllegalStateException: !STOPPED\n\tat org.eclipse.jetty.server.handler.HandlerWrapper.destroy(HandlerWrapper.java:140)\n\tat de.ids_mannheim.korap.plkexport.PluginServer.main(PluginServer.java:76)\n\n\nAfter replacing in Pluginserver.java line 76: jetty.destroy() with jettyServer.stop() it worked:\n\n   finally {\n            jettyServer.destroy();\n            //jettyServer.stop();\n        }\n        \n \n After that, I changed the line back to jettyServer.destroy() and it continued working.\n \n Some kind of cleaning up problem?",
+      "revId": "1856c994ac2b3423abe59c2326070030562a57ae",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
