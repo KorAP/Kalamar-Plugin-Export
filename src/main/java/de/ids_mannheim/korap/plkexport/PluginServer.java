@@ -73,6 +73,7 @@ public class PluginServer {
             jettyServer.join();
         }
         finally {
+            jettyServer.stop();
             jettyServer.destroy();
         }
     }
