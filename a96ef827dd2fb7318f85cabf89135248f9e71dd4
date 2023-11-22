@@ -33,6 +33,23 @@
       "message": "Can you explain the change? I don\u0027t see any difference in the test suite. Is there a difference when running the server?",
       "revId": "a96ef827dd2fb7318f85cabf89135248f9e71dd4",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0912bd4e_65b4a02f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2023-11-22T09:11:25Z",
+      "side": 1,
+      "message": "I changed it because of the behavior I described in https://korap.ids-mannheim.de/gerrit/c/KorAP/Kalamar/+/7753. \nThe illegal java.lang.IllegalStateException often seems to associate with a missing stop statement.\n\nActually, I don\u0027t think it is harmful to stop the server before destroying it, on the contrary it is \"cleaner\" anyway.",
+      "revId": "a96ef827dd2fb7318f85cabf89135248f9e71dd4",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
