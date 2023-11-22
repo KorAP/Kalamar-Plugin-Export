@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "87d78d3b_ef23d85c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2023-11-22T07:31:16Z",
+      "side": 1,
+      "message": "It\u0027s now probably easier to cherrypick.",
+      "revId": "1628d6e582fcca9e2ff1c6e5864a6f80761df9c8",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
