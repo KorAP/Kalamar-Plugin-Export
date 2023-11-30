@@ -110,6 +110,8 @@
             </div>
           </fieldset>
 
+          <p>Depending on the settings and add-ons of your browser, it may not be possible to export corpus excerpts that require authentication.</p>
+          
           <fieldset class="form-line">
             <legend>${dict.hitc}</legend>
             <input name="hitc" id="hitc" type="number" min="1" max="10000" value="${defaultHitc}" />
