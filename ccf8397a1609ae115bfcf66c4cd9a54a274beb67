@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "87be8d1c_0d372204",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2023-11-30T10:52:52Z",
+      "side": 1,
+      "message": "This has not to land in the master repo - but that\u0027s in my opinion the only way to warn.",
+      "revId": "ccf8397a1609ae115bfcf66c4cd9a54a274beb67",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
