@@ -33,6 +33,23 @@
       "message": "Of course, fixing https://github.com/KorAP/Kalamar-Plugin-Export/pull/88 would be better.",
       "revId": "e1f797da637197fbf8ac09321fd4f7c14290f57d",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ed342d5a_33ebfecf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2023-11-30T06:49:23Z",
+      "side": 1,
+      "message": "🙏",
+      "revId": "e1f797da637197fbf8ac09321fd4f7c14290f57d",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
