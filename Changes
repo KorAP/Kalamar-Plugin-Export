@@ -2,6 +2,7 @@
     - Change default api port to 443.
     - Update dependency of logback-classic.
     - Add warning regarding protected data.
+    - Do not rely on cookie path for session riding.
 
       This fixes a security issue! Please update!
 
