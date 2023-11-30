@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "17ca1758_01f47fe4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2023-11-30T13:20:54Z",
+      "side": 1,
+      "message": "I rephrased it. I guess it is a \"third party\" configuration that prevents this to work.",
+      "revId": "14c7cf0f13026cd1dbb7ccfbe37fd11fa66f3e93",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
