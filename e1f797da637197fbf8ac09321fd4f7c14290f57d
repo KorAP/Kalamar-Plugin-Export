@@ -16,6 +16,23 @@
       "message": "https://github.com/KorAP/Kalamar-Plugin-Export/security/dependabot/7",
       "revId": "e1f797da637197fbf8ac09321fd4f7c14290f57d",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f37482ef_0fb7534b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2023-11-30T06:39:08Z",
+      "side": 1,
+      "message": "Of course, fixing https://github.com/KorAP/Kalamar-Plugin-Export/pull/88 would be better.",
+      "revId": "e1f797da637197fbf8ac09321fd4f7c14290f57d",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
