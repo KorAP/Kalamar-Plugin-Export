@@ -634,18 +634,16 @@ public class Service {
         if (cookies == null)
             return "";
         
-        String cookiePath = prop.getProperty("cookie.path", "");
+        String cookieName = prop.getProperty("cookie.name", "");
 
         // Iterate through all cookies for a Kalamar session
         for (int i = 0; i < cookies.length; i++) {
 
-            // Check the valid path (often path is not set when sent)
-            if (cookiePath != "" && cookies[i].getPath() != "" &&
-                cookies[i].getPath() != cookiePath)
+            // Check the valid name and ignore irrelevant cookies
+            if (cookieName == "" && !cookies[i].getName().equals("kalamar"))
                 continue;
 
-            // Ignore irrelevant cookies
-            if (!cookies[i].getName().matches("^kalamar(-.+?)?$"))
+            if (!cookies[i].getName().equals(cookieName))
                 continue;
 
             // Get the value

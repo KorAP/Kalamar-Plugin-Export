@@ -1,6 +1,7 @@
 0.2.10 2023-11-30
     - Change default api port to 443.
     - Update dependency of logback-classic.
+    - Do not rely on cookie path for session riding.
 
       This fixes a security issue! Please update!
 
