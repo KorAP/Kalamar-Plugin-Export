@@ -1,3 +1,8 @@
+0.2.10 2023-11-30
+    - Update dependency of logback-classic.
+
+      This fixes a security issue! Please update!
+
 0.2.9 2023-10-4
     - Remove Cobertura to be compatible with
       Java 11.
