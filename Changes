@@ -1,6 +1,7 @@
 0.2.10 2023-11-30
     - Change default api port to 443.
     - Update dependency of logback-classic.
+    - Add warning regarding protected data.
 
       This fixes a security issue! Please update!
 

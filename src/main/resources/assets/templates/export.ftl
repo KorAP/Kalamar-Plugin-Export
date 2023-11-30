@@ -110,6 +110,8 @@
             </div>
           </fieldset>
 
+          <p style="color: red; font-weight: bold">Due to technical problems, the export of restricted data is currently not possible.</p>
+          
           <fieldset class="form-line">
             <legend>${dict.hitc}</legend>
             <input name="hitc" id="hitc" type="number" min="1" max="10000" value="${defaultHitc}" />
