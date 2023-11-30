@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "11aae051_ebad2e37",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2023-11-30T13:16:07Z",
+      "side": 1,
+      "message": "The problem seems to be that nowadays browsers do not send the cookie path to the server anymore. That means, when multiple instances with login are used, the cookie with the shortest name is taken, which is always the cookie for the main instance. By explicitely setting the cookie name, this problem is solved.",
+      "revId": "8d1c50496fc1e4948f664ae2d15372fe50a3696f",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
