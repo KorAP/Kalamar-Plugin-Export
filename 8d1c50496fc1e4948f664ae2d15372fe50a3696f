@@ -39,6 +39,30 @@
       },
       "revId": "8d1c50496fc1e4948f664ae2d15372fe50a3696f",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "262f7076_8d0afc30",
+        "filename": "src/main/java/de/ids_mannheim/korap/plkexport/Service.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 643,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2023-12-06T12:21:02Z",
+      "side": 1,
+      "message": "The reasoning here is that most installations of KorAP will only have a single KorAP instance and the cookie will be called \"kalamar\". In that case the cookie name shouldn\u0027t be set. In our case, when cookie name is not set, the cookie needs to be \"kalamar\" for the main instance.\n\nBut you may be right regarding the next check. This shouldn\u0027t be triggered for the case of an empty cookieName, but would. So \u0027if (cookieName !\u003d \"\" \u0026\u0026 !cookies[i].getName().equals(cookieName))\u0027 is probably right. I guess there are simpler solutions to this ... it was just the slimmest way to change the behaviour. :-)",
+      "parentUuid": "03c592e8_4352f55f",
+      "range": {
+        "startLine": 643,
+        "startChar": 58,
+        "endLine": 643,
+        "endChar": 64
+      },
+      "revId": "8d1c50496fc1e4948f664ae2d15372fe50a3696f",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
