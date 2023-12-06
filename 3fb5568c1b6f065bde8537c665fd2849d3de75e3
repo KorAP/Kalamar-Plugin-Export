@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "562ea642_9d3ee527",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2023-12-06T16:33:59Z",
+      "side": 1,
+      "message": "Following https://logback.qos.ch/news.html",
+      "revId": "3fb5568c1b6f065bde8537c665fd2849d3de75e3",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
