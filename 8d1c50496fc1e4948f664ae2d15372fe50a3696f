@@ -16,6 +16,29 @@
       "message": "The problem seems to be that nowadays browsers do not send the cookie path to the server anymore. That means, when multiple instances with login are used, the cookie with the shortest name is taken, which is always the cookie for the main instance. By explicitely setting the cookie name, this problem is solved.",
       "revId": "8d1c50496fc1e4948f664ae2d15372fe50a3696f",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "03c592e8_4352f55f",
+        "filename": "src/main/java/de/ids_mannheim/korap/plkexport/Service.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 643,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2023-12-06T11:41:08Z",
+      "side": 1,
+      "message": "I\u0027m not sure, if I understand this line. Should it not be getName().contains(\"kalamar\") instead? Wouldn\u0027t that result to true for the cookie with the name \u0027kalamar-instancetest\u0027, and should result to false instead?",
+      "range": {
+        "startLine": 643,
+        "startChar": 58,
+        "endLine": 643,
+        "endChar": 64
+      },
+      "revId": "8d1c50496fc1e4948f664ae2d15372fe50a3696f",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
