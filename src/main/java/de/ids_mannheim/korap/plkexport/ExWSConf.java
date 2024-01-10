@@ -16,16 +16,35 @@ import org.tinylog.Logger;
 public class ExWSConf {
 
     // Version of Export Plugin
-    public static final int VERSION_MAJOR = 0;
-    public static final int VERSION_MINOR = 2;
-    public static final int VERSION_PATCHLEVEL = 7;
+    private static String VERSION;
 
     private static Properties prop;
 
+    /*
+     * Returns version of the Export Plugin
+     */
+    public static String version(){
+        if (VERSION != null){
+            return VERSION;
+        }
+        else
+        {
+            Properties projProp = new Properties();
+            try{
+                projProp.load(ExWSConf.class.getClassLoader().getResourceAsStream("project.properties"));
+            }
+            catch(Exception e){
+                Logger.error("Unable to load project properties");
+                return null;
+            }
+            VERSION = projProp.getProperty("version");
+            return VERSION;
+    }
+    } 
     // Load properties from file
     public static Properties properties (String propFile) {
 
-        if (prop != null)
+         if (prop != null)
             return prop;
 
         if (propFile == null)
@@ -34,7 +53,7 @@ public class ExWSConf {
         InputStream iFile;
         try {
 
-            iFile = new FileInputStream(propFile);            
+            iFile = new FileInputStream(propFile);     
             prop = new Properties();
             prop.load(
                 new BufferedReader(

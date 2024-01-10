@@ -2,6 +2,8 @@ package de.ids_mannheim.korap.plkexport;
 
 import java.util.Properties;
 
+import org.tinylog.Logger;
+
 import java.nio.charset.*;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -214,8 +216,7 @@ public class RtfExporter extends MatchAggregator implements Exporter {
         if (this.getMeta() != null && this.getMeta().has("version")) {
             this.addInfoRow(w, "Backend-Version", this.getMeta().get("version").asText());
         };
-
-        this.addInfoRow(w, "Export-Version", this.getVersion().toString());
+        this.addInfoRow(w, "Export-Version", ExWSConf.version());
     };
 
 
@@ -245,22 +246,6 @@ public class RtfExporter extends MatchAggregator implements Exporter {
         w.append("\\cell\\row}\n");
     };
     
-
-    /*
-     * Get version of the plugin
-     * (maybe read from pom?) 
-     */
-    private Version getVersion () {
-        return new Version(
-            ExWSConf.VERSION_MAJOR,
-            ExWSConf.VERSION_MINOR,
-            ExWSConf.VERSION_PATCHLEVEL,
-            null,
-            null,
-            null
-            );
-    };
-
 
     /*
      * Convert a string to RTF compliant encoding.

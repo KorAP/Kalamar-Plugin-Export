@@ -1,3 +1,6 @@
+0.2.11 2024-1-10
+    - Retrieves the version of the export plugin from pom.xml (closes #99)
+
 0.2.10 2023-11-30
     - Change default api port to 443.
     - Update dependency of logback-classic.
