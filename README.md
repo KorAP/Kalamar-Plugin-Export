@@ -26,22 +26,22 @@ Further dependencies are resolved using Maven.
 To build the latest version of Kalamar-Plugin-Export, do ...
 
 ```shell
-$ git clone https://github.com/KorAP/Kalamar-Plugin-Export
-$ cd Kalamar-Plugin-Export
+git clone https://github.com/KorAP/Kalamar-Plugin-Export
+cd Kalamar-Plugin-Export
 ```
 
 ... and build the jar file ...
 
 
 ```shell
-$ mvn clean package
+mvn clean package
 ```
 
 Afterwards the jar file is located in the `target/` folder and can
 be started with ...
 
 ```shell
-$ java -jar KalamarExportPlugin-[VERSION].jar
+java -jar KalamarExportPlugin-[VERSION].jar
 ```
 
 Per default, this will start a server at `http://localhost:7777`.
@@ -115,7 +115,7 @@ To change the configuration create a new config file and run the jar with the
 according filename as argument:
 
 ```shell
-$ java -jar KalamarExportPlugin-[VERSION].jar myconf_exportPlugin.conf
+java -jar KalamarExportPlugin-[VERSION].jar myconf_exportPlugin.conf
 ```
 
 Alternatively a file named `exportPlugin.conf` can be stored in the
