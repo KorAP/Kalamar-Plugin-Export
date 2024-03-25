@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "34ccd7a4_544bdb16",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2024-03-25T09:29:37Z",
+      "side": 1,
+      "message": "See: https://korap.ids-mannheim.de/gerrit/c/KorAP/Kalamar/+/8366",
+      "revId": "e5ef771677120872ac42ed5488637e1250f7cd46",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
