@@ -1,7 +1,15 @@
+0.3   2024-6-21
+    - Upgrade to Java 17.
+    - Upgrade Jetty to 11.0.12. 
+    - Upgrade Jersey to 3.1.7.
+    - Upgrade dependencies following dependabot.
+    - Fixes md014 violations in README.
+
 0.2.11 2024-1-10
     - Upgrade dependency on Jackson following dependabot.
     - Upgrade dependency on Maven following dependabot.
     - Retrieves the version of the export plugin from pom.xml (closes #99)
+
 
 0.2.10 2023-11-30
     - Change default api port to 443.
