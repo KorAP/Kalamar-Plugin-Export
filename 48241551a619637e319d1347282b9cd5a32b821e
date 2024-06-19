@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0f58d9b9_e5937629",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2024-06-19T16:29:44Z",
+      "side": 1,
+      "message": "After commiting 5527 and https://github.com/KorAP/Kalamar-Plugin-Export/pull/120 + REBASE",
+      "revId": "48241551a619637e319d1347282b9cd5a32b821e",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
