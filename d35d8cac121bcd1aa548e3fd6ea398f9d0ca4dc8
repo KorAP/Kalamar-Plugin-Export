@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2ab18395_8bc51bd2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-06-20T11:46:53Z",
+      "side": 1,
+      "message": "CI currently fails on GH.",
+      "revId": "d35d8cac121bcd1aa548e3fd6ea398f9d0ca4dc8",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
