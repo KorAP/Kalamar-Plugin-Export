@@ -33,6 +33,24 @@
       "message": "May make sense to jump to 0.3.",
       "revId": "48241551a619637e319d1347282b9cd5a32b821e",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f6915b90_fbf45fe8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2024-06-20T05:34:37Z",
+      "side": 1,
+      "message": "Thanks for the hint! I was wondering about that..",
+      "parentUuid": "6255a234_023a3d14",
+      "revId": "48241551a619637e319d1347282b9cd5a32b821e",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
