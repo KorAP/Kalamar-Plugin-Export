@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0cf898b_c02960b5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2024-07-15T12:21:21Z",
+      "side": 1,
+      "message": "Faulty maven-surefire-plugin leaded to: Tests run: 0, Failures: 0, Errors: 0, Skipped: 0 \nThis is fixed now.",
+      "revId": "a6a5ea1ed3cd11394da3927611bea5bced4f8b46",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
