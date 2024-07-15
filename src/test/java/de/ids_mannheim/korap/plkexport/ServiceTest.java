@@ -41,8 +41,6 @@ import org.glassfish.jersey.media.sse.EventListener;
 import org.glassfish.jersey.media.sse.EventSource;
 import org.glassfish.jersey.media.sse.SseFeature;
 import java.util.concurrent.TimeUnit;
-import jakarta.ws.rs.client.WebTarget;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.glassfish.jersey.server.ResourceConfig;
