@@ -15,7 +15,7 @@ demonstrate and evaluate the plugin capabilities of Kalamar.
 
 ## Prerequisites
 
-Java 11 (OpenJDK or Oracle JDK),
+Java 17 (OpenJDK or Oracle JDK),
 [Git](http://git-scm.com/),
 [Maven 3](https://maven.apache.org/).
 Further dependencies are resolved using Maven.
@@ -123,7 +123,7 @@ same directory as the java jar.
 
 ## License
 
-Copyright (c) 2020-2023, [IDS Mannheim](https://www.ids-mannheim.de/), Germany
+Copyright (c) 2020-2024, [IDS Mannheim](https://www.ids-mannheim.de/), Germany
 
 Kalamar-Plugin-Export is developed as part of the [KorAP](https://korap.ids-mannheim.de/)
 Corpus Analysis Platform at the Leibniz Institute for the German Language
