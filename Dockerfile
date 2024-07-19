@@ -14,15 +14,11 @@ RUN git config --global user.email "korap+docker@ids-mannheim.de" && \
     git config --global user.name "Docker"
 
 # Install Kalamar-Plugin-Export
-RUN mkdir built && \
-    git clone https://github.com/KorAP/Kalamar-Plugin-Export.git Kalamar-Plugin-Export && \
-    cd Kalamar-Plugin-Export && \
-    git checkout master && \
-    mvn clean package
+RUN mvn clean package
 
-# Package
-RUN cd Kalamar-Plugin-Export && \
-    find target/KalamarExportPlugin-*.jar -exec mv {} ../built/KalamarExportPlugin.jar ';'
+RUN mkdir built
+
+RUN find target/KalamarExportPlugin-*.jar -exec mv {} /export/built/KalamarExportPlugin.jar ';'
 
 RUN apk del git \
             maven
@@ -47,6 +43,5 @@ EXPOSE 7777
 ENTRYPOINT [ "java", "-jar" ]
 
 CMD [ "KalamarExportPlugin.jar" ]
-
 
 # docker build -f Dockerfile -t korap/kalamar-plugin-export:{nr} .
