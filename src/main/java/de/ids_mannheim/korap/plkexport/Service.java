@@ -166,12 +166,12 @@ public class Service {
         };
         
         // Load configuration values
-        String scheme  = prop.getProperty("api.scheme", "https");
-        String port    = prop.getProperty("api.port", "8089");
+        String scheme  = prop.getProperty("api.scheme", "http");
+        String port    = prop.getProperty("api.port", "64543");
         String host    = prop.getProperty("api.host", "localhost");
         String path    = prop.getProperty("api.path", "");
         String source  = prop.getProperty("api.source");
-        int pageSize   = Integer.parseInt(prop.getProperty("conf.page_size", "5"));
+        int pageSize   = Integer.parseInt(prop.getProperty("conf.page_size", "50"));
         int maxResults = Integer.parseInt(prop.getProperty("conf.max_exp_limit", "10000"));
 
         // Adjust the number of requested hits
