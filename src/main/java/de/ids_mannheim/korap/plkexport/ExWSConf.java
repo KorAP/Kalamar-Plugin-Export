@@ -42,7 +42,7 @@ public class ExWSConf {
     }
     } 
     // Load properties from file
-    public static Properties properties (String propFile) {
+ /*    public static Properties properties (String propFile) {
 
          if (prop != null)
             return prop;
@@ -82,4 +82,85 @@ public class ExWSConf {
         };
         return prop;
     };
+
+    */
+      // Load properties from file
+      public static Properties properties (String propFile) {
+
+        if (prop != null)
+           return prop;
+
+   prop = new Properties();
+   /* 
+       if (propFile == null)
+           propFile = "exportPlugin.conf";
+*/
+        String defaultProp = "exportPlugin.conf";
+       InputStream diFile;
+       try {
+
+           diFile = new FileInputStream(defaultProp);     
+           //prop = new Properties();
+           prop.load(
+               new BufferedReader(
+                   new InputStreamReader(diFile, "UTF-8")
+                   )
+               );
+       }
+       catch (IOException t) {
+           try {
+               diFile = ExWSConf.class.getClassLoader()
+                   .getResourceAsStream(defaultProp);
+
+               if (diFile == null) {
+                   Logger.error("Unable to load properties.");
+                   return null;
+               };
+
+               prop = new Properties();
+               prop.load(diFile);
+               diFile.close();
+           }
+           catch (IOException e) {
+               Logger.error(e);
+               return null;
+           };
+       };
+       if (propFile != null){
+      // propFile = "exportPlugin.conf";
+       InputStream iFile;
+       try {
+
+           iFile = new FileInputStream(propFile);     
+          // prop = new Properties();
+           prop.load(
+               new BufferedReader(
+                   new InputStreamReader(iFile, "UTF-8")
+                   )
+               );
+       }
+       catch (IOException t) {
+           try {
+               iFile = ExWSConf.class.getClassLoader()
+                   .getResourceAsStream(propFile);
+
+               if (iFile == null) {
+                   Logger.error("Unable to load properties.");
+                   return null;
+               };
+
+               prop = new Properties();
+               prop.load(iFile);
+               iFile.close();
+           }
+           catch (IOException e) {
+               Logger.error(e);
+               return null;
+           };
+       };
+    }
+
+
+       return prop;
+   };
 }
