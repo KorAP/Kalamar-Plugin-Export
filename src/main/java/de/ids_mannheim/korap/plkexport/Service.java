@@ -578,6 +578,18 @@ public class Service {
 
 
     /**
+     *
+     * Returns the export template as JSON.
+     */
+    @GET
+    @Path("export/template")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String exportDisplayTemplate () {
+        Properties properties = ExWSConf.properties(null);
+        return ExpTempl.getExportTempl(properties.getProperty("server.scheme"),properties.getProperty("server.host"), properties.getProperty("server.port"));
+    };
+
+    /**
      * The export script.
      *
      * Returns a static JavaScript file.
