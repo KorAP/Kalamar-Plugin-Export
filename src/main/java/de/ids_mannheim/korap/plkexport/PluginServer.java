@@ -1,5 +1,6 @@
 package de.ids_mannheim.korap.plkexport;
 
+
 import java.util.Properties;
 
 import org.eclipse.jetty.server.Handler;
@@ -13,6 +14,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 import org.tinylog.Logger;
+
 
 import jakarta.servlet.Servlet;
 
@@ -28,11 +30,27 @@ public class PluginServer {
         contextHandler.setContextPath("/");
         
         String propfile = null;
-        if(args.length >= 1) {
-            propfile = args[0];
+    
+        boolean printhelp = false;
+        boolean argexc = false;
+
+        if(args.length >= 1 & args.length <= 2) {
+            for (int i = 0; i <= args.length-1; i++) {
+             if (args[i].equals("-h" ) |  args[i].equals("--help")){
+              printhelp = true;
+                }
+              else {
+                  propfile = args[i];
+                }
+            }
+        }
+        else if(args.length >= 3){
+        argexc = true;
         }
         Properties properties = ExWSConf.properties(propfile);
-        
+      
+        String usage = "\n Usage is java -jar KalamarExportPlugin-"+ ExWSConf.version() +".jar [-h|--help] [myconf_exportPlugin.conf]";
+      
         // Default: Server is available under http://localhost:7070/
         String portStr = properties.getProperty("server.port", "7070");
         String host = properties.getProperty("server.host", "localhost");
@@ -72,6 +90,22 @@ public class PluginServer {
                 properties.getProperty("api.port") +
                 properties.getProperty("api.path","")
                 );
+
+   
+            if(printhelp){
+                System.out.println(usage);
+                String templString = ExpTempl.getExportTempl(properties.getProperty("server.scheme"), properties.getProperty("server.host"), properties.getProperty("server.port"));
+                System.out.println(" \n Export template to pass to the plugin registration handler: \n " 
+                + templString);
+            }
+            else {
+                System.out.println("\n You can use  -h or --help for more information about usage");   
+            }
+
+            if(argexc){
+                System.out.println("\n Too much arguments: " + usage);
+            }
+
             jettyServer.join();
         }
         finally {
@@ -79,4 +113,5 @@ public class PluginServer {
             jettyServer.destroy();
         }
     }
+
 }
