@@ -1,5 +1,5 @@
 # Use alpine linux as base image
-FROM openjdk:19-alpine as builder
+FROM eclipse-temurin:22-jdk-alpine as builder
 
 # Copy repository respecting .dockerignore
 COPY . /export
@@ -29,7 +29,7 @@ RUN apk del git \
 
 RUN cd ${M2_HOME} && rm -r .m2
 
-FROM openjdk:19-alpine
+FROM eclipse-temurin:22-jre-alpine
 
 RUN addgroup -S korap && \
     adduser -S export -G korap && \
