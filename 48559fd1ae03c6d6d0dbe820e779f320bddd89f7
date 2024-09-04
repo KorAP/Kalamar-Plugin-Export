@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "af1f3870_0e82c57f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-09-04T07:50:26Z",
+      "side": 1,
+      "message": "openjdk don\u0027t support official docker images anymore.",
+      "revId": "48559fd1ae03c6d6d0dbe820e779f320bddd89f7",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
