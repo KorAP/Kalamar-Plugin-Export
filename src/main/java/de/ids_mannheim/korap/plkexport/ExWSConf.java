@@ -11,6 +11,7 @@ package de.ids_mannheim.korap.plkexport;
 import java.io.*;
 import java.lang.String;
 import java.util.Properties;
+
 import org.tinylog.Logger;
 
 public class ExWSConf {
@@ -41,45 +42,72 @@ public class ExWSConf {
             return VERSION;
     }
     } 
-    // Load properties from file
-    public static Properties properties (String propFile) {
+  
+    /*
+     * Sets properties to null 
+     * Is needed for testing purposes.
+     */
+    public static void clearProp(){
+        prop = null;
+    }
 
-         if (prop != null)
-            return prop;
-
-        if (propFile == null)
-            propFile = "exportPlugin.conf";
-
-        InputStream iFile;
+    /**
+    *Loads properties from a UTF-8 encoded file
+    */
+    public static Properties loadProp(Properties aprop, String file){
+    
+        InputStream diFile;
+        if(aprop ==  null){
+            aprop = new Properties();
+        }
+    
         try {
-
-            iFile = new FileInputStream(propFile);     
-            prop = new Properties();
-            prop.load(
+            diFile = new FileInputStream(file);     
+            aprop.load(
                 new BufferedReader(
-                    new InputStreamReader(iFile, "UTF-8")
-                    )
-                );
+                new InputStreamReader(diFile, "UTF-8")
+                )
+            );
         }
         catch (IOException t) {
-            try {
-                iFile = ExWSConf.class.getClassLoader()
-                    .getResourceAsStream(propFile);
+        try {
+            diFile = ExWSConf.class.getClassLoader()
+                .getResourceAsStream(file);
 
-                if (iFile == null) {
-                    Logger.error("Unable to load properties.");
-                    return null;
-                };
-
-                prop = new Properties();
-                prop.load(iFile);
-                iFile.close();
-            }
-            catch (IOException e) {
-                Logger.error(e);
+            if (diFile == null) {
+                Logger.error("Unable to load properties.");
                 return null;
             };
+
+            aprop.load(diFile);
+            diFile.close();
+        }
+        catch (IOException e) {
+            Logger.error(e);
+            return null;
         };
+    }    
+    return aprop;
+   }
+
+    /*
+    * Returns export properties 
+    * The properties in exportPlugin.conf are the default properties
+    * which can be overwritten by the properties in propFile.
+    */
+    public static Properties properties (String propFile) {
+     
+        if (prop != null)
+           return prop;
+
+        Properties defaultProp = loadProp(null, "exportPlugin.conf");
+        prop = new Properties(defaultProp);
+    
+        if (propFile != null){
+            loadProp(prop, propFile);
+        }
+    
         return prop;
     };
+
 }
