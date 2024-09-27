@@ -50,6 +50,23 @@
       "message": "I\u0027m not so sure what you are aiming at. \nI implemented it according to https://github.com/KorAP/Kalamar-Plugin-Export/issues/128 and our discussion in Slack. The exportPlugin.conf is kind of a default conf file, which can be overwritten partly or at all by certain KorAP instances.",
       "revId": "6763c7700b9325da8643b91e9ee1ab07ddbc62a8",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2992b066_fe157288",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2024-09-27T13:53:31Z",
+      "side": 1,
+      "message": "Test fail because of https://github.com/KorAP/Kalamar-Plugin-Export/issues/138, must be reviewed excluding AssetTest.",
+      "revId": "6763c7700b9325da8643b91e9ee1ab07ddbc62a8",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
