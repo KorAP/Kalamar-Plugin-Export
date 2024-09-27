@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3e2184ad_5f55240d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2024-09-27T13:49:49Z",
+      "side": 1,
+      "message": "Test fail because of https://github.com/KorAP/Kalamar-Plugin-Export/issues/138, must be reviewed excluding AssetTest.",
+      "revId": "98ce107dd03c87f96fba02312050a9109a34f3fe",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
