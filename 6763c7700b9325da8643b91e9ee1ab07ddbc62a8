@@ -33,6 +33,23 @@
       "message": "Shouldn\u0027t this be done using default properties?",
       "revId": "6763c7700b9325da8643b91e9ee1ab07ddbc62a8",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d927e34c_6593a353",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2024-09-27T13:52:49Z",
+      "side": 1,
+      "message": "I\u0027m not so sure what you are aiming at. \nI implemented it according to https://github.com/KorAP/Kalamar-Plugin-Export/issues/128 and our discussion in Slack. The exportPlugin.conf is kind of a default conf file, which can be overwritten partly or at all by certain KorAP instances.",
+      "revId": "6763c7700b9325da8643b91e9ee1ab07ddbc62a8",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
