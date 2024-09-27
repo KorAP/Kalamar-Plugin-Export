@@ -16,6 +16,23 @@
       "message": "Test fail because of https://github.com/KorAP/Kalamar-Plugin-Export/issues/138, must be reviewed excluding AssetTest.",
       "revId": "d2bc3f4f348251b22d36b7d90046c90463e93a9c",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f392ac31_ca120b7c",
+        "filename": "src/main/java/de/ids_mannheim/korap/plkexport/ExpTempl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2024-09-27T13:30:28Z",
+      "side": 1,
+      "message": "Alternatively I could a) define the json string like String json \u003d\"{\n\\\"name\\\" : \\\"Export\\\",\\\"desc\\\" ...} or b) map an object template with a more complex structure (object template which contains an embed object and a onClick object, enum permissions, etc. ). Maybe we can implement a java library for defining such objects which can be used for other plugin implementations.\nMeanwhile I would leave it like that.",
+      "revId": "d2bc3f4f348251b22d36b7d90046c90463e93a9c",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
