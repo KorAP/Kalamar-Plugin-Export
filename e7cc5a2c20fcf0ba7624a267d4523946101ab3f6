@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5913a673_7c0f2a46",
+        "filename": "src/main/resources/exportPlugin.conf",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-10-01T12:27:53Z",
+      "side": 0,
+      "message": "It may be risky to change default values. Especially when this lowers the security.\nIt should at least be anounced as a breaking change.",
+      "range": {
+        "startLine": 8,
+        "startChar": 14,
+        "endLine": 8,
+        "endChar": 19
+      },
+      "revId": "e7cc5a2c20fcf0ba7624a267d4523946101ab3f6",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
