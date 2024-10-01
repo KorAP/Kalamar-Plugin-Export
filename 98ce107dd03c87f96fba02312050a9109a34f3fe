@@ -16,6 +16,46 @@
       "message": "Test fail because of https://github.com/KorAP/Kalamar-Plugin-Export/issues/138, must be reviewed excluding AssetTest.",
       "revId": "98ce107dd03c87f96fba02312050a9109a34f3fe",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "917ca587_38b4264a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-10-01T11:24:36Z",
+      "side": 1,
+      "message": "I don\u0027t get this. Probably these values should be commented out in the conf file - but shouldn\u0027t be changed in a way that could break running instances, I guess.",
+      "revId": "98ce107dd03c87f96fba02312050a9109a34f3fe",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b066a780_9242c475",
+        "filename": "src/main/java/de/ids_mannheim/korap/plkexport/Service.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-10-01T11:24:36Z",
+      "side": 1,
+      "message": "This now differs from the shipped conf. That\u0027s confusing, I guess.",
+      "range": {
+        "startLine": 174,
+        "startChar": 78,
+        "endLine": 174,
+        "endChar": 80
+      },
+      "revId": "98ce107dd03c87f96fba02312050a9109a34f3fe",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
