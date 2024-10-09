@@ -41,7 +41,7 @@ Afterwards the jar file is located in the `target/` folder and can
 be started with ...
 
 ```shell
-java -jar KalamarExportPlugin-[VERSION].jar
+java -jar KalamarExportPlugin-[VERSION].jar [-h|--help]
 ```
 
 Per default, this will start a server at `http://localhost:7777`.
@@ -70,7 +70,13 @@ to the plugin registration handler.
 }
 ```
 
-The simplest way to do this at the moment is by storing the json
+This template will also be displayed when starting the jar with the argument [-h|--help]. Alternatively it is returned by:
+
+```shell
+http://localhost:7777/export/template
+```
+
+At the moment the simplest way to register the plugin is by storing the json
 blob in a file (the blob needs to be in a list, i.e. surrounded by `[...]`).
 The file then can be loaded using the `Plugins` addon in Kalamar using the
 Kalamar configuration file.
