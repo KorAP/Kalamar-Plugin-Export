@@ -1,3 +1,8 @@
+0.3.1 2024-10-9
+    - Produces export template as service (hebasta)
+    - Produces export template on the command line  (hebasta)
+    - Produces information of usage on the command line (hebasta)
+
 0.3.0 2024-6-21
     - Upgrade to Java 17.
     - Upgrade Jetty to 11.0.12.
