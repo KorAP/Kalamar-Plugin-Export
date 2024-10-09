@@ -84,6 +84,24 @@
       "message": "I mean: It\u0027s confusing to have two different default properties, one in code, one per conf. I would guess in code is easier and the conf can be overwritten as it is done now.\n\nThe test suite works, when only running ExWSConfTest - but there is also a failing test in ExWSConfTest, when the whole suite is ran, so I expect a problem with the property loading order, that should be fixed.\n\n  [ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.001 s \u003c\u003c\u003c FAILURE! -- in de.ids_mannheim.korap.plkexport.ExWSConfTest\n  [ERROR] de.ids_mannheim.korap.plkexport.ExWSConfTest.testExportWsOverlProp -- Time elapsed: 0 s \u003c\u003c\u003c FAILURE!\n  org.opentest4j.AssertionFailedError: expected: \u003cdummdidumm.ids-mannheim.de\u003e but was: \u003cids-mannheim.example\u003e\n\tat org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)\n\tat org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)\n\tat org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)",
       "revId": "6763c7700b9325da8643b91e9ee1ab07ddbc62a8",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5a7449ef_469e4b2a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2024-10-09T11:13:58Z",
+      "side": 1,
+      "message": "Hmm, I can not reproduce it with mvn clean test. It runs throught at my development system. I tested it several times ...",
+      "parentUuid": "7b73db82_a2f994d5",
+      "revId": "6763c7700b9325da8643b91e9ee1ab07ddbc62a8",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
