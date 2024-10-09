@@ -136,6 +136,24 @@
       "message": "I excluded it",
       "revId": "6763c7700b9325da8643b91e9ee1ab07ddbc62a8",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "571a5947_80da2b6c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-10-09T13:44:58Z",
+      "side": 1,
+      "message": "Please run it included and ignore the failing AssetTests. The failing probably means the test is not as atomic as it should be.",
+      "parentUuid": "7f28eff9_ec25c4bc",
+      "revId": "6763c7700b9325da8643b91e9ee1ab07ddbc62a8",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
