@@ -100,6 +100,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b2b3d0a4_739d26c0",
+        "filename": "src/main/java/de/ids_mannheim/korap/plkexport/PluginServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2024-10-09T10:15:58Z",
+      "side": 1,
+      "message": "I thought about it and decided against it.",
+      "parentUuid": "9f373363_ba00f25e",
+      "range": {
+        "startLine": 93,
+        "startChar": 12,
+        "endLine": 93,
+        "endChar": 26
+      },
+      "revId": "d2bc3f4f348251b22d36b7d90046c90463e93a9c",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "097a7ad2_a11caffd",
         "filename": "src/main/java/de/ids_mannheim/korap/plkexport/PluginServer.java",
         "patchSetId": 1
@@ -111,6 +135,30 @@
       "writtenOn": "2024-10-01T12:27:53Z",
       "side": 1,
       "message": "Too",
+      "range": {
+        "startLine": 104,
+        "startChar": 39,
+        "endLine": 104,
+        "endChar": 42
+      },
+      "revId": "d2bc3f4f348251b22d36b7d90046c90463e93a9c",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2190ae0e_f080550d",
+        "filename": "src/main/java/de/ids_mannheim/korap/plkexport/PluginServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2024-10-09T10:15:58Z",
+      "side": 1,
+      "message": "Thanks!",
+      "parentUuid": "097a7ad2_a11caffd",
       "range": {
         "startLine": 104,
         "startChar": 39,
