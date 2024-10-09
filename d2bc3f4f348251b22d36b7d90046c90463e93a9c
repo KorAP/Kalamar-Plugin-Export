@@ -75,6 +75,30 @@
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fafebd81_4e0a6c60",
+        "filename": "src/main/java/de/ids_mannheim/korap/plkexport/PluginServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2024-10-09T10:23:41Z",
+      "side": 1,
+      "message": "Thanks",
+      "parentUuid": "42a04b11_ad785ad6",
+      "range": {
+        "startLine": 33,
+        "startChar": 66,
+        "endLine": 33,
+        "endChar": 75
+      },
+      "revId": "d2bc3f4f348251b22d36b7d90046c90463e93a9c",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9f373363_ba00f25e",
@@ -182,6 +206,30 @@
       "writtenOn": "2024-10-01T12:27:53Z",
       "side": 1,
       "message": "Double test",
+      "range": {
+        "startLine": 54,
+        "startChar": 7,
+        "endLine": 54,
+        "endChar": 81
+      },
+      "revId": "d2bc3f4f348251b22d36b7d90046c90463e93a9c",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "34bc15f7_640644f8",
+        "filename": "src/test/java/de/ids_mannheim/korap/plkexport/ExpTemlTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2024-10-09T10:23:41Z",
+      "side": 1,
+      "message": "Thanks",
+      "parentUuid": "7b5e9e79_38aa9110",
       "range": {
         "startLine": 54,
         "startChar": 7,
