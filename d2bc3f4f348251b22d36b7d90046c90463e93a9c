@@ -37,6 +37,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "7169e0c2_8a54128f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-10-09T13:42:22Z",
+      "side": 1,
+      "message": "Otherwise: Great! I think that makes it easy to integrate plugins into the market store!",
+      "parentUuid": "d6d55bbd_f2fd5260",
+      "revId": "d2bc3f4f348251b22d36b7d90046c90463e93a9c",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "f392ac31_ca120b7c",
         "filename": "src/main/java/de/ids_mannheim/korap/plkexport/ExpTempl.java",
         "patchSetId": 1
@@ -136,6 +154,30 @@
       "side": 1,
       "message": "I thought about it and decided against it.",
       "parentUuid": "9f373363_ba00f25e",
+      "range": {
+        "startLine": 93,
+        "startChar": 12,
+        "endLine": 93,
+        "endChar": 26
+      },
+      "revId": "d2bc3f4f348251b22d36b7d90046c90463e93a9c",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "88386218_7e1841b9",
+        "filename": "src/main/java/de/ids_mannheim/korap/plkexport/PluginServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-10-09T13:42:22Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "b2b3d0a4_739d26c0",
       "range": {
         "startLine": 93,
         "startChar": 12,
