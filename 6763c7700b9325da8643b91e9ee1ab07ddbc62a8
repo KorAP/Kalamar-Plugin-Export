@@ -154,6 +154,24 @@
       "parentUuid": "7f28eff9_ec25c4bc",
       "revId": "6763c7700b9325da8643b91e9ee1ab07ddbc62a8",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a099dffb_a678c632",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2025-02-18T11:35:12Z",
+      "side": 1,
+      "message": "I fixed the test suite.\n\nI think the original idea for #128 was your criticism that sometimes it is necessary to change only a single property or few properties in certain instances. Therefore an overwriting mechanism should be supported (as I understood you).\n\nDefining the default properties in the code might be confusing for admins. For overview purposes it is much better to define them in a configuration file. I see the default properties in the code more as a safety net.\n\nAnother possibility would be to introduce environmental variables for this purpose.",
+      "parentUuid": "5a7449ef_469e4b2a",
+      "revId": "6763c7700b9325da8643b91e9ee1ab07ddbc62a8",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
