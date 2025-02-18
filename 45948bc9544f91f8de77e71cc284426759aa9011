@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2b0c81d3_720504ee",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2025-02-18T12:30:12Z",
+      "side": 1,
+      "message": "I wouldn\u0027t do it that way, but that\u0027s a matter of taste of course. :-)",
+      "revId": "45948bc9544f91f8de77e71cc284426759aa9011",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
