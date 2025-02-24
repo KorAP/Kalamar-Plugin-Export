@@ -124,6 +124,8 @@ according filename as argument:
 java -jar KalamarExportPlugin-[VERSION].jar myconf_exportPlugin.conf
 ```
 
+You can also define only single properties in the new config file. In this case only these properties overwrite the properties in the basic configuration file.
+
 Alternatively a file named `exportPlugin.conf` can be stored in the
 same directory as the java jar.
 
