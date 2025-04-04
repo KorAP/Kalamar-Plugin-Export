@@ -16,12 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.AfterClass;
 import org.mockserver.model.Header;
 
-// Fixture loading
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URLDecoder;
 
 import java.util.LinkedList;
 import java.util.Properties;
@@ -44,7 +39,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,8 +47,7 @@ import com.fasterxml.jackson.core.JsonParser;
 
 import static de.ids_mannheim.korap.plkexport.Service.getClientIP;
 
-
-public class ServiceTest extends JerseyTest {
+public class ServiceTest extends ExpTest {
 
     private static ClientAndServer mockServer;
 	private static MockServerClient mockClient;
@@ -990,7 +983,7 @@ public class ServiceTest extends JerseyTest {
         assertTrue(fileLoc.length() > 5);
         assertTrue(fileLoc.contains(";"));
     };
-    
+ 
 
     @Test
     public void testFileServingError () {
@@ -1012,46 +1005,4 @@ public class ServiceTest extends JerseyTest {
         assertEquals(getClientIP("10.0.4.6, 14.800.4.6 , 10.0.4.256"), "10.0.4.6");
     };
 
-
-    // Get fixture from ressources utf8 encoded
-    private String getFixture (String file) {
-        return getFixture(file, true);
-    }
-
-    
-    // Get fixture from ressources as byte stream
-    private String getFixture (String file, Boolean raw) {
-        String filepath = getClass()
-            .getResource("/fixtures/" + file)
-            .getFile();
-
-        if (raw) {
-            return getFileString(filepath);
-        };
-        return Util.convertToUTF8(getFileString(filepath));
-    };
-        
-
-    // Get string from a file
-    public static String getFileString (String filepath) {
-        StringBuilder contentBuilder = new StringBuilder();
-        try {
-			BufferedReader in = new BufferedReader(
-                new InputStreamReader(
-                    new FileInputStream(URLDecoder.decode(filepath, "UTF-8")),
-                    "UTF-8"
-                    )
-                );
-
-            String str;
-            while ((str = in.readLine()) != null) {
-                contentBuilder.append(str);
-            };
-            in.close();
-        }
-        catch (IOException e) {
-            fail(e.getMessage());
-        }
-        return contentBuilder.toString();
-    };
 };
