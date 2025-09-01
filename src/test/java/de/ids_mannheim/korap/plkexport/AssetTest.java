@@ -26,16 +26,17 @@ public class AssetTest extends JerseyTest {
 
     @Test
     public void testFormHtml () {
+
         Response responsehtml = target("/export").request()
                 .get();
         assertEquals("HTTP Code",
-                Status.OK.getStatusCode(), responsehtml.getStatus());
+                Status.OK.getStatusCode(), responsehtml.getStatus());        
         String str = responsehtml.readEntity(String.class);
         assertTrue("HTTP Body", str.contains("<title>Export</title>"));
-        assertTrue("Assets", str.contains("<script src=\"https://korap.ids-mannheim.de/js"));
-        assertTrue("Assets", str.contains("<link href=\"https://korap.ids-mannheim.de/css"));
+        assertTrue("Assets", str.contains("<script src=\"https://dummdidumm.ids-mannheim.de/js"));
+        assertTrue("Assets", str.contains("<link href=\"https://dummdidumm.ids-mannheim.de/css"));
         assertFalse("Errors", str.contains("dynCall("));
-    }
+        }
 
     @Test
     public void testFormHtmlLocalization () {
@@ -87,6 +88,7 @@ public class AssetTest extends JerseyTest {
 
         assertTrue("HTTP Body (en1)", str.contains("data-withql=\"with\""));
         assertTrue("HTTP Body (en2)", str.contains("data-incq=\"in\""));
+   
     };
 
     
