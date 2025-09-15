@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b087e185_9acda431",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2025-09-15T15:13:33Z",
+      "side": 1,
+      "message": "Fails CI-Tests...\n\n.. but runs through in my local development environment, have to investigate this furhter",
+      "revId": "efaf930962897716ae5b64b5660ba90609854522",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
