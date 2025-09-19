@@ -4,15 +4,4 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    ignore:
-      # Jetty >= 10 requires JDK 11
-      - dependency-name: "org.eclipse.jetty:jetty-server"
-        versions:
-          - ">= 10.0.0"
-      - dependency-name: "org.eclipse.jetty:jetty-servlet"
-        versions:
-          - ">= 10.0.0"
-      - dependency-name: "jersey*"
-        versions:
-          - ">= 3"
     open-pull-requests-limit: 50
