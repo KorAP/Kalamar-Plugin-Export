@@ -27,7 +27,7 @@ public class AssetTest extends JerseyTest {
     @Test
     public void testFormHtml () {
 
-        Response responsehtml = target("/export").request()
+        Response responsehtml = target("/export").request(MediaType.TEXT_HTML)
                 .get();
         assertEquals("HTTP Code",
                 Status.OK.getStatusCode(), responsehtml.getStatus());
@@ -43,7 +43,7 @@ public class AssetTest extends JerseyTest {
     public void testFormHtmlLocalization () {
 
         // Check german
-        Response responsehtml = target("/export").request()
+        Response responsehtml = target("/export").request(MediaType.TEXT_HTML)
             .header("Accept-Language","fr-CH, fr;q=0.9, de;q=0.8, en;q=0.7, *;q=0.5").get();
         assertEquals("HTTP Code",
                      Status.OK.getStatusCode(), responsehtml.getStatus());
@@ -51,7 +51,7 @@ public class AssetTest extends JerseyTest {
         assertTrue("HTTP Body (de)", str.contains("Dateiformat"));
 
         // Check English
-        responsehtml = target("/export").request()
+        responsehtml = target("/export").request(MediaType.TEXT_HTML)
             .header("Accept-Language","fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5").get();
         assertEquals("HTTP Code",
                      Status.OK.getStatusCode(), responsehtml.getStatus());
@@ -59,7 +59,7 @@ public class AssetTest extends JerseyTest {
         assertTrue("HTTP Body (en)", str.contains("File format"));
 
         // Check German (2)
-        responsehtml = target("/export").request()
+        responsehtml = target("/export").request(MediaType.TEXT_HTML)
             .header("Accept-Language","de-DE, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5").get();
         assertEquals("HTTP Code",
                      Status.OK.getStatusCode(), responsehtml.getStatus());
@@ -71,7 +71,7 @@ public class AssetTest extends JerseyTest {
     public void testFormJsLocalization () {
 
         // Check german
-        Response responsehtml = target("/export").request()
+        Response responsehtml = target("/export").request(MediaType.TEXT_HTML)
             .header("Accept-Language","fr-CH, fr;q=0.9, de;q=0.8, en;q=0.7, *;q=0.5").get();
         assertEquals("HTTP Code",
                      Status.OK.getStatusCode(), responsehtml.getStatus());
@@ -81,7 +81,7 @@ public class AssetTest extends JerseyTest {
         assertTrue("HTTP Body (de2)", str.contains("data-incq=\"in\""));
          
         // Check English
-        responsehtml = target("/export").request()
+        responsehtml = target("/export").request(MediaType.TEXT_HTML)
             .header("Accept-Language","fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5").get();
         assertEquals("HTTP Code",
                      Status.OK.getStatusCode(), responsehtml.getStatus());
@@ -97,7 +97,7 @@ public class AssetTest extends JerseyTest {
     public void testFormHtmlMaxHitc () {
 
         // Check german
-        Response responsehtml = target("/export").request()
+        Response responsehtml = target("/export").request(MediaType.TEXT_HTML)
             .header("Accept-Language","fr-CH, fr;q=0.9, de;q=0.8, en;q=0.7, *;q=0.5").get();
         assertEquals("HTTP Code",
                      Status.OK.getStatusCode(), responsehtml.getStatus());
@@ -107,7 +107,7 @@ public class AssetTest extends JerseyTest {
 
         
         // Check English
-        responsehtml = target("/export").request()
+        responsehtml = target("/export").request(MediaType.TEXT_HTML)
             .header("Accept-Language","fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5").get();
         assertEquals("HTTP Code",
                      Status.OK.getStatusCode(), responsehtml.getStatus());
@@ -126,7 +126,7 @@ public class AssetTest extends JerseyTest {
         properties.setProperty("asset.host", "ids-mannheim.example");
         properties.setProperty("asset.path", "/instance/test");
         
-        Response responsehtml = target("/export").request()
+        Response responsehtml = target("/export").request(MediaType.TEXT_HTML)
                 .get();
         assertEquals("HTTP Code",
                 Status.OK.getStatusCode(), responsehtml.getStatus());
@@ -142,7 +142,7 @@ public class AssetTest extends JerseyTest {
 
     @Test
     public void testFormHtmlExporters () {
-        Response responsehtml = target("/export").request()
+        Response responsehtml = target("/export").request(MediaType.TEXT_HTML)
                 .get();
         assertEquals("HTTP Code",
                 Status.OK.getStatusCode(), responsehtml.getStatus());
