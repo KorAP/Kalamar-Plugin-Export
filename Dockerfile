@@ -1,5 +1,5 @@
 # Use alpine linux as base image
-FROM eclipse-temurin:22-jdk-alpine as builder
+FROM eclipse-temurin:22-jdk-alpine AS builder
 
 # Copy repository respecting .dockerignore
 COPY . /export
@@ -7,27 +7,16 @@ COPY . /export
 WORKDIR /export
 
 RUN apk update && \
-    apk add --no-cache git \
-            maven
+    apk add --no-cache maven
 
-RUN git config --global user.email "korap+docker@ids-mannheim.de" && \
-    git config --global user.name "Docker"
-
-# Install Kalamar-Plugin-Export
-RUN mkdir built && \
-    git clone https://github.com/KorAP/Kalamar-Plugin-Export.git Kalamar-Plugin-Export && \
-    cd Kalamar-Plugin-Export && \
-    git checkout master && \
-    mvn clean package
+# Build the project using local source code
+RUN mvn clean package
 
 # Package
-RUN cd Kalamar-Plugin-Export && \
-    find target/KalamarExportPlugin-*.jar -exec mv {} ../built/KalamarExportPlugin.jar ';'
+RUN find target/KalamarExportPlugin-*.jar -exec mv {} KalamarExportPlugin.jar ';'
 
-RUN apk del git \
-            maven
-
-RUN cd ${M2_HOME} && rm -r .m2
+# Clean up Maven cache
+RUN rm -rf ~/.m2/repository
 
 FROM eclipse-temurin:22-jre-alpine
 
@@ -38,7 +27,7 @@ RUN addgroup -S korap && \
 
 WORKDIR /export
 
-COPY --from=builder /export/built/KalamarExportPlugin.jar /export/
+COPY --from=builder /export/KalamarExportPlugin.jar /export/
 
 USER export
 
@@ -47,6 +36,5 @@ EXPOSE 7777
 ENTRYPOINT [ "java", "-jar" ]
 
 CMD [ "KalamarExportPlugin.jar" ]
-
 
 # docker build -f Dockerfile -t korap/kalamar-plugin-export:{nr} .
