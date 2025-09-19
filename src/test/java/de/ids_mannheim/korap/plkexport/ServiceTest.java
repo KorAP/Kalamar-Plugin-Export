@@ -80,6 +80,7 @@ public class ServiceTest extends JerseyTest {
 
     @Before
     public void resetProps () {
+        ExWSConf.clearProp();
         Properties properties = ExWSConf.properties(null);
         properties.setProperty("api.host", "localhost");
         properties.setProperty("api.port", String.valueOf(mockServer.getPort()));

@@ -1,6 +1,7 @@
 package de.ids_mannheim.korap.plkexport;
 
 import org.junit.Test;
+import org.junit.Before;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -19,6 +20,8 @@ import jakarta.ws.rs.core.Response.Status;
 
 public class AssetTest extends JerseyTest {
     
+
+
     @Override
     protected Application configure () {
         return new ResourceConfig(Service.class);
@@ -120,6 +123,7 @@ public class AssetTest extends JerseyTest {
     
     @Test
     public void testFormHtmlAssets () {
+        ExWSConf.clearProp();
         Properties properties = ExWSConf.properties(null);
         String hostTemp = properties.getProperty("asset.host");
         String pathTemp = properties.getProperty("asset.path");
