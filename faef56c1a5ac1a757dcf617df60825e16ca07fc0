@@ -16,6 +16,23 @@
       "message": "Fails CI-Tests...\n\n.. but runs through in my local development environment, have to investigate this further\nSee also https://korap.ids-mannheim.de/gerrit/c/KorAP/Kalamar-Plugin-Export/+/9724",
       "revId": "faef56c1a5ac1a757dcf617df60825e16ca07fc0",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d95d882c_90b05f02",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33
+      },
+      "writtenOn": "2025-09-19T17:31:04Z",
+      "side": 1,
+      "message": "Closed See https://github.com/KorAP/Kalamar-Plugin-Export/pull/148#issuecomment-3311452767 and https://github.com/KorAP/Kalamar-Plugin-Export/pull/148#issuecomment-3311452767",
+      "revId": "faef56c1a5ac1a757dcf617df60825e16ca07fc0",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
