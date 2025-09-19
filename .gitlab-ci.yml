@@ -2,7 +2,7 @@
 # This pipeline runs tests on pushes and builds Docker containers on tag pushes and manual triggers
 
 stages:
-  - test
+  - test-and-build
   - build
   - deploy
 
@@ -16,21 +16,22 @@ cache:
   paths:
     - .m2/repository/
 
-# Test stage - runs on all pushes
-test:
-  stage: test
+# Test and build stage - runs on all pushes
+test-and-build:
+  stage: test-and-build
   image: eclipse-temurin:22-jdk-alpine
   before_script:
     - apk add --no-cache maven
     - export MAVEN_OPTS="$MAVEN_OPTS"
   script:
-    - mvn $MAVEN_CLI_OPTS clean test
+    - mvn $MAVEN_CLI_OPTS clean test package
   artifacts:
     reports:
       junit:
         - target/surefire-reports/TEST-*.xml
     paths:
       - target/surefire-reports/
+      - target/*.jar
     expire_in: 1 week
   only:
     - pushes
