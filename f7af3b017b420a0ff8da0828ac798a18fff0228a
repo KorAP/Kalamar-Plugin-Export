@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aae4fda2_fe0a9337",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2025-09-19T09:01:18Z",
+      "side": 1,
+      "message": "I can\u0027t remember, why I didn\u0027t do it that way - maybe for building on the server - but I can\u0027t remember. It\u0027s definitely better building from HEAD.",
+      "revId": "f7af3b017b420a0ff8da0828ac798a18fff0228a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
