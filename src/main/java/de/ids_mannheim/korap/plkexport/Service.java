@@ -185,12 +185,13 @@ public class Service {
         ResponseBuilder builder = null;
         Client client = ClientBuilder.newClient();
         
+        String query = q.replace("{", "%7B").replace("}", "%7D");
         // Create initial search uri
         UriBuilder uri = UriBuilder.fromPath("/api/v1.0/search")
             .host(host)
             .port(Integer.parseInt(port))
             .scheme(scheme)
-            .queryParam("q", q)
+            .queryParam("q", query)
             .queryParam("context", "40-t,40-t")
             .queryParam("ql", ql)
             .queryParam("count", pageSize)

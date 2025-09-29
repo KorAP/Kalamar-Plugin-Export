@@ -192,7 +192,37 @@ public class ServiceTest extends JerseyTest {
                 Status.OK.getStatusCode(), responsejson.getStatus());
     };
     
-    
+    @Test
+    public void testExportWsQueryWithCurlyBrackets () {
+        mockClient.reset().when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "der{3}")
+            )
+            .respond(
+                response()
+                .withStatusCode(200)
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
+                .withBody(getFixture("response_der.json"))
+                );
+
+        String filenamej = "dateiJson";
+        MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<String, String>();
+        frmap.add("fname", filenamej);
+        frmap.add("format", "json");
+        frmap.add("q", "der{3}");
+        frmap.add("ql", "poliqarp");
+        frmap.add("cutoff", "true");
+
+
+        Response responsejson = target("/export").request()
+                .post(Entity.form(frmap));
+     
+        assertEquals("Request JSON: Http Response should be 200: ",
+                Status.OK.getStatusCode(), responsejson.getStatus());
+    };
+
     @Test
     public void testExportWsRTF () {
         mockClient.reset().when(
