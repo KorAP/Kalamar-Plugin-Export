@@ -1,6 +1,8 @@
 0.3.2 2025-9-29
     - Bugfix: export of queries containing curly brackets (closes #61 )(hebasta)
-    - Upgrade dependencies following dependabot
+    - CI: Build docker image also on tag push (kupietz)
+    - Upgrade Jersey to 4.0.0
+    - Upgrade other dependencies following dependabot 
 
 0.3.1 2024-10-9
     - Produces export template as service (hebasta)
