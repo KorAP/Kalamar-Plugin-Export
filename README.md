@@ -129,9 +129,69 @@ You can also define only single properties in the new config file. In this case 
 Alternatively a file named `exportPlugin.conf` can be stored in the
 same directory as the java jar.
 
+### Environment Variables
+
+Configuration can also be set via environment variables, which take precedence over
+configuration file values. This is particularly useful for Docker deployments and
+containerized environments.
+
+The priority order is (highest to lowest):
+1. Environment variables
+2. Custom configuration file (if provided as argument)
+3. Default configuration file (`exportPlugin.conf`)
+
+### Configuration Reference
+
+The following configuration options are available. Each can be set either in a
+configuration file (using the property name) or via an environment variable:
+
+#### Server Configuration
+
+- `server.port` or `KALAMAR_EXPORT_SERVER_PORT`: Port of the export server (default: `7777`)
+- `server.host` or `KALAMAR_EXPORT_SERVER_HOST`: Host address of the server (default: `localhost`)
+- `server.scheme` or `KALAMAR_EXPORT_SERVER_SCHEME`: URL scheme for the server (default: `https`)
+- `server.origin` or `KALAMAR_EXPORT_SERVER_ORIGIN`: CORS origin for SSE responses (default: `*`)
+
+#### API Configuration
+
+- `api.port` or `KALAMAR_EXPORT_API_PORT`: Port of the KorAP API backend (default: `443`)
+- `api.host` or `KALAMAR_EXPORT_API_HOST`: Host address of the KorAP API backend (default: `korap.ids-mannheim.de`)
+- `api.scheme` or `KALAMAR_EXPORT_API_SCHEME`: URL scheme for the API backend (default: `https`)
+- `api.source` or `KALAMAR_EXPORT_API_SOURCE`: Source string for exports, useful when running behind a proxy (optional)
+- `api.path` or `KALAMAR_EXPORT_API_PATH`: Additional path prefix for the API (default: empty)
+
+#### Asset Configuration
+
+- `asset.host` or `KALAMAR_EXPORT_ASSET_HOST`: Host address for assets/stylesheets (default: `korap.ids-mannheim.de`)
+- `asset.port` or `KALAMAR_EXPORT_ASSET_PORT`: Port for assets (default: empty, uses default port)
+- `asset.scheme` or `KALAMAR_EXPORT_ASSET_SCHEME`: URL scheme for assets (default: `https`)
+- `asset.path` or `KALAMAR_EXPORT_ASSET_PATH`: Path prefix for assets (default: empty)
+
+#### Export Configuration
+
+- `conf.page_size` or `KALAMAR_EXPORT_PAGE_SIZE`: Number of matches to fetch per API request (default: `5`)
+- `conf.max_exp_limit` or `KALAMAR_EXPORT_MAX_EXP_LIMIT`: Maximum number of matches allowed per export (default: `10000`)
+- `conf.file_dir` or `KALAMAR_EXPORT_FILE_DIR`: Directory for temporary export files (default: system temp directory)
+- `conf.default_hitc` or `KALAMAR_EXPORT_DEFAULT_HITC`: Default number of hits in the export form (default: `100`)
+
+#### Cookie Configuration
+
+- `cookie.name` or `KALAMAR_EXPORT_COOKIE_NAME`: Name of the Kalamar session cookie (default: `kalamar`)
+
+### Docker Example
+
+When running in Docker, you can set environment variables:
+
+```shell
+docker run -e KALAMAR_EXPORT_SERVER_PORT=8080 \
+           -e KALAMAR_EXPORT_API_HOST=api.example.com \
+           -e KALAMAR_EXPORT_MAX_EXP_LIMIT=50000 \
+           kalamar-export-plugin
+```
+
 ## License
 
-Copyright (c) 2020-2024, [IDS Mannheim](https://www.ids-mannheim.de/), Germany
+Copyright (c) 2020-2026, [IDS Mannheim](https://www.ids-mannheim.de/), Germany
 
 Kalamar-Plugin-Export is developed as part of the [KorAP](https://korap.ids-mannheim.de/)
 Corpus Analysis Platform at the Leibniz Institute for the German Language

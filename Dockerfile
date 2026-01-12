@@ -23,7 +23,7 @@ FROM eclipse-temurin:22-jre-alpine
 RUN addgroup -S korap && \
     adduser -S export -G korap && \
     mkdir export && \
-    chown -R export.korap /export
+    chown -R export:korap /export
 
 WORKDIR /export
 

@@ -1,3 +1,6 @@
+    - Support environment variables overriding configuration properties.
+      (closes #161)(diewald)
+
 0.3.3 2026-01-29
     - Introduce announcements (diewald)
 
