@@ -720,6 +720,7 @@ public class Service {
         templateData.put("assetPath", uri.build());
         templateData.put("defaultHitc", defaultHitc);
         templateData.put("maxHitc", maxHitc);
+        templateData.put("announcement", prop.getProperty("announcement"));
 
         // There is an error code to pass
         if (code != null) {
