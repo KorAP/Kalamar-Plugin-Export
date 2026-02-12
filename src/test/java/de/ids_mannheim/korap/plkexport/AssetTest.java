@@ -139,11 +139,32 @@ public class AssetTest extends JerseyTest {
         assertTrue("Assets", str.contains("<script src=\"https://ids-mannheim.example/instance/test/js"));
         assertTrue("Assets", str.contains("<link href=\"https://ids-mannheim.example/instance/test/css"));
         assertFalse("Errors", str.contains("dynCall("));
+        assertFalse("Announcement", str.contains("<p id=\"announcement\">"));
 
         properties.setProperty("asset.host", hostTemp);
         properties.setProperty("asset.path", pathTemp != null ? pathTemp : "");
     }
 
+    @Test
+    public void testFormHtmlAnnouncements () {
+        ExWSConf.clearProp();
+        Properties properties = ExWSConf.properties(null);
+        String announceTemp = properties.getProperty("announcement");
+        properties.setProperty("announcement", "Test World");
+        
+        Response responsehtml = target("/export").request(MediaType.TEXT_HTML)
+                .get();
+        assertEquals("HTTP Code",
+                Status.OK.getStatusCode(), responsehtml.getStatus());
+        String str = responsehtml.readEntity(String.class);
+        assertTrue("HTTP Body", str.contains("<title>Export</title>"));
+        assertTrue("Announcement", str.contains("<p id=\"announcement\">Test World</p>"));
+        assertTrue("Note", str.contains("on the settings"));
+
+        properties.setProperty("announcement", announceTemp != null ? announceTemp : "");
+    }
+
+    
     @Test
     public void testFormHtmlExporters () {
         Response responsehtml = target("/export").request(MediaType.TEXT_HTML)

@@ -57,6 +57,11 @@
       #export input[type=radio] {
         vertical-align: top;
       }
+
+      #announcement {
+        font-weight: bold;
+        color: red;
+      }
       
       .button-group.button-panel input[type="submit"]{
         min-width: 20em;
@@ -110,7 +115,11 @@
             </div>
           </fieldset>
 
-          <p>Depending on the settings and add-ons of your browser, it may not be possible to export corpus excerpts that require authentication.</p>
+          <#if announcement??>
+            <p id="announcement">${announcement}</p>
+          </#if>
+          
+          <p>${dict.info}</p>
           
           <fieldset class="form-line">
             <legend>${dict.hitc}</legend>
