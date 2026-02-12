@@ -39,7 +39,6 @@ public class AssetTest extends JerseyTest {
         assertTrue("Assets", str.contains("<script src=\"https://dummdidumm.ids-mannheim.de/js"));
         assertTrue("Assets", str.contains("<link href=\"https://dummdidumm.ids-mannheim.de/css"));
         assertFalse("Errors", str.contains("dynCall("));
-    
     }
 
     @Test
@@ -107,6 +106,7 @@ public class AssetTest extends JerseyTest {
         String str = responsehtml.readEntity(String.class);
         assertTrue("HTTP Body (de)", str.contains("value=\"100\""));
         assertTrue("HTTP Body (de)", str.contains("Maximal zu exportierende Treffer: <tt>10.000</tt>"));
+        assertTrue("Form", str.contains("max=\"10000\" value=\"100\" />"));    
 
         
         // Check English
@@ -127,8 +127,13 @@ public class AssetTest extends JerseyTest {
         Properties properties = ExWSConf.properties(null);
         String hostTemp = properties.getProperty("asset.host");
         String pathTemp = properties.getProperty("asset.path");
+        String maxHitC = properties.getProperty("asset.path");
+        String defaultHitCTemp = properties.getProperty("conf.default_hitc");
+        String maxExpLimitTemp = properties.getProperty("conf.max_exp_limit");
         properties.setProperty("asset.host", "ids-mannheim.example");
         properties.setProperty("asset.path", "/instance/test");
+        properties.setProperty("conf.default_hitc", "133");
+        properties.setProperty("conf.max_exp_limit", "4998");
         
         Response responsehtml = target("/export").request(MediaType.TEXT_HTML)
                 .get();
@@ -138,11 +143,16 @@ public class AssetTest extends JerseyTest {
         assertTrue("HTTP Body", str.contains("<title>Export</title>"));
         assertTrue("Assets", str.contains("<script src=\"https://ids-mannheim.example/instance/test/js"));
         assertTrue("Assets", str.contains("<link href=\"https://ids-mannheim.example/instance/test/css"));
+        assertTrue("HTTP Body (en)", str.contains("Maximum number of exportable matches: <tt>4,998</tt>"));
         assertFalse("Errors", str.contains("dynCall("));
         assertFalse("Announcement", str.contains("<p id=\"announcement\">"));
 
+        assertTrue("Form", str.contains("max=\"4998\" value=\"133\" />"));
+
         properties.setProperty("asset.host", hostTemp);
         properties.setProperty("asset.path", pathTemp != null ? pathTemp : "");
+        properties.setProperty("conf.default_hitc", defaultHitCTemp != null ? defaultHitCTemp : "");
+        properties.setProperty("conf.max_exp_limit", maxExpLimitTemp != null ? maxExpLimitTemp : "");
     }
 
     @Test
