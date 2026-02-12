@@ -1,5 +1,11 @@
+0.3.4 2026-02-12
     - Support environment variables overriding configuration properties.
       (closes #161)(diewald)
+    - Fix GitLab CI pipeline (kupietz)
+    - Fixed hard-coded export limit in template (kupietz)
+    - Added test for for maxHitC (diewald)
+    - Upgrade Jersey to 4.0.2 (dependabot)
+    - Upgrade other dependencies (dependabot)
 
 0.3.3 2026-01-29
     - Introduce announcements (diewald)
