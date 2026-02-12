@@ -1,3 +1,9 @@
+0.4.0 2026-02-14
+    - Upgraded Docker Java to 25.
+    - Upgraded target Java to 21.
+    - Fix export of KWICs from licensed texts with Firefox and Safari (kupietz).
+    - Added support for randomizing page order in export (resolves #182) (kupietz).
+
 0.3.4 2026-02-12
     - Support environment variables overriding configuration properties.
       (closes #161)(diewald)
