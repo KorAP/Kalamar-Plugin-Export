@@ -13,6 +13,7 @@ interface Exporter {
 
     // Implemented by MatchAggregator
     public boolean init (String s) throws IOException;
+    public boolean initMeta (String s) throws IOException;
     public Exporter finish () throws IOException;
     public void setMeta(JsonNode n);
     public void setQuery(JsonNode n);
@@ -34,6 +35,8 @@ interface Exporter {
     public int getTotalResults ();
     public boolean hasTimeExceeded ();
     public void setMaxResults (int m);
+    public void setSeed (Long s);
+    public Long getSeed ();
     public void setSse (EventOutput sse);
     public void forceFile ();
     public String getExportID ();

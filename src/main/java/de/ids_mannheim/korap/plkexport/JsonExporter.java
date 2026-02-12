@@ -62,6 +62,17 @@ public class JsonExporter extends MatchAggregator implements Exporter {
                 .append(this.getCollection().toString());
         };
 
+        // Add seed when randomization was used
+        if (this.getSeed() != null) {
+            if (header) {
+                w.append(',');
+            } else {
+                header = true;
+            };
+            w.append("\"seed\":")
+                .append(Long.toString(this.getSeed()));
+        };
+
         if (header)
             w.append(',');
 

@@ -4,6 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 
 // Mockserver tests
@@ -23,7 +24,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLDecoder;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 import jakarta.ws.rs.client.Entity;
@@ -517,6 +521,238 @@ public class ServiceTest extends JerseyTest {
         assertTrue("Source", str.contains("Source:" + CELLSPLIT + "localhost\\cell"));
         assertTrue("Backend-Version", str.contains("Backend-Version:" + CELLSPLIT + "0.59.2"));
         assertTrue("Export-Version", str.contains("Export-Version:" + CELLSPLIT));
+    }
+
+
+    @Test
+    public void testExportWsRTFPagingRandomized () {
+
+        mockClient.reset().when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Plagegeist")
+            .withQueryStringParameter("count", "5")
+            .withQueryStringParameter("offset", "5")
+            )
+            .respond(
+                response()
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
+                .withBody(getFixture("response_plagegeist_2.json"))
+                .withStatusCode(200)
+                );
+
+        mockClient.when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Plagegeist")
+            )
+            .respond(
+                response()
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
+                .withBody(getFixture("response_plagegeist_1.json"))
+                .withStatusCode(200)
+                );
+
+        MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<String, String>();
+        frmap.add("format", "rtf");
+        frmap.add("q", "Plagegeist");
+        frmap.add("ql", "poliqarp");
+        frmap.add("hitc", "30");
+        frmap.add("randomizePageOrder", "true");
+        String filenamer = "dateiPagingRtfRandom";
+        frmap.putSingle("fname", filenamer);
+
+        Response responsertf = target("/export").request()
+            .post(Entity.form(frmap));
+        assertEquals("Request RTF with randomize: Http Response should be 200: ",
+                Status.OK.getStatusCode(), responsertf.getStatus());
+
+        String str = responsertf.readEntity(String.class);
+        // Both pages should still be fetched (order is random but all content present)
+        assertTrue("Page 1 content", str.contains("Ironhoof"));
+        assertTrue("Page 2 content", str.contains("Sinologie"));
+        assertTrue("TotalResults", str.contains("Number of results:"));
+    }
+
+    
+    @Test
+    public void testExportWsJsonPagingRandomized () throws IOException {
+
+        mockClient.reset().when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Plagegeist")
+            .withQueryStringParameter("count", "5")
+            .withQueryStringParameter("offset", "5")
+            )
+            .respond(
+                response()
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
+                .withBody(getFixture("response_plagegeist_2.json"))
+                .withStatusCode(200)
+                );
+
+        mockClient.when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Plagegeist")
+            )
+            .respond(
+                response()
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
+                .withBody(getFixture("response_plagegeist_1.json"))
+                .withStatusCode(200)
+                );
+        
+        MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<String, String>();
+        frmap.add("format", "json");
+        frmap.add("q", "Plagegeist");
+        frmap.add("ql", "poliqarp");
+        frmap.add("hitc", "30");
+        frmap.add("randomizePageOrder", "true");
+        String filenamer = "dateiPagingJsonRandom";
+        frmap.putSingle("fname", filenamer);
+
+        Response responsejson = target("/export").request()
+            .post(Entity.form(frmap));
+        assertEquals("Request JSON with randomize: Http Response should be 200: ",
+                Status.OK.getStatusCode(), responsejson.getStatus());
+
+        String str = responsejson.readEntity(String.class);
+        JsonParser parser = mapper.getFactory().createParser(str);
+        JsonNode obj = mapper.readTree(parser);
+
+        assertEquals(obj.at("/query/@type").asText(),"koral:token");
+        assertEquals(obj.at("/meta/totalResults").asInt(),9);
+        // All 9 matches should be present
+        assertTrue("Has 9 matches", obj.at("/matches").size() == 9);
+    }
+
+
+    /**
+     * Verify that page 0 is included in the shuffle, so randomization
+     * is effective even with just 2 pages. Uses page_size=2 with 5
+     * pages of distinct matches to confirm different seeds produce
+     * different match orderings, including a different first match.
+     */
+    @Test
+    public void testExportWsJsonRandomizeShufflesPage0 () throws IOException {
+
+        // Set page_size to 2 so we get 5 pages from 9 results
+        Properties properties = ExWSConf.properties(null);
+        String origPageSize = properties.getProperty("conf.page_size", "5");
+        properties.setProperty("conf.page_size", "2");
+
+        try {
+            // Mock 5 pages with distinct match IDs per page:
+            // offset 0 -> p1 (matches ending 4239, 737)
+            // offset 2 -> p2 (matches ending 19827, 10142)
+            // offset 4 -> p3 (matches ending 2701, 3804)
+            // offset 6 -> p4 (matches ending 16115, 16198)
+            // offset 8 -> p5 (match ending 16259)
+
+            mockClient.reset();
+
+            // Register specific offset mocks FIRST (most specific)
+            String[] fixtures = {"p2", "p3", "p4", "p5"};
+            int[] offsets = {2, 4, 6, 8};
+            for (int idx = 0; idx < offsets.length; idx++) {
+                mockClient.when(
+                    request()
+                    .withMethod("GET")
+                    .withPath("/api/v1.0/search")
+                    .withQueryStringParameter("q", "Plagegeist")
+                    .withQueryStringParameter("count", "2")
+                    .withQueryStringParameter("offset", String.valueOf(offsets[idx]))
+                    )
+                    .respond(
+                        response()
+                        .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
+                        .withBody(getFixture("response_plagegeist_" + fixtures[idx] + ".json"))
+                        .withStatusCode(200)
+                        );
+            }
+
+            // Catch-all for the initial request (no offset param) -> page 0
+            mockClient.when(
+                request()
+                .withMethod("GET")
+                .withPath("/api/v1.0/search")
+                .withQueryStringParameter("q", "Plagegeist")
+                )
+                .respond(
+                    response()
+                    .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
+                    .withBody(getFixture("response_plagegeist_p1.json"))
+                    .withStatusCode(200)
+                    );
+
+            // Export with seed=1
+            MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<>();
+            frmap.add("format", "json");
+            frmap.add("q", "Plagegeist");
+            frmap.add("ql", "poliqarp");
+            frmap.add("hitc", "30");
+            frmap.add("randomizePageOrder", "true");
+            frmap.add("seed", "1");
+            frmap.putSingle("fname", "shufflePage0Test1");
+
+            Response resp1 = target("/export").request().post(Entity.form(frmap));
+            assertEquals(Status.OK.getStatusCode(), resp1.getStatus());
+            String str1 = resp1.readEntity(String.class);
+            JsonNode obj1 = mapper.readTree(mapper.getFactory().createParser(str1));
+            assertEquals("All 9 matches with seed 1", 9, obj1.at("/matches").size());
+
+            // Collect match order for seed 1
+            List<String> order1 = new ArrayList<>();
+            for (JsonNode m : obj1.at("/matches")) {
+                order1.add(m.get("matchID").asText());
+            }
+
+            // Verify no duplicates with seed 1
+            assertEquals("No duplicate matches with seed 1",
+                    order1.size(), new HashSet<>(order1).size());
+
+            // Export with seed=999
+            frmap.putSingle("seed", "999");
+            frmap.putSingle("fname", "shufflePage0Test999");
+            Response resp2 = target("/export").request().post(Entity.form(frmap));
+            assertEquals(Status.OK.getStatusCode(), resp2.getStatus());
+            String str2 = resp2.readEntity(String.class);
+            JsonNode obj2 = mapper.readTree(mapper.getFactory().createParser(str2));
+            assertEquals("All 9 matches with seed 999", 9, obj2.at("/matches").size());
+
+            // Collect match order for seed 999
+            List<String> order2 = new ArrayList<>();
+            for (JsonNode m : obj2.at("/matches")) {
+                order2.add(m.get("matchID").asText());
+            }
+
+            // Verify no duplicates with seed 999
+            assertEquals("No duplicate matches with seed 999",
+                    order2.size(), new HashSet<>(order2).size());
+
+            // The two seeds must produce different orderings
+            assertNotEquals("Different seeds must produce different match order",
+                    order1, order2);
+
+            // At least one of the two seeds must NOT start with page 0's first match,
+            // proving that page 0 is included in the shuffle
+            String page0FirstMatch = "match-WUD17/G59/34284-p4238-4239";
+            boolean seed1StartsWithPage0 = order1.get(0).equals(page0FirstMatch);
+            boolean seed2StartsWithPage0 = order2.get(0).equals(page0FirstMatch);
+            assertFalse(
+                "Page 0 should be shuffled - at least one seed should NOT start with page 0's first match",
+                seed1StartsWithPage0 && seed2StartsWithPage0
+            );
+        } finally {
+            // Restore original page_size
+            properties.setProperty("conf.page_size", origPageSize);
+        }
     }
 
     

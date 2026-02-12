@@ -9,11 +9,16 @@ import java.util.Properties;
 import java.util.Base64;
 import java.util.ResourceBundle;
 import java.util.Locale;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.PathParam;
@@ -136,7 +141,9 @@ public class Service {
                              String ql,
                              String cutoffStr,
                              int hitc,
-                             EventOutput eventOutput
+                             EventOutput eventOutput,
+                             boolean randomizePageOrder,
+                             long seed
         ) throws WebApplicationException {
         
         // These parameters are mandatory
@@ -238,6 +245,8 @@ public class Service {
         exp.setMaxResults(maxResults);
         exp.setQueryString(q);
         exp.setCorpusQueryString(cq);
+        if (randomizePageOrder)
+            exp.setSeed(seed);
         if (source != null)
             exp.setSource(source);
         else
@@ -256,13 +265,21 @@ public class Service {
             exp.forceFile();
         };
 
-        // Initialize export with meta data
-        // and first matches
+        // When randomizing, use initMeta() to extract header info
+        // without processing page 0's matches yet, so page 0 can
+        // be included in the shuffled page sequence.
+        // Save the initial response to replay page 0's matches later.
+        String initResp = resp;
+
         try {
 
             // TODO:
             //   Check return value.
-            exp.init(resp);
+            if (randomizePageOrder) {
+                exp.initMeta(resp);
+            } else {
+                exp.init(resp);
+            }
         }
 
         catch (Exception e) {
@@ -293,7 +310,7 @@ public class Service {
         // for a temporary export file, unless progress is
         // requested. In case all matches are already fetched,
         // stop here as well.
-        if (cutoff || fetchCount <= pageSize) {
+        if (!randomizePageOrder && (cutoff || fetchCount <= pageSize)) {
 
             try {
 
@@ -329,17 +346,52 @@ public class Service {
         uri.queryParam("offset", "{offset}");
 
         try {
-            
-            // Iterate over all results
-            for (int i = pageSize; i <= fetchCount; i+=pageSize) {
 
-                resource = client.target(uri.build(i));
-                reqBuilder = resource.request(MediaType.APPLICATION_JSON);
-                resp = authBuilder(reqBuilder, xff, auth).get(String.class);
+            if (randomizePageOrder) {
 
-                // Stop when no more matches are allowed
-                if (!exp.appendMatches(resp))
-                    break;
+                // When randomizing page order, compute all possible
+                // page offsets up to totalResults (not just fetchCount)
+                // so we sample broadly from the entire result set.
+                int totalForPages = exp.getTotalResults();
+                if (totalForPages < fetchCount)
+                    totalForPages = fetchCount;
+
+                // Build list of ALL page offsets including page 0
+                List<Integer> pageOffsets = new ArrayList<>();
+                for (int i = 0; i < totalForPages; i += pageSize) {
+                    pageOffsets.add(i);
+                }
+                Collections.shuffle(pageOffsets, new Random(seed));
+
+                // Fetch pages in random order until maxResults are collected
+                for (int offset : pageOffsets) {
+                    if (offset == 0) {
+                        // Use the already-fetched initial response for page 0
+                        if (!exp.appendMatches(initResp))
+                            break;
+                    } else {
+                        resource = client.target(uri.build(offset));
+                        reqBuilder = resource.request(MediaType.APPLICATION_JSON);
+                        resp = authBuilder(reqBuilder, xff, auth).get(String.class);
+
+                        // Stop when no more matches are allowed
+                        if (!exp.appendMatches(resp))
+                            break;
+                    }
+                }
+            }
+            else {
+                // Iterate over all results sequentially
+                for (int i = pageSize; i <= fetchCount; i+=pageSize) {
+
+                    resource = client.target(uri.build(i));
+                    reqBuilder = resource.request(MediaType.APPLICATION_JSON);
+                    resp = authBuilder(reqBuilder, xff, auth).get(String.class);
+
+                    // Stop when no more matches are allowed
+                    if (!exp.appendMatches(resp))
+                        break;
+                }
             }
 
             // Close all export writers
@@ -396,10 +448,14 @@ public class Service {
         @FormParam("cq") String cq,
         @FormParam("ql") String ql,
         @FormParam("cutoff") String cutoffStr,
-        @FormParam("hitc") int hitc
+        @FormParam("hitc") int hitc,
+        @FormParam("randomizePageOrder") String randomizePageOrderStr,
+        @DefaultValue("42") @FormParam("seed") long seed
         ) throws IOException {
 
-        Exporter exp = export(fname, format, q, cq, ql, cutoffStr, hitc, null);
+        boolean randomize = "true".equals(randomizePageOrderStr);
+
+        Exporter exp = export(fname, format, q, cq, ql, cutoffStr, hitc, null, randomize, seed);
         
         return exp.serve().build();
     };
@@ -437,8 +493,12 @@ public class Service {
         @QueryParam("cq") String cq,
         @QueryParam("ql") String ql,
         @QueryParam("cutoff") String cutoffStr,
-        @QueryParam("hitc") int hitc
+        @QueryParam("hitc") int hitc,
+        @QueryParam("randomizePageOrder") String randomizePageOrderStr,
+        @DefaultValue("42") @QueryParam("seed") long seed
         ) throws InterruptedException {
+
+        boolean randomize = "true".equals(randomizePageOrderStr);
 
         // See
         //   https://www.baeldung.com/java-ee-jax-rs-sse
@@ -463,7 +523,7 @@ public class Service {
                         eventBuilder.data("init");
                         eventOutput.write(eventBuilder.build());
                         Exporter exp = export(
-                            fname, format, q, cq, ql, cutoffStr, hitc, eventOutput
+                            fname, format, q, cq, ql, cutoffStr, hitc, eventOutput, randomize, seed
                             );
 
                         if (eventOutput.isClosed())
@@ -706,6 +766,7 @@ public class Service {
         String path = prop.getProperty("asset.path", "");
         String defaultHitc = prop.getProperty("conf.default_hitc", "100");
         int maxHitc = Integer.parseInt(prop.getProperty("conf.max_exp_limit", "10000"));
+        int pageSize = Integer.parseInt(prop.getProperty("conf.page_size", "5"));
 
         UriBuilder uri = UriBuilder.fromPath("")
             .host(host)
@@ -720,6 +781,7 @@ public class Service {
         templateData.put("assetPath", uri.build());
         templateData.put("defaultHitc", defaultHitc);
         templateData.put("maxHitc", maxHitc);
+        templateData.put("pageSize", pageSize);
         templateData.put("announcement", prop.getProperty("announcement"));
 
         // There is an error code to pass

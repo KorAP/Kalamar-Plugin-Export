@@ -54,6 +54,9 @@ public class MatchAggregator {
         maxResults = -1,
         fetchedResults = 0;
 
+    // Seed for randomized page order (null = not randomized)
+    private Long seed = null;
+
     // Event writer for progress
     private EventOutput evOut;
 
@@ -249,6 +252,24 @@ public class MatchAggregator {
         return this.maxResults;
     };
 
+
+    /**
+     * Set the seed used for randomized page order.
+     * A non-null value indicates randomization was active.
+     */
+    public void setSeed (Long seed) {
+        this.seed = seed;
+    };
+
+
+    /**
+     * Get the seed used for randomized page order.
+     * Returns null if randomization was not active.
+     */
+    public Long getSeed () {
+        return this.seed;
+    };
+
     
     /**
      * Get the export ID which is the pointer
@@ -390,6 +411,54 @@ public class MatchAggregator {
 
         // Go on by iterating through matches
         return this.iterateThroughMatches(root.get("matches"));
+    };
+
+
+    /**
+     * Parse initial JSON file to get header information
+     * (meta data, query, collection) and write the export header,
+     * but do NOT process matches yet.
+     * This is used when randomizing page order, so that page 0's
+     * matches can be included in the shuffled sequence.
+     */
+    public boolean initMeta (String resp) throws IOException, JsonParseException {
+
+        if (resp == null)
+            return false;
+
+        JsonParser parser = mapper.getFactory().createParser(resp);
+        JsonNode root = mapper.readTree(parser);
+
+        if (root == null)
+            return false;
+
+        JsonNode meta = root.get("meta");
+        this.setMeta(meta);
+        this.setQuery(root.get("query"));
+        this.setCollection(root.get("collection"));
+
+        if (meta != null) {
+            if (meta.has("totalResults")) {
+                this.totalResults = meta.get("totalResults").asInt();
+                if (meta.has("timeExceeded")) {
+                    this.timeExceeded = meta.get("timeExceeded").asBoolean();
+                };
+            };
+        };
+
+        // In case the writer is already set (e.g. forceFile() was issued),
+        // write in the header
+        if (writer == null) {
+            this.file = null;
+            writer = new StringWriter();
+        };
+
+        // Write header to exporter
+        this.writeHeader(writer);
+
+        // Do NOT process matches - they will be added later
+        // via appendMatches() in shuffled page order
+        return true;
     };
 
     

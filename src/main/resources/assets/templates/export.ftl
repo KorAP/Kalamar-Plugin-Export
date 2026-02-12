@@ -68,6 +68,12 @@
         width: 20%;
         }
         
+        #hitc {
+          width: 8em;
+        }
+        .form-table input {
+          min-width: 0;
+        }
     </style>   
   </head>
   <body>
@@ -123,8 +129,27 @@
           
           <fieldset class="form-line">
             <legend>${dict.hitc}</legend>
-            <input name="hitc" id="hitc" type="number" min="1" max="${maxHitc?c}" value="${defaultHitc}" />
-            <p style="font-size: 80%; margin-top: .2em; margin-bottom: 0;">${dict.max_hitc} <tt>${maxHitc}</tt></p>
+            <div style="display: flex; margin-top: 0.5em; align-items: flex-start; flex-wrap: wrap; gap: 1em 0.3em;">
+              <div>
+                <input name="hitc" id="hitc" type="number" min="1" max="${maxHitc?c}" value="${defaultHitc}" />
+                <p style="font-size: 80%; margin-top: .2em; margin-bottom: 0;">${dict.max_hitc} <tt>${maxHitc}</tt></p>
+              </div>
+              <div style="display: flex; align-items: center; gap: 1em;">
+                <input type="checkbox"
+                       id="randomizePageOrder"
+                       name="randomizePageOrder"
+                       value="true"
+                       style="align-self: center; min-width: 0;" />
+                <label for="randomizePageOrder">
+                  ${dict.randomize_page_order}
+                  <span class="desc">${dict.randomize_page_order_desc?replace("{0}", pageSize?c)}</span>
+                </label>
+              </div>
+              <div style="display: flex; align-items: center;">
+                <label for="seed">${dict.seed}:</label>
+                <input name="seed" id="seed" type="number" min="0" value="42" style="width: 7em;" />
+              </div>
+            </div>
           </fieldset>
 
           <progress id="progress" value="0" max="100" style="display: none;">0%</progress>

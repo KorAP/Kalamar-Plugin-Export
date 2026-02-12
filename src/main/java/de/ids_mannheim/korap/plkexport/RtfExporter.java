@@ -217,6 +217,11 @@ public class RtfExporter extends MatchAggregator implements Exporter {
             this.addInfoRow(w, "Backend-Version", this.getMeta().get("version").asText());
         };
         this.addInfoRow(w, "Export-Version", ExWSConf.version());
+
+        // Seed information (only when randomized page order was used)
+        if (this.getSeed() != null) {
+            this.addInfoRow(w, "Seed", Long.toString(this.getSeed()));
+        };
     };
 
 
