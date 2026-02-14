@@ -16,7 +16,7 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jakarta.ws.rs.BadRequestException;
+
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.FormParam;
@@ -143,7 +143,8 @@ public class Service {
                              int hitc,
                              EventOutput eventOutput,
                              boolean randomizePageOrder,
-                             long seed
+                             long seed,
+                             String authToken
         ) throws WebApplicationException {
         
         // These parameters are mandatory
@@ -223,6 +224,11 @@ public class Service {
 
             auth = authFromCookie(servletReq);
         };
+        
+        // Override auth if provided
+        if ((auth == null || auth.isEmpty()) && authToken != null) {
+            auth = authToken;
+        }
     
         String resp;
         WebTarget resource;
@@ -455,7 +461,7 @@ public class Service {
 
         boolean randomize = "true".equals(randomizePageOrderStr);
 
-        Exporter exp = export(fname, format, q, cq, ql, cutoffStr, hitc, null, randomize, seed);
+        Exporter exp = export(fname, format, q, cq, ql, cutoffStr, hitc, null, randomize, seed, null);
         
         return exp.serve().build();
     };
@@ -495,7 +501,8 @@ public class Service {
         @QueryParam("cutoff") String cutoffStr,
         @QueryParam("hitc") int hitc,
         @QueryParam("randomizePageOrder") String randomizePageOrderStr,
-        @DefaultValue("42") @QueryParam("seed") long seed
+        @DefaultValue("42") @QueryParam("seed") long seed,
+        @QueryParam("auth") String authToken
         ) throws InterruptedException {
 
         boolean randomize = "true".equals(randomizePageOrderStr);
@@ -523,7 +530,7 @@ public class Service {
                         eventBuilder.data("init");
                         eventOutput.write(eventBuilder.build());
                         Exporter exp = export(
-                            fname, format, q, cq, ql, cutoffStr, hitc, eventOutput, randomize, seed
+                            fname, format, q, cq, ql, cutoffStr, hitc, eventOutput, randomize, seed, authToken
                             );
 
                         if (eventOutput.isClosed())
@@ -577,17 +584,63 @@ public class Service {
         t.start();      
 //        t.join();
 
-        String origin = prop.getProperty("server.origin","*");
+        String origin = prop.getProperty("server.origin", "*");
+        String reqOrigin = null;
         if (servletReq != null) {
-            // This is temporary to allow for session riding
-            origin = servletReq.getHeader("Origin");
-        };
+            reqOrigin = servletReq.getHeader("Origin");
+            
+            // Treat "null" string (sent by browsers for privacy/sandboxing) same as missing
+            if (reqOrigin != null && reqOrigin.equals("null")) {
+                reqOrigin = null;
+            }
+            
+            // If Origin is missing, try to construct it from the request (for same-origin)
+            if (reqOrigin == null || reqOrigin.isEmpty()) {
+                String host = servletReq.getHeader("Host");
+                String scheme = servletReq.getScheme();
+                
+                // Check X-Forwarded-Proto for proxy scenarios
+                String forwardedProto = servletReq.getHeader("X-Forwarded-Proto");
+                if (forwardedProto != null) {
+                    scheme = forwardedProto;
+                }
+                
+                if (host != null) {
+                    reqOrigin = scheme + "://" + host;
+                }
+            }
 
-        return Response.ok(eventOutput, String.valueOf(SseFeature.SERVER_SENT_EVENTS_TYPE))
-            .header("Access-Control-Allow-Origin", origin)
-            .header("Access-Control-Allow-Credentials", "true")
-            .header("Vary","Origin")
-            .build();
+            // Fallback: If still no origin, try Referer
+            if (reqOrigin == null || reqOrigin.isEmpty()) {
+                String referer = servletReq.getHeader("Referer");
+                if (referer != null) {
+                    try {
+                        java.net.URI refUri = java.net.URI.create(referer);
+                        if (refUri.getScheme() != null && refUri.getAuthority() != null) {
+                            reqOrigin = refUri.getScheme() + "://" + refUri.getAuthority();
+                        }
+                    } catch (Exception e) {
+                        // Ignore invalid/missing referer
+                    }
+                }
+            }
+        }
+
+        if (reqOrigin != null && !reqOrigin.isEmpty()) {
+            origin = reqOrigin;
+        }
+
+        ResponseBuilder builder = Response.ok(eventOutput, String.valueOf(SseFeature.SERVER_SENT_EVENTS_TYPE))
+            .header("Vary", "Origin");
+
+        // Always use specific origin (echoed or fallback) with Credentials=true
+        // This supports both cookie-based and token-based auth securely
+        if (!origin.equals("*")) {
+            builder.header("Access-Control-Allow-Origin", origin);
+            builder.header("Access-Control-Allow-Credentials", "true");
+        }
+
+        return builder.build();
     };
 
 
@@ -716,13 +769,17 @@ public class Service {
         for (int i = 0; i < cookies.length; i++) {
 
             // Check the valid name and ignore irrelevant cookies
-            if (cookieName == "") {
-                if (!cookies[i].getName().equals("kalamar")) {
-                    continue;
-                }
-            } else if (!cookies[i].getName().equals(cookieName)) {
-                continue;
-            };
+            boolean match = false;
+            // Strict match if configured
+            if (!cookieName.isEmpty() && cookies[i].getName().equals(cookieName)) {
+                match = true;
+            }
+            // Prefix match (fallback or default)
+            else if (cookies[i].getName().startsWith("kalamar")) {
+                match = true;
+            }
+            
+            if (!match) continue;
 
             // Get the value
             String b64 = cookies[i].getValue();
@@ -858,7 +915,7 @@ public class Service {
     }
 
     private Locale getPreferredSupportedLocale() throws IOException {
-        Locale fallback = new Locale("en");
+        Locale fallback = Locale.forLanguageTag("en");
 
         if (req != null) {
             for (Locale l : req.getAcceptableLanguages()) {

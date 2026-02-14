@@ -3,6 +3,19 @@
 function pluginit(P) {
 
   // Request query params from the embedding window
+  let authToken = null;
+  P.requestMsg(
+    {
+      'action':'get',
+      'key':'User'
+    },
+    function (d) {
+      if (d.value && d.value.auth) {
+        authToken = d.value.auth;
+      };
+    }
+  );
+
   P.requestMsg(
     {
       'action':'get',
@@ -95,6 +108,10 @@ function pluginit(P) {
       };
     };
     
+    if (authToken) {
+      query.append("auth", authToken);
+    };
+    
     reqStream(url.href);
     return false;
   };
@@ -118,8 +135,12 @@ function reqStream (target) {
     prog.style.display = "none";
     sse.close();
     window.Plugin.resize();
-    console.log(e.data);
-    window.Plugin.log(0, e.data);
+    let msg = "Connection error";
+    if (e.data !== undefined) {
+        msg = e.data;
+    };
+    console.log(msg);
+    window.Plugin.log(0, msg);
   };
 
   sse.addEventListener('Error', err);
