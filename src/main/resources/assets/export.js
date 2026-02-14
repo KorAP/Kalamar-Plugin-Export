@@ -38,6 +38,24 @@ function pluginit(P) {
     window.dynCall(P)
   };
 
+  // Toggle advanced options
+  const toggle = document.getElementById("options-toggle");
+  if (toggle) {
+    toggle.onclick = function () {
+      const advContent = document.getElementById("advanced-options-content");
+      const marker = document.getElementById("options-marker");
+      if (advContent) {
+        if (advContent.style.display === "none") {
+          advContent.style.display = "flex";
+          if (marker) marker.innerText = '\u25BC';
+        } else {
+          advContent.style.display = "none";
+          if (marker) marker.innerText = '\u25B6';
+        };
+      };
+    };
+  };
+
   // Set plugin object globally
   window.Plugin = P;
 

@@ -50,7 +50,7 @@
       }
 
       label > .desc {
-        font-size: 90%;
+        font-size: 80%;
         display: block;
       }
 
@@ -69,7 +69,7 @@
         }
         
         #hitc {
-          width: 8em;
+          width: 20em;
         }
         .form-table input {
           min-width: 0;
@@ -130,24 +130,37 @@
           <fieldset class="form-line">
             <legend>${dict.hitc}</legend>
             <div style="display: flex; margin-top: 0.5em; align-items: flex-start; flex-wrap: wrap; gap: 1em 0.3em;">
-              <div>
+              <div style="margin-right: 1em;">
                 <input name="hitc" id="hitc" type="number" min="1" max="${maxHitc?c}" value="${defaultHitc}" />
                 <p style="font-size: 80%; margin-top: .2em; margin-bottom: 0;">${dict.max_hitc} <tt>${maxHitc}</tt></p>
               </div>
-              <div style="display: flex; align-items: center; gap: 1em;">
-                <input type="checkbox"
-                       id="randomizePageOrder"
-                       name="randomizePageOrder"
-                       value="true"
-                       style="align-self: center; min-width: 0;" />
-                <label for="randomizePageOrder">
-                  ${dict.randomize_page_order}
-                  <span class="desc">${dict.randomize_page_order_desc?replace("{0}", pageSize?c)}</span>
-                </label>
-              </div>
-              <div style="display: flex; align-items: center;">
-                <label for="seed">${dict.seed}:</label>
-                <input name="seed" id="seed" type="number" min="0" value="42" style="width: 7em;" />
+
+              <!-- Advanced Options Box -->
+              <div id="advanced-options" style="border: 1px solid #ccc; background-color: #f8f8f8; border-radius: 4px; padding: 4px 10px; align-self: flex-start; display: flex; flex-direction: column;">
+                  
+                  <!-- Header / Toggle -->
+                  <div id="options-toggle" style="cursor: pointer; font-size: 80%; font-weight: bold; user-select: none;">
+                      ${dict.options} <span id="options-marker">&#9654;</span>
+                  </div>
+
+                  <!-- Content (Hidden by default) -->
+                  <div id="advanced-options-content" style="display: none; flex-wrap: wrap; gap: 1em 2em; align-items: center; margin-top: 0.5em;">
+                      <div style="display: flex; align-items: center; gap: 0.5em;">
+                        <input type="checkbox"
+                               id="randomizePageOrder"
+                               name="randomizePageOrder"
+                               value="true"
+                               style="align-self: center; min-width: 0;" />
+                        <label for="randomizePageOrder">
+                          ${dict.randomize_page_order}
+                          <span class="desc" style="margin-top: 0.2em;">${dict.randomize_page_order_desc?replace("{0}", pageSize?c)}</span>
+                        </label>
+                      </div>
+                      <div style="display: flex; align-items: center; white-space: nowrap;">
+                        <label for="seed" style="margin-right: 0.5em;">${dict.seed}:</label>
+                        <input name="seed" id="seed" type="number" min="0" value="42" style="width: 5em;" />
+                      </div>
+                  </div>
               </div>
             </div>
           </fieldset>
