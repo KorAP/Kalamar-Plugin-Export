@@ -19,9 +19,8 @@ cache:
 # Test and build stage - runs on all pushes
 test-and-build:
   stage: test-and-build
-  image: eclipse-temurin:25-jdk-alpine
+  image: maven:3-eclipse-temurin-21
   before_script:
-    - apk add --no-cache maven
     - export MAVEN_OPTS="$MAVEN_OPTS"
   script:
     - mvn $MAVEN_CLI_OPTS clean test package
@@ -75,9 +74,9 @@ build-docker:
 # Security scan stage (optional)
 security-scan:
   stage: build
-  image: eclipse-temurin:25-jdk-alpine
+  image: maven:3-eclipse-temurin-21
   before_script:
-    - apk add --no-cache maven
+    - export MAVEN_OPTS="$MAVEN_OPTS"
   script:
     - mvn $MAVEN_CLI_OPTS clean compile
   allow_failure: true
