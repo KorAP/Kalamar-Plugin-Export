@@ -1,3 +1,6 @@
+0.4.1 2026-02-15
+    - Removed no longer needed workaround for export of KWICs from licensed texts with Firefox (kupietz)
+
 0.4.0 2026-02-14
     - Upgraded Docker Java to 25.
     - Upgraded target Java to 21.
