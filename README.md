@@ -15,7 +15,7 @@ demonstrate and evaluate the plugin capabilities of Kalamar.
 
 ## Prerequisites
 
-Java 17 (OpenJDK or Oracle JDK),
+Java 21 (OpenJDK or Oracle JDK),
 [Git](http://git-scm.com/),
 [Maven 3](https://maven.apache.org/).
 Further dependencies are resolved using Maven.
