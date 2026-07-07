@@ -236,7 +236,7 @@
           </dependency>
         </dependencies>
         <configuration>
-          <argLine>-Dfile.encoding=UTF-8</argLine>
+          <argLine>-Dfile.encoding=UTF-8 -Djava.util.logging.config.file=src/test/resources/logging.properties</argLine>
         </configuration>
       </plugin>
     </plugins>
