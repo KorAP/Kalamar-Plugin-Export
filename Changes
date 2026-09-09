@@ -1,3 +1,6 @@
+0.4.2 2026-09-09
+    - Updated dependencies (diewald)
+
 0.4.1 2026-02-15
     - Removed no longer needed workaround for export of KWICs from licensed texts with Firefox (kupietz)
 
