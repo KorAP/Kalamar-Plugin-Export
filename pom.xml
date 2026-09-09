@@ -10,7 +10,7 @@
   
   <properties>
     <java.version>21</java.version>
-    <jetty.version>11.0.26</jetty.version>
+    <jetty.version>12.1.12</jetty.version>
     <jersey.version>4.0.2</jersey.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -36,8 +36,8 @@
       <version>${jetty.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlet</artifactId>
+      <groupId>org.eclipse.jetty.ee10</groupId>
+      <artifactId>jetty-ee10-servlet</artifactId>
       <version>${jetty.version}</version>
     </dependency>
     

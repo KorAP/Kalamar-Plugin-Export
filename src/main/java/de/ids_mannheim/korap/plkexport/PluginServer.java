@@ -7,9 +7,8 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.DefaultHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
 
 import org.glassfish.jersey.servlet.ServletContainer;
 
@@ -63,8 +62,7 @@ public class PluginServer {
         connector.setIdleTimeout(60000);
         jettyServer.addConnector(connector);
         
-        HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[] { contextHandler, new DefaultHandler()});
+        Handler.Sequence handlers = new Handler.Sequence(contextHandler, new DefaultHandler());
         jettyServer.setHandler(handlers);
 
 
