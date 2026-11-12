@@ -162,6 +162,11 @@ configuration file (using the property name) or via an environment variable:
 
 #### Asset Configuration
 
+When accessed through Kalamar's `/plugin/export/` proxy, the export form
+loads JavaScript and CSS from the same Kalamar frontend using relative URLs.
+No asset configuration is needed, including with HTTPS, a different port,
+or a reverse-proxy path prefix. The settings below apply to standalone use.
+
 - `asset.host` or `KALAMAR_EXPORT_ASSET_HOST`: Host address for assets/stylesheets (default: `korap.ids-mannheim.de`)
 - `asset.port` or `KALAMAR_EXPORT_ASSET_PORT`: Port for assets (default: empty, uses default port)
 - `asset.scheme` or `KALAMAR_EXPORT_ASSET_SCHEME`: URL scheme for assets (default: `https`)

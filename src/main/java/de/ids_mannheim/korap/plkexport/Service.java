@@ -778,7 +778,11 @@ public class Service {
         if (port != "")
             uri = uri.port(Integer.parseInt(port));
 
-        templateData.put("assetPath", uri.build());
+        // Kalamar exposes this service at <frontend>/plugin/export/.
+        // Resolve assets against that frontend, preserving its public host,
+        // scheme, port and any reverse-proxy prefix without configuration.
+        templateData.put("assetPath", req != null && "Kalamar".equals(req.getHeaderString("X-Proxy"))
+            ? "../.." : uri.build());
         templateData.put("defaultHitc", defaultHitc);
         templateData.put("maxHitc", maxHitc);
         templateData.put("pageSize", pageSize);
