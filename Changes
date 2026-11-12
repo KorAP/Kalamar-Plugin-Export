@@ -1,3 +1,8 @@
+0.4.3 2026-11-12
+    - Load export assets from the local frontend through Kalamar's proxy (kupietz).
+    - Fix HTTP 400 on export when the search URL omits the query language (kupietz).
+    - Updated dependencies (hebasta, kupietz).
+
 0.4.2 2026-09-09
     - Updated dependencies (diewald)
 
