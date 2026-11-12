@@ -102,6 +102,34 @@ public class ServiceTest extends JerseyTest {
         return new ResourceConfig(Service.class);
     }
 
+    @Test
+    public void testExportFormDefaultsToPoliqarp() {
+        String form = target("export").request(MediaType.TEXT_HTML)
+            .header("X-Proxy", "Kalamar").get(String.class);
+        java.util.regex.Matcher language = java.util.regex.Pattern
+            .compile("<input[^>]*name=\"ql\"[^>]*value=\"([^\"]+)\"")
+            .matcher(form);
+        assertTrue("The export form must supply a default query language", language.find());
+        assertEquals("poliqarp", language.group(1));
+
+        mockClient.reset().when(request().withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withQueryStringParameter("q", "Wasser")
+            .withQueryStringParameter("ql", "poliqarp"))
+            .respond(response().withHeader("Content-Type", "application/json; charset=UTF-8")
+                .withBody(getFixture("response_water.json")).withStatusCode(200));
+
+        MultivaluedHashMap<String, String> fields = new MultivaluedHashMap<>();
+        fields.add("q", "Wasser");
+        fields.add("ql", language.group(1));
+        fields.add("format", "rtf");
+        fields.add("hitc", "1");
+        try (Response result = target("export").request().post(Entity.form(fields))) {
+            assertEquals(200, result.getStatus());
+            assertTrue(result.readEntity(String.class).startsWith("{\\rtf1"));
+        }
+    }
+
     // Client is pre-configured in JerseyTest
     /**
      * Tests if webservice returns a document with the right filename

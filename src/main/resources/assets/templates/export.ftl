@@ -83,7 +83,7 @@
       <form id="export" class="form-table" action="export" method="POST">
         <fieldset>
           <input type="hidden"  id="q" name="q">
-          <input type="hidden" id="ql" name="ql">
+          <input type="hidden" id="ql" name="ql" value="poliqarp">
           <input type="hidden" id="cq" name="cq">
 
           <fieldset class="form-line">
