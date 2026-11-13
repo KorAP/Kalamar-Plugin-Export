@@ -41,29 +41,26 @@ build-docker:
   stage: build
   image: docker:latest
   services:
-    - docker:dind
+    - name: docker:dind
+      alias: docker
+      variables:
+        HEALTHCHECK_TCP_PORT: "2375"
+  variables:
+    # Non-TLS dind, as in Kustvakt
+    FF_NETWORK_PER_BUILD: "true"
+    DOCKER_TLS_CERTDIR: ""
   before_script:
+    - docker info
     - apk add --no-cache xz
   script:
-    - |
-      if [ -n "$CI_COMMIT_TAG" ]; then
-        export BUILD_SUFFIX="$CI_COMMIT_TAG"
-        export VERSIONED_IMAGE_NAME="$DOCKER_IMAGE_NAME-$BUILD_SUFFIX"
-        export ARTIFACT_NAME="kalamar-plugin-export-$BUILD_SUFFIX.tar.xz"
-        docker build -t "$DOCKER_IMAGE_NAME:$BUILD_SUFFIX" -t "$VERSIONED_IMAGE_NAME:$BUILD_SUFFIX" -t "$DOCKER_IMAGE_NAME:latest" .
-        docker save "$DOCKER_IMAGE_NAME:$BUILD_SUFFIX" "$VERSIONED_IMAGE_NAME:$BUILD_SUFFIX" "$DOCKER_IMAGE_NAME:latest" | xz -c > "$ARTIFACT_NAME"
-      else
-        export BUILD_SUFFIX="$CI_COMMIT_SHORT_SHA"
-        export VERSIONED_IMAGE_NAME="$DOCKER_IMAGE_NAME-$BUILD_SUFFIX"
-        export ARTIFACT_NAME="kalamar-plugin-export-$BUILD_SUFFIX.tar.xz"
-        docker build -t "$DOCKER_IMAGE_NAME:$BUILD_SUFFIX" -t "$VERSIONED_IMAGE_NAME:$BUILD_SUFFIX" .
-        docker save "$DOCKER_IMAGE_NAME:$BUILD_SUFFIX" "$VERSIONED_IMAGE_NAME:$BUILD_SUFFIX" | xz -c > "$ARTIFACT_NAME"
-      fi
-    - ls -lh "$ARTIFACT_NAME"
+    - CLEAN_TAG="${CI_COMMIT_TAG#v}"
+    - CLEAN_TAG="${CLEAN_TAG:-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA}"
+    - docker build -t "$DOCKER_IMAGE_NAME:$CLEAN_TAG" .
+    - docker save "$DOCKER_IMAGE_NAME:$CLEAN_TAG" | xz -c > "kalamar-plugin-export-$CLEAN_TAG.tar.xz"
+    - ls -lh kalamar-plugin-export-*.tar.xz
   artifacts:
-    name: "kalamar-plugin-export-$BUILD_SUFFIX.tar.xz"
     paths:
-      - "*.tar.xz"
+      - "kalamar-plugin-export-*.tar.xz"
     expire_in: 30 days
   rules:
     - if: "$CI_COMMIT_TAG"
@@ -87,21 +84,27 @@ deploy:
   stage: deploy
   image: docker:latest
   services:
-    - docker:dind
+    - name: docker:dind
+      alias: docker
+      variables:
+        HEALTHCHECK_TCP_PORT: "2375"
+  variables:
+    FF_NETWORK_PER_BUILD: "true"
+    DOCKER_TLS_CERTDIR: ""
+  needs:
+    - job: build-docker
+      artifacts: true
   before_script:
+    - docker info
+    - apk add --no-cache xz
     - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
   script:
-    - |
-      # Load the built image from artifact
-      docker load -i "kalamar-plugin-export-$CI_COMMIT_TAG.tar.xz"
-      # Push the version-tagged image
-      docker push "$DOCKER_IMAGE_NAME:$CI_COMMIT_TAG"
-      # Tag and push the latest tag
-      docker tag "$DOCKER_IMAGE_NAME:$CI_COMMIT_TAG" "$DOCKER_IMAGE_NAME:latest"
-      docker push "$DOCKER_IMAGE_NAME:latest"
+    - CLEAN_TAG="${CI_COMMIT_TAG#v}"
+    - xz -d -c "kalamar-plugin-export-$CLEAN_TAG.tar.xz" | docker load
+    - docker tag "$DOCKER_IMAGE_NAME:$CLEAN_TAG" "$DOCKER_IMAGE_NAME:latest"
+    - docker push "$DOCKER_IMAGE_NAME:$CLEAN_TAG"
+    - docker push "$DOCKER_IMAGE_NAME:latest"
   rules:
-    - if: '$CI_COMMIT_TAG =~ /^(v|[0-9])/'
-      when: manual
+    - if: '$CI_COMMIT_TAG =~ /^v?[0-9]/'
+      when: on_success
   allow_failure: false
-  dependencies:
-    - build-docker
