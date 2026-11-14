@@ -223,6 +223,12 @@ public class Service {
 
             auth = authFromCookie(servletReq);
         };
+
+        // Prefer the authorization header, as set by Kalamar's
+        // proxy, over the session cookie
+        String authHeader = req != null ? req.getHeaderString("Authorization") : null;
+        if (authHeader != null && !authHeader.isEmpty())
+            auth = authHeader;
     
         String resp;
         WebTarget resource;

@@ -193,6 +193,39 @@ public class ServiceTest extends JerseyTest {
     }
     
     @Test
+    public void testExportWsPassesAuthorization () {
+        // Only an authorized search request is answered
+        mockClient.reset().when(
+            request()
+            .withMethod("GET")
+            .withPath("/api/v1.0/search")
+            .withHeader("Authorization", "Bearer s3cr3t")
+            )
+            .respond(
+                response()
+                .withStatusCode(200)
+                .withHeaders(new Header("Content-Type", "application/json; charset=UTF-8"))
+                .withBody(getFixture("response_none.json"))
+                );
+
+        MultivaluedHashMap<String, String> frmap = new MultivaluedHashMap<String, String>();
+        frmap.add("fname", "dateiJson");
+        frmap.add("format", "json");
+        frmap.add("q", "axdjakdftr");
+        frmap.add("ql", "poliqarp");
+        frmap.add("cutoff", "true");
+
+        assertEquals(Status.OK.getStatusCode(),
+                     target("/export").request()
+                     .header("Authorization", "Bearer s3cr3t")
+                     .post(Entity.form(frmap)).getStatus());
+
+        assertNotEquals(Status.OK.getStatusCode(),
+                        target("/export").request()
+                        .post(Entity.form(frmap)).getStatus());
+    };
+
+    @Test
     public void testExportWsJsonEmpty () {
         mockClient.reset().when(
             request()
