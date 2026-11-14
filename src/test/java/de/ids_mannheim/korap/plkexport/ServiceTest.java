@@ -193,6 +193,16 @@ public class ServiceTest extends JerseyTest {
     }
     
     @Test
+    public void testExportConfig () throws IOException {
+        Response resp = target("/export/config").request().get();
+        assertEquals(Status.OK.getStatusCode(), resp.getStatus());
+        JsonNode conf = new ObjectMapper().readTree(resp.readEntity(String.class));
+        assertEquals(10000, conf.at("/maxHitc").asInt());
+        assertEquals(100, conf.at("/defaultHitc").asInt());
+        assertTrue(conf.at("/pageSize").asInt() > 0);
+    };
+
+    @Test
     public void testExportWsPassesAuthorization () {
         // Only an authorized search request is answered
         mockClient.reset().when(

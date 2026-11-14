@@ -46,6 +46,9 @@ import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseFeature;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -654,6 +657,23 @@ public class Service {
     public String exportDisplayTemplate () {
         Properties properties = ExWSConf.properties(null);
         return ExpTempl.getExportTempl(properties.getProperty("server.scheme"),properties.getProperty("server.host"), properties.getProperty("server.port"));
+    };
+
+    /**
+     *
+     * Returns the limits of the service as JSON, so that
+     * Kalamar can render the export form on its own.
+     */
+    @GET
+    @Path("export/config")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String exportConfig () {
+        ObjectNode conf = new ObjectMapper().createObjectNode();
+        conf.put("defaultHitc", Integer.parseInt(prop.getProperty("conf.default_hitc", "100")));
+        conf.put("maxHitc", Integer.parseInt(prop.getProperty("conf.max_exp_limit", "10000")));
+        conf.put("pageSize", Integer.parseInt(prop.getProperty("conf.page_size", "5")));
+        conf.put("announcement", prop.getProperty("announcement"));
+        return conf.toString();
     };
 
     /**
