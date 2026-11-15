@@ -1,3 +1,9 @@
+0.5.0-beta.1 2026-11-15
+    - Prefer the Authorization header, as set by Kalamar's proxy,
+      over the session cookie (kupietz).
+    - Provide the limits of the service as JSON (export/config)
+      for the export form built into Kalamar (kupietz).
+
 0.4.3 2026-11-12
     - Load export assets from the local frontend through Kalamar's proxy (kupietz).
     - Fix HTTP 400 on export when the search URL omits the query language (kupietz).
