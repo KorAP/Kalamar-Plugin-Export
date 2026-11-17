@@ -1,3 +1,8 @@
+0.5.0 2026-11-17
+    - Release the built-in export integration tested with Kalamar 0.67,
+      retaining the Authorization-header and export/config changes from
+      0.5.0-beta.1 (kupietz).
+
 0.5.0-beta.1 2026-11-15
     - Prefer the Authorization header, as set by Kalamar's proxy,
       over the session cookie (kupietz).
