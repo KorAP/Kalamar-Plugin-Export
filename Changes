@@ -1,3 +1,12 @@
+0.5.1 2026-11-18
+    - Upgrade the Docker runtime to Java 25 with pinned Corretto 25.0.5.1.2,
+      fixing CVE-2026-114938 (Java4Shell) (kupietz).
+    - Ship a compact linked runtime and run Maven tests on its module set
+      (kupietz).
+    - Use glibc for compatibility with older Docker hosts, including the
+      CoRoLa CentOS 7 server, and preserve the export user's numeric IDs
+      for existing mounted directories (kupietz).
+
 0.5.0 2026-11-17
     - Release the built-in export integration tested with Kalamar 0.67,
       retaining the Authorization-header and export/config changes from
