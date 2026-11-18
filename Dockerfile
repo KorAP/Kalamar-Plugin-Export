@@ -22,7 +22,9 @@ RUN apk update && \
     apk add --no-cache maven
 
 # Build the project using local source code
-RUN mvn -Djvm=/opt/java/runtime/bin/java clean package
+RUN mvn -Djvm=/opt/java/runtime/bin/java \
+    -Dexport.api.scheme=http -Dexport.api.host=kustvakt -Dexport.api.port=8089 \
+    clean package
 
 # Package
 RUN find target/KalamarExportPlugin-*.jar -exec mv {} KalamarExportPlugin.jar ';'
@@ -41,6 +43,7 @@ RUN yum install -y binutils && \
     cp -L "$JAVA_HOME/lib/security/cacerts" /opt/java/runtime/lib/security/cacerts
 
 FROM public.ecr.aws/amazonlinux/amazonlinux:2023-minimal@sha256:c64f3b683d01c1c874831adc6a7b5a2fd6f0f9affd58bc638939a9f46cc03543
+ENV KALAMAR_EXPORT_SERVER_HOST=0.0.0.0
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 COPY --from=java-runtime-glibc /opt/java/runtime /opt/java/openjdk

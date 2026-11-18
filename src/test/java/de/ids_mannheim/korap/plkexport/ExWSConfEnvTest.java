@@ -1,6 +1,9 @@
 package de.ids_mannheim.korap.plkexport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.HashMap;
@@ -439,5 +442,68 @@ public class ExWSConfEnvTest {
         Properties propsReset = ExWSConf.properties(null);
         // Should use config file value (assuming no actual env var is set)
         assertEquals("1024", propsReset.getProperty("server.port"));
+    }
+    @Test
+    public void testApiUrlOverridesAllLegacyComponents() {
+        mockEnv.put("KALAMAR_EXPORT_API_HOST", "old-host");
+        mockEnv.put("KALAMAR_EXPORT_API_PORT", "9000");
+        mockEnv.put("KALAMAR_EXPORT_API_SCHEME", "https");
+        mockEnv.put("KALAMAR_EXPORT_API_PATH", "/old-prefix");
+        mockEnv.put("KALAMAR_EXPORT_API_URL", "http://kustvakt:8089");
+        ExWSConf.setEnvironmentProvider(mockEnv::get);
+        Properties props = ExWSConf.properties(null);
+        assertEquals("kustvakt", props.getProperty("api.host"));
+        assertEquals("8089", props.getProperty("api.port"));
+        assertEquals("http", props.getProperty("api.scheme"));
+        assertEquals("", props.getProperty("api.path"));
+    }
+
+    @Test
+    public void testApiUrlDefaultPortsAndPrefix() {
+        ExWSConf.setEnvironmentProvider(mockEnv::get);
+        for (String scheme : new String[] { "http", "https" }) {
+            ExWSConf.clearProp();
+            mockEnv.put("KALAMAR_EXPORT_API_URL", scheme + "://backend.example/prefix/");
+            Properties props = ExWSConf.properties(null);
+            assertEquals("http".equals(scheme) ? "80" : "443", props.getProperty("api.port"));
+            assertEquals("/prefix/", props.getProperty("api.path"));
+        }
+    }
+
+    @Test
+    public void testApiUrlSupportsIpv6() {
+        mockEnv.put("KALAMAR_EXPORT_API_URL", "http://[::1]:8089/prefix");
+        ExWSConf.setEnvironmentProvider(mockEnv::get);
+        Properties props = ExWSConf.properties(null);
+        assertEquals("[::1]", props.getProperty("api.host"));
+        assertEquals("8089", props.getProperty("api.port"));
+        assertEquals("/prefix", props.getProperty("api.path"));
+    }
+
+    @Test
+    public void testEmptyApiUrlKeepsLegacySettings() {
+        mockEnv.put("KALAMAR_EXPORT_API_URL", "");
+        mockEnv.put("KALAMAR_EXPORT_API_HOST", "legacy-host");
+        ExWSConf.setEnvironmentProvider(mockEnv::get);
+        assertEquals("legacy-host", ExWSConf.properties(null).getProperty("api.host"));
+    }
+
+    @Test
+    public void testInvalidApiUrlsFailWithoutLeakingCredentials() {
+        ExWSConf.setEnvironmentProvider(mockEnv::get);
+        for (String url : new String[] { "kustvakt:8089", "ftp://backend", "http:///missing-host",
+                "http://backend:0", "http://backend:70000", "http://backend:",
+                "http://user:secret@backend", "http://backend?secret=1", "http://backend/#fragment",
+                "http://bad host" }) {
+            ExWSConf.clearProp();
+            mockEnv.put("KALAMAR_EXPORT_API_URL", url);
+            // Repeated calls must not return partially initialized properties.
+            for (int attempt = 0; attempt < 2; attempt++) {
+                IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
+                    () -> ExWSConf.properties(null));
+                assertTrue(error.getMessage().contains("KALAMAR_EXPORT_API_URL"));
+                assertFalse(error.getMessage().contains("secret"));
+            }
+        }
     }
 }

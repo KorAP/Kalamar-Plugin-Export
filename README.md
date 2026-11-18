@@ -34,8 +34,20 @@ Alternatively, set `export` in the `Kalamar` section of Kalamar's configuration:
 
 Kalamar provides the export interface and proxies requests to the export service,
 including authentication. Configure the export service to use the same Kustvakt
-backend as Kalamar with `KALAMAR_EXPORT_API_HOST`, `KALAMAR_EXPORT_API_PORT`,
-`KALAMAR_EXPORT_API_SCHEME`, and, if needed, `KALAMAR_EXPORT_API_PATH`.
+backend as Kalamar. Docker images built from this source default to
+`http://kustvakt:8089`. If Kustvakt is reachable under that name on the shared
+network, the export container needs no environment settings. A Compose backend
+with a different service name can use `kustvakt` as a network alias. For any
+other address, set the base URL on the **export service**:
+
+```yaml
+environment:
+  KALAMAR_EXPORT_API_URL: "http://kustvakt-full:9000"
+```
+
+This setting is available in source builds after 0.5.1; published 0.5.1 images
+still require the separate host, port and scheme variables. The service appends
+`/api/v1.0/search` to the base URL, including any path prefix.
 
 The browser accesses the service through Kalamar's `/export/` proxy, so the export
 service does not need a public port. Restart Kalamar after changing its
@@ -199,7 +211,18 @@ working directory from which the service is started.
 
 Configuration can also be set via environment variables, which take precedence over
 configuration file values. This is particularly useful for Docker deployments and
-containerized environments.
+containerized environments. Docker builds after 0.5.1 listen on `0.0.0.0` by
+default and use `http://kustvakt:8089` as the backend. The standalone JAR
+listens on `localhost` and defaults to `https://korap.ids-mannheim.de:443`.
+The API defaults apply when there is no local `exportPlugin.conf` replacing
+the bundled configuration. Custom settings and environment overrides still work.
+
+`KALAMAR_EXPORT_API_URL` accepts an absolute HTTP(S) base URL, such as
+`http://kustvakt:8089` or `https://backend.example/instance/wiki`. It takes
+precedence over all four separate API scheme, host, port and path settings.
+An omitted port means 80 for HTTP or 443 for HTTPS, and an omitted path clears
+any configured path prefix. Credentials, query strings and fragments are not
+accepted. The separate variables remain supported when the URL is unset or empty.
 
 The priority order is (highest to lowest):
 1. Environment variables
@@ -222,6 +245,8 @@ configuration file (using the property name) or via an environment variable:
 - `server.origin` or `KALAMAR_EXPORT_SERVER_ORIGIN`: CORS origin for SSE responses (default: `*`)
 
 #### API Configuration
+
+The defaults below are for the standalone JAR.
 
 - `api.port` or `KALAMAR_EXPORT_API_PORT`: Port of the KorAP API backend (default: `443`)
 - `api.host` or `KALAMAR_EXPORT_API_HOST`: Host address of the KorAP API backend (default: `korap.ids-mannheim.de`)

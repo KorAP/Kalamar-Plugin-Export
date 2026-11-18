@@ -10,6 +10,8 @@ package de.ids_mannheim.korap.plkexport;
 
 import java.io.*;
 import java.lang.String;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -155,15 +157,15 @@ public class ExWSConf {
            return prop;
 
         Properties defaultProp = loadProp(null, "exportPlugin.conf");
-        prop = new Properties(defaultProp);
+        Properties configured = new Properties(defaultProp);
     
         if (propFile != null){
-            loadProp(prop, propFile);
+            loadProp(configured, propFile);
         }
         
         // Apply environment variable overrides
-        applyEnvironmentOverrides(prop);
-    
+        applyEnvironmentOverrides(configured);
+        prop = configured;
         return prop;
     };
 
@@ -178,6 +180,38 @@ public class ExWSConf {
                 props.setProperty(entry.getValue(), envValue);
             }
         }
+
+        // A complete URL takes precedence over the legacy components. Always
+        // replace port and path as well, so defaults cannot leak into the URL.
+        String apiUrl = getEnvironmentVariable("KALAMAR_EXPORT_API_URL");
+        if (apiUrl != null && !apiUrl.isEmpty()) {
+            URI uri;
+            try {
+                uri = new URI(apiUrl);
+            }
+            catch (URISyntaxException e) {
+                throw invalidApiUrl();
+            }
+            String scheme = uri.getScheme();
+            if (!("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme))
+                    || uri.getHost() == null || uri.getRawUserInfo() != null
+                    || uri.getRawQuery() != null || uri.getRawFragment() != null
+                    || uri.getPort() > 65535 || uri.getPort() == 0
+                    || uri.getRawAuthority().endsWith(":")) {
+                throw invalidApiUrl();
+            }
+            props.setProperty("api.scheme", scheme.toLowerCase(java.util.Locale.ROOT));
+            props.setProperty("api.host", uri.getHost());
+            props.setProperty("api.port", String.valueOf(uri.getPort() == -1
+                ? ("https".equalsIgnoreCase(scheme) ? 443 : 80) : uri.getPort()));
+            props.setProperty("api.path", uri.getPath());
+        }
+    }
+
+    private static IllegalArgumentException invalidApiUrl() {
+        // Do not echo a URL that might contain credentials.
+        return new IllegalArgumentException("KALAMAR_EXPORT_API_URL must be an absolute "
+            + "HTTP(S) URL with a valid host and port, without credentials, query or fragment");
     }
 
     /*

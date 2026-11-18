@@ -130,6 +130,33 @@ public class ServiceTest extends JerseyTest {
         }
     }
 
+    @Test
+    public void testExportWithApiUrlPrefix() {
+        ExWSConf.clearProp();
+        ExWSConf.setEnvironmentProvider(name -> "KALAMAR_EXPORT_API_URL".equals(name)
+            ? "http://localhost:" + mockServer.getPort() + "/instance/test/" : null);
+        try {
+            ExWSConf.properties(null);
+            mockClient.reset().when(request().withMethod("GET")
+                .withPath("/instance/test/api/v1.0/search"))
+                .respond(response().withHeader("Content-Type", "application/json; charset=UTF-8")
+                    .withBody(getFixture("response_water.json")).withStatusCode(200));
+            MultivaluedHashMap<String, String> fields = new MultivaluedHashMap<>();
+            fields.add("q", "Wasser");
+            fields.add("ql", "poliqarp");
+            fields.add("format", "rtf");
+            fields.add("hitc", "1");
+            try (Response result = target("export").request().post(Entity.form(fields))) {
+                assertEquals(200, result.getStatus());
+                assertTrue(result.readEntity(String.class).startsWith("{\\rtf1"));
+            }
+        }
+        finally {
+            ExWSConf.setEnvironmentProvider(null);
+            ExWSConf.clearProp();
+        }
+    }
+
     // Client is pre-configured in JerseyTest
     /**
      * Tests if webservice returns a document with the right filename

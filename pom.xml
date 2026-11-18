@@ -10,6 +10,9 @@
   
   <properties>
     <java.version>21</java.version>
+    <export.api.scheme>https</export.api.scheme>
+    <export.api.host>korap.ids-mannheim.de</export.api.host>
+    <export.api.port>443</export.api.port>
     <jetty.version>12.1.14</jetty.version>
     <jersey.version>4.0.3</jersey.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

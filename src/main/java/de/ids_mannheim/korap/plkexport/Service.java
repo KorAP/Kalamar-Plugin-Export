@@ -197,7 +197,7 @@ public class Service {
         
         String query = q.replace("{", "%7B").replace("}", "%7D");
         // Create initial search uri
-        UriBuilder uri = UriBuilder.fromPath("/api/v1.0/search")
+        UriBuilder uri = UriBuilder.fromPath(path).path("/api/v1.0/search")
             .host(host)
             .port(Integer.parseInt(port))
             .scheme(scheme)
@@ -213,9 +213,6 @@ public class Service {
         if (cq != null && cq.length() > 0)
             uri = uri.queryParam("cq", cq);
         
-        if (path != "")
-            uri = uri.path(path);
-
         // Get client IP, in case service is behind a proxy
         // Get auth (temporarily) via Session riding
         String xff = "", auth = "";
