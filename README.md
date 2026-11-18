@@ -185,6 +185,16 @@ or a reverse-proxy path prefix. The settings below apply to standalone use.
 
 ### Docker Example
 
+The Docker image uses a compact Java 25 runtime linked from Corretto
+25.0.5.1.2, which includes the fix for CVE-2026-114938 (Java4Shell).
+Build and runtime base images are pinned by digest. Maven tests run on the
+linked runtime's module set before the application is packaged.
+
+The final image uses glibc. Alpine-based Java images have caused compatibility
+problems on older Docker hosts, including the CoRoLa CentOS 7 server; keep
+Alpine confined to the build stage. The runtime retains TLS, authentication,
+locale and diagnostic modules, but does not include a compiler or Maven.
+
 When running in Docker, you can set environment variables:
 
 ```shell
