@@ -13,7 +13,7 @@
     <export.api.scheme>https</export.api.scheme>
     <export.api.host>korap.ids-mannheim.de</export.api.host>
     <export.api.port>443</export.api.port>
-    <jetty.version>12.1.14</jetty.version>
+    <jetty.version>12.1.15</jetty.version>
     <jersey.version>4.0.3</jersey.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
