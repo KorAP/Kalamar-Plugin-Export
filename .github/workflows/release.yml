@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]*.[0-9]*.[0-9]*'
+      - '[0-9]*.[0-9]*.[0-9]*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Read version and release notes
+        id: release
+        shell: bash
+        run: |
+          version=${GITHUB_REF_NAME#v}
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?$ ]]; then
+            echo "Expected a version tag such as v0.5.2 or v0.5.2-beta.1." >&2
+            exit 1
+          fi
+
+          # Changes headings have the form "0.5.2 2026-11-19". Keep the
+          # continuation lines indented beneath each Markdown list item.
+          awk -v version="$version" '
+            /^[0-9]/ && $2 ~ /^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$/ {
+              if (in_section) exit
+              in_section = ($1 == version)
+              next
+            }
+            in_section { sub(/^    /, ""); print }
+          ' Changes > release-notes.md
+          if ! grep -q '[^[:space:]]' release-notes.md; then
+            echo "No release notes found in Changes for $version." >&2
+            exit 1
+          fi
+
+          prerelease=false
+          if [[ "$version" == *-* ]]; then
+            prerelease=true
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$prerelease" >> "$GITHUB_OUTPUT"
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Test and build the release JAR
+        run: mvn --batch-mode clean package
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v3
+        with:
+          body_path: release-notes.md
+          prerelease: ${{ steps.release.outputs.prerelease }}
+          files: target/KalamarExportPlugin-${{ steps.release.outputs.version }}.jar
+          fail_on_unmatched_files: true
