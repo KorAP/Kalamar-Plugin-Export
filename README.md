@@ -1,6 +1,6 @@
 # Kalamar-Plugin-Export
 
-![Kalamar-Plugin-Export Screenshot](https://raw.githubusercontent.com/KorAP/Kalamar-Plugin-Export/master/misc/kalamar-export-screenshot.png)
+![Kalamar search results with the built-in export form open](misc/kalamar-export-screenshot.png)
 
 ## Description
 
@@ -13,46 +13,89 @@ available for legacy integrations.
 
 ## Integration with Kalamar
 
-For Kalamar 0.67 or later, configure `KALAMAR_EXPORT_SERVICE` on the **Kalamar
-service** with the export service's internal base URL. For example, when both
-services share a Docker Compose network and the export service is named `export`:
+### Docker Compose with Kalamar 0.67 or later
+
+In your existing `compose.yaml`, add or update `services.kalamar-export`. Add
+`KALAMAR_EXPORT_SERVICE` to the `environment:` of the Kalamar service that
+serves the UI. In KorAP-Docker, that service is `kalamar` for the `open` profile
+or `kalamar-auth` for the `auth` profile.
+
+Merge this excerpt into your existing `services:` block and keep the other
+settings for your Kalamar and Kustvakt services.
 
 ```yaml
-environment:
-  KALAMAR_EXPORT_SERVICE: http://export:7777
+services:
+  kalamar:
+    environment:
+      KALAMAR_EXPORT_SERVICE: "http://kalamar-export:7777"
+  kalamar-export:
+    image: "docker.io/korap/kalamar-plugin-export:0.5.2"
 ```
 
-Alternatively, set `export` in the `Kalamar` section of Kalamar's configuration:
+This is the **zero-configuration Docker setup** for the export container. It
+listens on port `7777` and reaches Kustvakt at `http://kustvakt:8089` by default.
+Keep all three services on a shared Compose network. If you rename
+`kalamar-export`, use that name in `KALAMAR_EXPORT_SERVICE`. When upgrading an
+existing export container, remove any API URL, host, port, scheme and path
+overrides to use the default backend.
+
+Kalamar provides the export interface and forwards requests, including
+authentication, through its `/export/` proxy. Kalamar reaches the export
+container over the shared network without a `ports:` entry on `kalamar-export`.
+Recreate the services whose configuration changed with `docker compose up -d`
+using your usual profiles. On a results page, open the export form and try a
+small CSV download.
+
+### When Kustvakt uses a different address
+
+The export service should use the same Kustvakt backend as Kalamar. If your
+backend still listens on port `8089`, you can give it the `kustvakt` network
+alias and keep the export defaults. For example, in a setup where the backend
+service for the `auth` profile is named `kustvakt-auth` and uses the default
+Compose network, add `kustvakt` to that backend service's existing aliases:
+
+```yaml
+services:
+  kustvakt-auth:
+    networks:
+      default:
+        aliases:
+          - kustvakt
+```
+
+Alternatively, set `KALAMAR_EXPORT_API_URL` in the export service's
+`environment:` block. For example, if the backend is named `kustvakt-full`
+and listens on port `9000`:
+
+```yaml
+services:
+  kalamar-export:
+    image: "docker.io/korap/kalamar-plugin-export:0.5.2"
+    environment:
+      KALAMAR_EXPORT_API_URL: "http://kustvakt-full:9000"
+```
+
+Use the backend's base URL. The export service appends `/api/v1.0/search`,
+including when the base URL has a path prefix. Version 0.5.2 introduced the
+single URL setting. Earlier images use the separate host, port and scheme
+variables listed in the [configuration reference](#api-configuration).
+
+### Kalamar configuration file
+
+If you configure Kalamar through `kalamar.conf`, set `export` in its `Kalamar`
+section. Use the address that Kalamar can reach, such as the Compose service
+address in this example:
 
 ```perl
 {
   Kalamar => {
-    export => 'http://export:7777'
+    export => 'http://kalamar-export:7777'
   }
 }
 ```
 
-Kalamar provides the export interface and proxies requests to the export service,
-including authentication. Configure the export service to use the same Kustvakt
-backend as Kalamar. Docker images built from this source default to
-`http://kustvakt:8089`. If Kustvakt is reachable under that name on the shared
-network, the export container needs no environment settings. A Compose backend
-with a different service name can use `kustvakt` as a network alias. For any
-other address, set the base URL on the **export service**:
-
-```yaml
-environment:
-  KALAMAR_EXPORT_API_URL: "http://kustvakt-full:9000"
-```
-
-This setting is available in source builds after 0.5.1; published 0.5.1 images
-still require the separate host, port and scheme variables. The service appends
-`/api/v1.0/search` to the base URL, including any path prefix.
-
-The browser accesses the service through Kalamar's `/export/` proxy, so the export
-service does not need a public port. Restart Kalamar after changing its
-configuration. Iframe plugin registration is only needed for the
-[legacy integration](#legacy-integration).
+Restart Kalamar after changing its configuration. For deployments using the
+iframe plugin interface, see [Legacy integration](#legacy-integration).
 
 ## Docker
 
@@ -67,23 +110,22 @@ Alpine confined to the build stage. The runtime retains TLS, authentication,
 locale and diagnostic modules, but does not include a compiler or Maven.
 
 To run the service locally for Kalamar's built-in export interface, using the
-public KorAP API as its default backend:
+public KorAP API as the backend:
 
 ```shell
 docker run --rm --name korap-export \
   -p 127.0.0.1:7777:7777 \
-  -e KALAMAR_EXPORT_SERVER_HOST=0.0.0.0 \
-  korap/kalamar-plugin-export:0.5.1
+  -e KALAMAR_EXPORT_API_URL=https://korap.ids-mannheim.de \
+  korap/kalamar-plugin-export:0.5.2
 ```
 
-Port `7777` is already the default. The host override lets Docker reach the
-service, which otherwise listens only on the container's loopback interface.
-The published port is restricted to the Docker host's loopback interface.
+The image listens on port `7777`. This command publishes the port on the
+Docker host's loopback interface.
 If Kalamar runs directly on that host, use
 `KALAMAR_EXPORT_SERVICE=http://127.0.0.1:7777`.
 
 When Kalamar also runs in Docker, use a shared Compose network and the export
-service's Docker service name, such as `http://export:7777`, instead of
+service's Docker service name, such as `http://kalamar-export:7777`, instead of
 `localhost`. The export service must listen on `0.0.0.0` inside its container;
 a host port mapping is not needed for communication within the Compose network.
 
@@ -210,9 +252,10 @@ working directory from which the service is started.
 ### Environment Variables
 
 Configuration can also be set via environment variables, which take precedence over
-configuration file values. This is particularly useful for Docker deployments and
-containerized environments. Docker builds after 0.5.1 listen on `0.0.0.0` by
-default and use `http://kustvakt:8089` as the backend. The standalone JAR
+configuration file values. In Compose, place the variables listed below under
+`services.kalamar-export.environment`, substituting your export service name if
+it differs. Docker images from version 0.5.2 listen on `0.0.0.0` by default and
+use `http://kustvakt:8089` as the backend. The standalone JAR
 listens on `localhost` and defaults to `https://korap.ids-mannheim.de:443`.
 The API defaults apply when there is no local `exportPlugin.conf` replacing
 the bundled configuration. Custom settings and environment overrides still work.

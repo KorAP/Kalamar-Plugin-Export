@@ -1,3 +1,12 @@
+0.5.2 2026-11-19
+    - Enable zero-configuration Docker setup for the export service when
+      Kustvakt is reachable at http://kustvakt:8089. The container listens
+      on all IPv4 interfaces by default (kupietz).
+    - Set a different backend with KALAMAR_EXPORT_API_URL. Existing API
+      settings remain supported (kupietz).
+    - Place configured API path prefixes before /api/v1.0/search (kupietz).
+    - Update Jetty to 12.1.15 and Logback Classic to 1.6.7 (dependabot).
+
 0.5.1 2026-11-18
     - Upgrade the Docker runtime to Java 25 with pinned Corretto 25.0.5.1.2,
       fixing CVE-2026-114938 (Java4Shell) (kupietz).
