@@ -1,6 +1,6 @@
 # Kalamar-Plugin-Export
 
-![Kalamar search results with the built-in export form open](misc/kalamar-export-screenshot.png)
+![Kalamar results for `[gender/l=xier]` with the built-in export form open](misc/kalamar-export-screenshot.png)
 
 ## Description
 
